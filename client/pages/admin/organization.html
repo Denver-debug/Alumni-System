@@ -1,0 +1,687 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Organization - Admin</title>
+    <link rel="stylesheet" href="../../assets/css/main.css" />
+    <link rel="stylesheet" href="../../assets/css/components.css" />
+  </head>
+  <body>
+    <div class="admin-layout">
+      <aside class="sidebar" id="sidebar"></aside>
+
+      <main class="main-content">
+        <header class="content-header">
+          <h1>Organization Structure</h1>
+        </header>
+
+        <div class="tabs">
+          <button class="tab-btn active" onclick="switchTab('colleges')">
+            Colleges
+          </button>
+          <button class="tab-btn" onclick="switchTab('programs')">
+            Programs
+          </button>
+          <button class="tab-btn" onclick="switchTab('sections')">
+            Sections
+          </button>
+        </div>
+
+        <!-- Colleges Tab -->
+        <div class="tab-content active" id="collegesTab">
+          <div class="card">
+            <div class="card-header">
+              <h3>Colleges</h3>
+              <button
+                class="btn btn-primary btn-sm"
+                onclick="showCollegeModal()"
+              >
+                + Add College
+              </button>
+            </div>
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Code</th>
+                    <th>Programs</th>
+                    <th>Alumni</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="collegesTable">
+                  <tr>
+                    <td colspan="6" class="loading">Loading...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Programs Tab -->
+        <div class="tab-content" id="programsTab">
+          <div class="card">
+            <div class="card-header">
+              <h3>Programs</h3>
+              <button
+                class="btn btn-primary btn-sm"
+                onclick="showProgramModal()"
+              >
+                + Add Program
+              </button>
+            </div>
+            <div class="filters-bar">
+              <select id="collegeFilter" onchange="loadPrograms()">
+                <option value="">All Colleges</option>
+              </select>
+            </div>
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Code</th>
+                    <th>College</th>
+                    <th>Degree</th>
+                    <th>Sections</th>
+                    <th>Alumni</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="programsTable">
+                  <tr>
+                    <td colspan="7" class="loading">Loading...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sections Tab -->
+        <div class="tab-content" id="sectionsTab">
+          <div class="card">
+            <div class="card-header">
+              <h3>Sections</h3>
+              <button
+                class="btn btn-primary btn-sm"
+                onclick="showSectionModal()"
+              >
+                + Add Section
+              </button>
+            </div>
+            <div class="filters-bar">
+              <select id="programFilter" onchange="loadSections()">
+                <option value="">All Programs</option>
+              </select>
+              <input
+                type="number"
+                id="batchFilter"
+                placeholder="Batch Year"
+                onchange="loadSections()"
+              />
+            </div>
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Program</th>
+                    <th>Batch Year</th>
+                    <th>Alumni</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="sectionsTable">
+                  <tr>
+                    <td colspan="5" class="loading">Loading...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- College Modal -->
+    <div class="modal" id="collegeModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="collegeModalTitle">Add College</h2>
+          <button class="btn-close" onclick="closeModal('collegeModal')">
+            &times;
+          </button>
+        </div>
+        <form id="collegeForm" onsubmit="saveCollege(event)">
+          <div class="modal-body">
+            <div class="form-group">
+              <label>Name *</label>
+              <input type="text" id="collegeName" required />
+            </div>
+            <div class="form-group">
+              <label>Code *</label>
+              <input
+                type="text"
+                id="collegeCode"
+                required
+                maxlength="10"
+                style="text-transform: uppercase"
+              />
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <textarea id="collegeDescription" rows="3"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="closeModal('collegeModal')"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-primary">Save</button>
+          </div>
+          <input type="hidden" id="collegeId" />
+        </form>
+      </div>
+    </div>
+
+    <!-- Program Modal -->
+    <div class="modal" id="programModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="programModalTitle">Add Program</h2>
+          <button class="btn-close" onclick="closeModal('programModal')">
+            &times;
+          </button>
+        </div>
+        <form id="programForm" onsubmit="saveProgram(event)">
+          <div class="modal-body">
+            <div class="form-group">
+              <label>College *</label>
+              <select id="programCollege" required></select>
+            </div>
+            <div class="form-group">
+              <label>Name *</label>
+              <input type="text" id="programName" required />
+            </div>
+            <div class="form-group">
+              <label>Code *</label>
+              <input
+                type="text"
+                id="programCode"
+                required
+                maxlength="10"
+                style="text-transform: uppercase"
+              />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Degree Type</label>
+                <select id="programDegree">
+                  <option value="bachelor">Bachelor's</option>
+                  <option value="master">Master's</option>
+                  <option value="doctorate">Doctorate</option>
+                  <option value="associate">Associate</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Duration (Years)</label>
+                <input
+                  type="number"
+                  id="programDuration"
+                  value="4"
+                  min="1"
+                  max="10"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="closeModal('programModal')"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-primary">Save</button>
+          </div>
+          <input type="hidden" id="programId" />
+        </form>
+      </div>
+    </div>
+
+    <!-- Section Modal -->
+    <div class="modal" id="sectionModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="sectionModalTitle">Add Section</h2>
+          <button class="btn-close" onclick="closeModal('sectionModal')">
+            &times;
+          </button>
+        </div>
+        <form id="sectionForm" onsubmit="saveSection(event)">
+          <div class="modal-body">
+            <div class="form-group">
+              <label>Program *</label>
+              <select id="sectionProgram" required></select>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Name *</label>
+                <input
+                  type="text"
+                  id="sectionName"
+                  required
+                  placeholder="e.g., Section A"
+                />
+              </div>
+              <div class="form-group">
+                <label>Batch Year *</label>
+                <input
+                  type="number"
+                  id="sectionBatch"
+                  required
+                  min="1990"
+                  max="2100"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="closeModal('sectionModal')"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-primary">Save</button>
+          </div>
+          <input type="hidden" id="sectionId" />
+        </form>
+      </div>
+    </div>
+
+    <script src="../../assets/js/api.js"></script>
+    <script src="../../assets/js/auth.js"></script>
+    <script src="../../assets/js/utils.js"></script>
+    <script>
+      let colleges = [];
+      let programs = [];
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        if (!Auth.isAdmin()) {
+          window.location.hash = "#/admin/login";
+          return;
+        }
+
+        const sidebarHtml = await fetch("dashboard.html").then((r) => r.text());
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(sidebarHtml, "text/html");
+        document.getElementById("sidebar").innerHTML =
+          doc.querySelector(".sidebar").innerHTML;
+
+        loadColleges();
+      });
+
+      function switchTab(tab) {
+        document
+          .querySelectorAll(".tab-btn")
+          .forEach((b) => b.classList.remove("active"));
+        document
+          .querySelectorAll(".tab-content")
+          .forEach((c) => c.classList.remove("active"));
+
+        document
+          .querySelector(`[onclick="switchTab('${tab}')"]`)
+          .classList.add("active");
+        document.getElementById(tab + "Tab").classList.add("active");
+
+        if (tab === "programs") loadPrograms();
+        else if (tab === "sections") loadSections();
+      }
+
+      async function loadColleges() {
+        try {
+          const response = await API.admin.getOrganization("colleges");
+          if (response.success) {
+            colleges = response.data;
+            renderColleges();
+            populateCollegeSelects();
+          }
+        } catch (e) {
+          showToast("Error loading colleges", "error");
+        }
+      }
+
+      function renderColleges() {
+        const tbody = document.getElementById("collegesTable");
+        if (!colleges.length) {
+          tbody.innerHTML =
+            '<tr><td colspan="6" class="empty">No colleges</td></tr>';
+          return;
+        }
+        tbody.innerHTML = colleges
+          .map(
+            (c) => `
+                <tr>
+                    <td>${escapeHtml(c.name)}</td>
+                    <td><code>${c.code}</code></td>
+                    <td>${c.program_count || 0}</td>
+                    <td>${c.alumni_count || 0}</td>
+                    <td><span class="badge badge-${c.status === "active" ? "success" : "secondary"}">${c.status}</span></td>
+                    <td class="actions">
+                        <button class="btn btn-sm btn-secondary" onclick="editCollege(${c.id})">Edit</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteCollege(${c.id})">Delete</button>
+                    </td>
+                </tr>
+            `,
+          )
+          .join("");
+      }
+
+      function populateCollegeSelects() {
+        const options = colleges
+          .map((c) => `<option value="${c.id}">${c.name}</option>`)
+          .join("");
+        document.getElementById("collegeFilter").innerHTML =
+          '<option value="">All Colleges</option>' + options;
+        document.getElementById("programCollege").innerHTML = options;
+      }
+
+      async function loadPrograms() {
+        const collegeId = document.getElementById("collegeFilter").value;
+        try {
+          const response = await API.admin.getOrganization("programs", {
+            college_id: collegeId,
+          });
+          if (response.success) {
+            programs = response.data;
+            renderPrograms();
+            populateProgramSelects();
+          }
+        } catch (e) {
+          showToast("Error loading programs", "error");
+        }
+      }
+
+      function renderPrograms() {
+        const tbody = document.getElementById("programsTable");
+        if (!programs.length) {
+          tbody.innerHTML =
+            '<tr><td colspan="7" class="empty">No programs</td></tr>';
+          return;
+        }
+        tbody.innerHTML = programs
+          .map(
+            (p) => `
+                <tr>
+                    <td>${escapeHtml(p.name)}</td>
+                    <td><code>${p.code}</code></td>
+                    <td>${p.college_name}</td>
+                    <td>${p.degree_type}</td>
+                    <td>${p.section_count || 0}</td>
+                    <td>${p.alumni_count || 0}</td>
+                    <td class="actions">
+                        <button class="btn btn-sm btn-secondary" onclick="editProgram(${p.id})">Edit</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteProgram(${p.id})">Delete</button>
+                    </td>
+                </tr>
+            `,
+          )
+          .join("");
+      }
+
+      function populateProgramSelects() {
+        const options = programs
+          .map(
+            (p) =>
+              `<option value="${p.id}">${p.name} (${p.college_name})</option>`,
+          )
+          .join("");
+        document.getElementById("programFilter").innerHTML =
+          '<option value="">All Programs</option>' + options;
+        document.getElementById("sectionProgram").innerHTML = options;
+      }
+
+      async function loadSections() {
+        const programId = document.getElementById("programFilter").value;
+        const batchYear = document.getElementById("batchFilter").value;
+        try {
+          const response = await API.admin.getOrganization("sections", {
+            program_id: programId,
+            batch_year: batchYear,
+          });
+          if (response.success) {
+            renderSections(response.data);
+          }
+        } catch (e) {
+          showToast("Error loading sections", "error");
+        }
+      }
+
+      function renderSections(sections) {
+        const tbody = document.getElementById("sectionsTable");
+        if (!sections.length) {
+          tbody.innerHTML =
+            '<tr><td colspan="5" class="empty">No sections</td></tr>';
+          return;
+        }
+        tbody.innerHTML = sections
+          .map(
+            (s) => `
+                <tr>
+                    <td>${escapeHtml(s.name)}</td>
+                    <td>${s.program_name}</td>
+                    <td>${s.batch_year}</td>
+                    <td>${s.alumni_count || 0}</td>
+                    <td class="actions">
+                        <button class="btn btn-sm btn-secondary" onclick="editSection(${s.id})">Edit</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteSection(${s.id})">Delete</button>
+                    </td>
+                </tr>
+            `,
+          )
+          .join("");
+      }
+
+      // College CRUD
+      function showCollegeModal() {
+        document.getElementById("collegeModalTitle").textContent =
+          "Add College";
+        document.getElementById("collegeForm").reset();
+        document.getElementById("collegeId").value = "";
+        document.getElementById("collegeModal").classList.add("active");
+      }
+
+      function editCollege(id) {
+        const c = colleges.find((x) => x.id == id);
+        if (!c) return;
+        document.getElementById("collegeModalTitle").textContent =
+          "Edit College";
+        document.getElementById("collegeId").value = c.id;
+        document.getElementById("collegeName").value = c.name;
+        document.getElementById("collegeCode").value = c.code;
+        document.getElementById("collegeDescription").value =
+          c.description || "";
+        document.getElementById("collegeModal").classList.add("active");
+      }
+
+      async function saveCollege(e) {
+        e.preventDefault();
+        const id = document.getElementById("collegeId").value;
+        const data = {
+          name: document.getElementById("collegeName").value,
+          code: document.getElementById("collegeCode").value.toUpperCase(),
+          description: document.getElementById("collegeDescription").value,
+        };
+
+        try {
+          const response = id
+            ? await API.admin.updateOrganization("colleges", id, data)
+            : await API.admin.createOrganization("colleges", data);
+          if (response.success) {
+            showToast(response.message, "success");
+            closeModal("collegeModal");
+            loadColleges();
+          } else {
+            showToast(response.message, "error");
+          }
+        } catch (e) {
+          showToast("Error saving college", "error");
+        }
+      }
+
+      async function deleteCollege(id) {
+        if (!confirm("Delete this college?")) return;
+        try {
+          const response = await API.admin.deleteOrganization("colleges", id);
+          if (response.success) {
+            showToast("College deleted", "success");
+            loadColleges();
+          } else {
+            showToast(response.message, "error");
+          }
+        } catch (e) {
+          showToast("Error deleting college", "error");
+        }
+      }
+
+      // Program CRUD
+      function showProgramModal() {
+        document.getElementById("programModalTitle").textContent =
+          "Add Program";
+        document.getElementById("programForm").reset();
+        document.getElementById("programId").value = "";
+        document.getElementById("programModal").classList.add("active");
+      }
+
+      function editProgram(id) {
+        const p = programs.find((x) => x.id == id);
+        if (!p) return;
+        document.getElementById("programModalTitle").textContent =
+          "Edit Program";
+        document.getElementById("programId").value = p.id;
+        document.getElementById("programCollege").value = p.college_id;
+        document.getElementById("programName").value = p.name;
+        document.getElementById("programCode").value = p.code;
+        document.getElementById("programDegree").value =
+          p.degree_type || "bachelor";
+        document.getElementById("programDuration").value =
+          p.duration_years || 4;
+        document.getElementById("programModal").classList.add("active");
+      }
+
+      async function saveProgram(e) {
+        e.preventDefault();
+        const id = document.getElementById("programId").value;
+        const data = {
+          college_id: document.getElementById("programCollege").value,
+          name: document.getElementById("programName").value,
+          code: document.getElementById("programCode").value.toUpperCase(),
+          degree_type: document.getElementById("programDegree").value,
+          duration_years: document.getElementById("programDuration").value,
+        };
+
+        try {
+          const response = id
+            ? await API.admin.updateOrganization("programs", id, data)
+            : await API.admin.createOrganization("programs", data);
+          if (response.success) {
+            showToast(response.message, "success");
+            closeModal("programModal");
+            loadPrograms();
+          } else {
+            showToast(response.message, "error");
+          }
+        } catch (e) {
+          showToast("Error saving program", "error");
+        }
+      }
+
+      async function deleteProgram(id) {
+        if (!confirm("Delete this program?")) return;
+        try {
+          const response = await API.admin.deleteOrganization("programs", id);
+          if (response.success) {
+            showToast("Program deleted", "success");
+            loadPrograms();
+          } else {
+            showToast(response.message, "error");
+          }
+        } catch (e) {
+          showToast("Error deleting program", "error");
+        }
+      }
+
+      // Section CRUD
+      function showSectionModal() {
+        document.getElementById("sectionModalTitle").textContent =
+          "Add Section";
+        document.getElementById("sectionForm").reset();
+        document.getElementById("sectionId").value = "";
+        document.getElementById("sectionBatch").value =
+          new Date().getFullYear();
+        document.getElementById("sectionModal").classList.add("active");
+      }
+
+      function editSection(id) {
+        // Would need to fetch section data
+        showToast("Edit functionality - fetch section data", "info");
+      }
+
+      async function saveSection(e) {
+        e.preventDefault();
+        const id = document.getElementById("sectionId").value;
+        const data = {
+          program_id: document.getElementById("sectionProgram").value,
+          name: document.getElementById("sectionName").value,
+          batch_year: document.getElementById("sectionBatch").value,
+        };
+
+        try {
+          const response = id
+            ? await API.admin.updateOrganization("sections", id, data)
+            : await API.admin.createOrganization("sections", data);
+          if (response.success) {
+            showToast(response.message, "success");
+            closeModal("sectionModal");
+            loadSections();
+          } else {
+            showToast(response.message, "error");
+          }
+        } catch (e) {
+          showToast("Error saving section", "error");
+        }
+      }
+
+      async function deleteSection(id) {
+        if (!confirm("Delete this section?")) return;
+        try {
+          const response = await API.admin.deleteOrganization("sections", id);
+          if (response.success) {
+            showToast("Section deleted", "success");
+            loadSections();
+          } else {
+            showToast(response.message, "error");
+          }
+        } catch (e) {
+          showToast("Error deleting section", "error");
+        }
+      }
+
+      function closeModal(modalId) {
+        document.getElementById(modalId).classList.remove("active");
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,617 @@
+<!-- Admin Events Management Page -->
+<div class="admin-layout">
+  <aside class="admin-sidebar" id="adminSidebar"></aside>
+
+  <main class="admin-main">
+    <header class="admin-topbar">
+      <button class="btn btn-ghost sidebar-toggle" id="sidebarToggle">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </button>
+      <h1 class="page-title">Events Management</h1>
+      <div class="flex-1"></div>
+      <button class="btn btn-primary" id="createEventBtn">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+        Create Event
+      </button>
+    </header>
+
+    <div class="admin-content p-lg">
+      <!-- Filters -->
+      <div class="card mb-lg">
+        <div class="card-body">
+          <div class="grid grid-cols-4 gap-md">
+            <input
+              type="text"
+              id="searchInput"
+              class="form-input"
+              placeholder="Search events..."
+            />
+            <select id="statusFilter" class="form-select">
+              <option value="">All Status</option>
+              <option value="upcoming">Upcoming</option>
+              <option value="ongoing">Ongoing</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+            <select id="typeFilter" class="form-select">
+              <option value="">All Types</option>
+              <option value="seminar">Seminar</option>
+              <option value="reunion">Reunion</option>
+              <option value="workshop">Workshop</option>
+              <option value="networking">Networking</option>
+              <option value="career_fair">Career Fair</option>
+              <option value="webinar">Webinar</option>
+              <option value="other">Other</option>
+            </select>
+            <input type="month" id="monthFilter" class="form-input" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Events Table -->
+      <div class="card">
+        <div class="card-body p-0">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Event</th>
+                <th>Date & Time</th>
+                <th>Location</th>
+                <th>Type</th>
+                <th>Registrations</th>
+                <th>Points</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="eventsTable">
+              <tr>
+                <td colspan="8" class="text-center">Loading...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Create/Edit Event Modal -->
+<div class="modal" id="eventModal">
+  <div class="modal-backdrop"></div>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="eventModalTitle">Create Event</h3>
+        <button class="modal-close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="eventForm">
+          <input type="hidden" name="id" id="eventId" />
+
+          <div class="grid grid-cols-2 gap-md">
+            <div class="form-group col-span-2">
+              <label class="form-label required">Event Title</label>
+              <input type="text" name="title" class="form-input" required />
+            </div>
+
+            <div class="form-group col-span-2">
+              <label class="form-label">Description</label>
+              <textarea
+                name="description"
+                class="form-input"
+                rows="4"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label required">Event Date</label>
+              <input
+                type="date"
+                name="event_date"
+                class="form-input"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label required">Event Time</label>
+              <input
+                type="time"
+                name="event_time"
+                class="form-input"
+                required
+              />
+            </div>
+
+            <div class="form-group col-span-2">
+              <label class="form-label">Location</label>
+              <input
+                type="text"
+                name="location"
+                class="form-input"
+                placeholder="Physical address or online link"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label required">Event Type</label>
+              <select name="event_type" class="form-select" required>
+                <option value="seminar">Seminar</option>
+                <option value="reunion">Reunion</option>
+                <option value="workshop">Workshop</option>
+                <option value="networking">Networking</option>
+                <option value="career_fair">Career Fair</option>
+                <option value="webinar">Webinar</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label required">Points Reward</label>
+              <input
+                type="number"
+                name="points_reward"
+                class="form-input"
+                value="20"
+                min="0"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Max Attendees</label>
+              <input
+                type="number"
+                name="max_attendees"
+                class="form-input"
+                placeholder="Leave empty for unlimited"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Registration Deadline</label>
+              <input
+                type="datetime-local"
+                name="registration_deadline"
+                class="form-input"
+              />
+            </div>
+
+            <div class="form-group col-span-2">
+              <label class="form-label">Event Image</label>
+              <input
+                type="file"
+                name="image"
+                class="form-input"
+                accept="image/*"
+              />
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button class="btn btn-primary" id="saveEventBtn">Save Event</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Event Attendance Modal -->
+<div class="modal" id="attendanceModal">
+  <div class="modal-backdrop"></div>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Event Attendance</h3>
+        <button class="modal-close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="flex justify-between items-center mb-lg">
+          <div>
+            <h4 id="attendanceEventTitle">Event</h4>
+            <p class="text-secondary" id="attendanceEventDate">Date</p>
+          </div>
+          <div class="text-right">
+            <div class="text-2xl font-bold" id="attendanceCode">------</div>
+            <div class="text-sm text-secondary">Attendance Code</div>
+          </div>
+        </div>
+
+        <div class="card mb-lg" style="background: var(--gray-100)">
+          <div class="card-body text-center">
+            <div
+              id="qrCode"
+              style="
+                width: 200px;
+                height: 200px;
+                margin: 0 auto;
+                background: white;
+                border-radius: var(--radius-md);
+              "
+            >
+              <!-- QR Code will be generated here -->
+            </div>
+            <p class="text-sm text-secondary mt-md">
+              Scan this QR code for attendance
+            </p>
+          </div>
+        </div>
+
+        <div class="flex gap-md mb-lg">
+          <button class="btn btn-primary flex-1" id="generateNewCodeBtn">
+            Generate New Code
+          </button>
+          <button class="btn btn-secondary flex-1" id="printQRBtn">
+            Print QR Code
+          </button>
+        </div>
+
+        <h5 class="font-semibold mb-md">Registered Attendees</h5>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Alumni</th>
+                <th>Registered At</th>
+                <th>Status</th>
+                <th>Check-in Time</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="attendeesTable">
+              <tr>
+                <td colspan="5" class="text-center">Loading...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    includeAdminSidebar("events");
+
+    let events = [];
+    let currentEventId = null;
+
+    loadEvents();
+
+    // Filter listeners
+    Utils.$("#searchInput").addEventListener(
+      "input",
+      Utils.debounce(loadEvents, 300),
+    );
+    Utils.$("#statusFilter").addEventListener("change", loadEvents);
+    Utils.$("#typeFilter").addEventListener("change", loadEvents);
+    Utils.$("#monthFilter").addEventListener("change", loadEvents);
+
+    // Create event button
+    Utils.$("#createEventBtn").addEventListener("click", () => {
+      Utils.$("#eventModalTitle").textContent = "Create Event";
+      Utils.$("#eventForm").reset();
+      Utils.$("#eventId").value = "";
+      Utils.openModal("#eventModal");
+    });
+
+    // Save event
+    Utils.$("#saveEventBtn").addEventListener("click", saveEvent);
+
+    // Generate new attendance code
+    Utils.$("#generateNewCodeBtn").addEventListener("click", generateNewCode);
+
+    async function loadEvents() {
+      const params = {
+        search: Utils.$("#searchInput").value,
+        status: Utils.$("#statusFilter").value,
+        event_type: Utils.$("#typeFilter").value,
+        month: Utils.$("#monthFilter").value,
+      };
+
+      try {
+        const response = await API.events.list(params);
+        events = response.data.events || [];
+        renderTable();
+      } catch (error) {
+        console.error("Load events error:", error);
+      }
+    }
+
+    function renderTable() {
+      const tbody = Utils.$("#eventsTable");
+
+      if (!events.length) {
+        tbody.innerHTML =
+          '<tr><td colspan="8" class="text-center text-secondary">No events found</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = events
+        .map(
+          (e) => `
+            <tr>
+                <td>
+                    <div class="font-medium">${Utils.escapeHtml(e.title)}</div>
+                </td>
+                <td>
+                    <div>${Utils.formatDate(e.event_date)}</div>
+                    <div class="text-sm text-secondary">${e.event_time}</div>
+                </td>
+                <td>${Utils.escapeHtml(e.location || "-")}</td>
+                <td><span class="badge badge-${getTypeBadge(e.event_type)}">${e.event_type}</span></td>
+                <td>${e.registered_count || 0}${e.max_attendees ? ` / ${e.max_attendees}` : ""}</td>
+                <td class="font-medium text-primary">${e.points_reward} pts</td>
+                <td><span class="badge badge-${getStatusBadge(e.status)}">${e.status}</span></td>
+                <td>
+                    <div class="flex gap-xs">
+                        <button class="btn btn-ghost btn-sm" onclick="editEvent(${e.id})" title="Edit">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                            </svg>
+                        </button>
+                        <button class="btn btn-ghost btn-sm" onclick="manageAttendance(${e.id})" title="Attendance">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            </svg>
+                        </button>
+                        <button class="btn btn-ghost btn-sm text-danger" onclick="deleteEvent(${e.id})" title="Delete">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            </svg>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `,
+        )
+        .join("");
+    }
+
+    function getTypeBadge(type) {
+      const badges = {
+        seminar: "primary",
+        reunion: "success",
+        workshop: "warning",
+        networking: "info",
+        career_fair: "danger",
+        webinar: "secondary",
+      };
+      return badges[type] || "default";
+    }
+
+    function getStatusBadge(status) {
+      const badges = {
+        upcoming: "primary",
+        ongoing: "success",
+        completed: "secondary",
+        cancelled: "danger",
+      };
+      return badges[status] || "default";
+    }
+
+    window.editEvent = async (id) => {
+      try {
+        const response = await API.events.get(id);
+        const event = response.data;
+
+        Utils.$("#eventModalTitle").textContent = "Edit Event";
+        Utils.$("#eventId").value = event.id;
+
+        const form = Utils.$("#eventForm");
+        form.elements.title.value = event.title;
+        form.elements.description.value = event.description || "";
+        form.elements.event_date.value = event.event_date;
+        form.elements.event_time.value = event.event_time;
+        form.elements.location.value = event.location || "";
+        form.elements.event_type.value = event.event_type;
+        form.elements.points_reward.value = event.points_reward;
+        form.elements.max_attendees.value = event.max_attendees || "";
+        form.elements.registration_deadline.value =
+          event.registration_deadline || "";
+
+        Utils.openModal("#eventModal");
+      } catch (error) {
+        Utils.error("Failed to load event");
+      }
+    };
+
+    async function saveEvent() {
+      const form = Utils.$("#eventForm");
+      const formData = new FormData(form);
+      const id = Utils.$("#eventId").value;
+
+      Utils.setButtonLoading("#saveEventBtn", true);
+
+      try {
+        if (id) {
+          await API.events.update(id, formData);
+          Utils.success("Event updated");
+        } else {
+          await API.events.create(formData);
+          Utils.success("Event created");
+        }
+
+        Utils.closeModal("#eventModal");
+        loadEvents();
+      } catch (error) {
+        Utils.error(error.message || "Failed to save event");
+      } finally {
+        Utils.setButtonLoading("#saveEventBtn", false);
+      }
+    }
+
+    window.deleteEvent = async (id) => {
+      if (!confirm("Are you sure you want to delete this event?")) return;
+
+      try {
+        await API.events.delete(id);
+        Utils.success("Event deleted");
+        loadEvents();
+      } catch (error) {
+        Utils.error("Failed to delete event");
+      }
+    };
+
+    window.manageAttendance = async (id) => {
+      currentEventId = id;
+      const event = events.find((e) => e.id === id);
+
+      Utils.$("#attendanceEventTitle").textContent = event?.title || "Event";
+      Utils.$("#attendanceEventDate").textContent = event
+        ? `${Utils.formatDate(event.event_date)} at ${event.event_time}`
+        : "";
+
+      await loadAttendanceData(id);
+      Utils.openModal("#attendanceModal");
+    };
+
+    async function loadAttendanceData(eventId) {
+      try {
+        const response = await API.events.getAttendance(eventId);
+        const data = response.data;
+
+        Utils.$("#attendanceCode").textContent =
+          data.attendance_code || "------";
+
+        // Simple QR code placeholder (would need library like qrcode.js)
+        Utils.$("#qrCode").innerHTML = `
+                <div class="flex items-center justify-center h-100">
+                    <span class="text-2xl font-bold">${data.attendance_code || "------"}</span>
+                </div>
+            `;
+
+        // Render attendees
+        const attendees = data.attendees || [];
+        const tbody = Utils.$("#attendeesTable");
+
+        if (!attendees.length) {
+          tbody.innerHTML =
+            '<tr><td colspan="5" class="text-center text-secondary">No registrations yet</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = attendees
+          .map(
+            (a) => `
+                <tr>
+                    <td>
+                        <div class="flex items-center gap-sm">
+                            <div class="avatar avatar-sm bg-primary"><span>${Utils.getInitials(a.name)}</span></div>
+                            <div>
+                                <div class="font-medium">${Utils.escapeHtml(a.name)}</div>
+                                <div class="text-xs text-secondary">${a.alumni_id || ""}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${Utils.formatDateTime(a.registered_at)}</td>
+                    <td><span class="badge badge-${a.status === "attended" ? "success" : "secondary"}">${a.status}</span></td>
+                    <td>${a.check_in_time ? Utils.formatDateTime(a.check_in_time) : "-"}</td>
+                    <td>
+                        ${
+                          a.status !== "attended"
+                            ? `
+                            <button class="btn btn-success btn-sm" onclick="markAttended(${a.id})">Mark Attended</button>
+                        `
+                            : ""
+                        }
+                    </td>
+                </tr>
+            `,
+          )
+          .join("");
+      } catch (error) {
+        console.error("Load attendance error:", error);
+      }
+    }
+
+    async function generateNewCode() {
+      if (!currentEventId) return;
+
+      Utils.setButtonLoading("#generateNewCodeBtn", true);
+
+      try {
+        const response =
+          await API.events.generateAttendanceCode(currentEventId);
+        Utils.$("#attendanceCode").textContent = response.data.code;
+        Utils.$("#qrCode").innerHTML = `
+                <div class="flex items-center justify-center h-100">
+                    <span class="text-2xl font-bold">${response.data.code}</span>
+                </div>
+            `;
+        Utils.success("New code generated");
+      } catch (error) {
+        Utils.error("Failed to generate code");
+      } finally {
+        Utils.setButtonLoading("#generateNewCodeBtn", false);
+      }
+    }
+
+    window.markAttended = async (attendanceId) => {
+      try {
+        await API.events.markAttended(currentEventId, attendanceId);
+        Utils.success("Marked as attended");
+        loadAttendanceData(currentEventId);
+      } catch (error) {
+        Utils.error("Failed to update attendance");
+      }
+    };
+
+    function includeAdminSidebar(activePage) {
+      fetch("/pages/admin/dashboard.html")
+        .then((r) => r.text())
+        .then((html) => {
+          const doc = new DOMParser().parseFromString(html, "text/html");
+          const sidebar = doc.querySelector(".admin-sidebar");
+          if (sidebar) {
+            Utils.$("#adminSidebar").innerHTML = sidebar.innerHTML;
+            const user = Auth.getUser();
+            if (user) {
+              Utils.$("#adminName").textContent = user.name || "Admin";
+              Utils.$("#adminInitials").textContent = Utils.getInitials(
+                user.name || "A",
+              );
+            }
+            Utils.$$(".sidebar-link").forEach((link) => {
+              link.classList.remove("active");
+              if (link.getAttribute("href") === `#/admin/${activePage}`)
+                link.classList.add("active");
+            });
+          }
+        });
+      setTimeout(() => {
+        const toggle = Utils.$("#sidebarToggle");
+        if (toggle)
+          toggle.addEventListener("click", () =>
+            Utils.$("#adminSidebar").classList.toggle("open"),
+          );
+      }, 500);
+    }
+  })();
+</script>

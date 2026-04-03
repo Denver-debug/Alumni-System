@@ -1,0 +1,1706 @@
+<!-- Admin Settings Index -->
+<div class="dashboard-layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="flex items-center gap-md">
+        <div class="avatar avatar-md bg-primary"><span>A</span></div>
+        <div>
+          <div class="font-medium text-white">Admin</div>
+          <div class="text-xs opacity-75">Administrator</div>
+        </div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="#/admin/dashboard" class="sidebar-link">Dashboard</a>
+      <a href="#/admin/alumni" class="sidebar-link">Alumni</a>
+      <a href="#/admin/events" class="sidebar-link">Events</a>
+      <a href="#/admin/announcements" class="sidebar-link">Announcements</a>
+      <a href="#/admin/organization" class="sidebar-link">Organization</a>
+      <a href="#/admin/form-builder" class="sidebar-link">Form Builder</a>
+      <a href="#/admin/gamification" class="sidebar-link">Gamification</a>
+      <a href="#/admin/users" class="sidebar-link">Users</a>
+      <a href="#/admin/settings" class="sidebar-link active">Settings</a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="sidebar-link text-error" onclick="Auth.logout()">Logout</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="content-header">
+      <h1>Settings</h1>
+    </div>
+
+    <div class="content-body">
+      <div class="grid grid-cols-3 gap-lg">
+        <!-- Site Content -->
+        <a href="#/admin/settings/site-content" class="card p-xl text-center hover:shadow-lg transition-all">
+          <div class="text-4xl mb-md">📝</div>
+          <h3 class="font-bold mb-sm">Site Content</h3>
+          <p class="text-sm text-muted">Manage homepage content, contact info, and social links</p>
+        </a>
+
+        <!-- Theme -->
+        <a href="#/admin/settings/theme" class="card p-xl text-center hover:shadow-lg transition-all">
+          <div class="text-4xl mb-md">🎨</div>
+          <h3 class="font-bold mb-sm">Theme</h3>
+          <p class="text-sm text-muted">Customize colors, fonts, and visual styling</p>
+        </a>
+
+        <!-- Email Templates -->
+        <a href="#/admin/settings/email-templates" class="card p-xl text-center hover:shadow-lg transition-all">
+          <div class="text-4xl mb-md">✉️</div>
+          <h3 class="font-bold mb-sm">Email Templates</h3>
+          <p class="text-sm text-muted">Configure email notifications and templates</p>
+        </a>
+
+        <!-- General Settings -->
+        <div class="card p-xl">
+          <h3 class="font-bold mb-lg">General Settings</h3>
+          <form id="generalSettingsForm">
+            <div class="form-group">
+              <label class="form-label">Maintenance Mode</label>
+              <label class="flex items-center gap-sm">
+                <input type="checkbox" name="maintenance_mode" id="maintenanceMode">
+                <span>Enable maintenance mode</span>
+              </label>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Registration</label>
+              <label class="flex items-center gap-sm">
+                <input type="checkbox" name="registration_enabled" id="registrationEnabled" checked>
+                <span>Allow new registrations</span>
+              </label>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email Verification</label>
+              <label class="flex items-center gap-sm">
+                <input type="checkbox" name="email_verification_required" id="emailVerification" checked>
+                <span>Require email verification</span>
+              </label>
+            </div>
+            <button type="submit" class="btn btn-primary">Save Settings</button>
+          </form>
+        </div>
+
+        <!-- Email Configuration -->
+        <div class="card p-xl">
+          <h3 class="font-bold mb-lg">Email Configuration</h3>
+          <form id="emailConfigForm">
+            <div class="form-group">
+              <label class="form-label">SMTP Host</label>
+              <input type="text" name="smtp_host" class="form-input" placeholder="smtp.gmail.com">
+            </div>
+            <div class="form-group">
+              <label class="form-label">SMTP Port</label>
+              <input type="number" name="smtp_port" class="form-input" placeholder="587">
+            </div>
+            <div class="form-group">
+              <label class="form-label">SMTP Username</label>
+              <input type="text" name="smtp_username" class="form-input" placeholder="email@domain.com">
+            </div>
+            <div class="form-group">
+              <label class="form-label">SMTP Password</label>
+              <input type="password" name="smtp_password" class="form-input" placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn btn-primary">Save Email Config</button>
+          </form>
+        </div>
+
+        <!-- System Info -->
+        <div class="card p-xl">
+          <h3 class="font-bold mb-lg">System Information</h3>
+          <div class="space-y-sm text-sm">
+            <div class="flex justify-between">
+              <span class="text-muted">Version</span>
+              <span>1.0.0</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-muted">PHP Version</span>
+              <span id="phpVersion">-</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-muted">Database</span>
+              <span>MySQL</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-muted">Total Alumni</span>
+              <span id="totalAlumni">-</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-muted">Total Events</span>
+              <span id="totalEvents">-</span>
+            </div>
+          </div>
+          <button class="btn btn-secondary w-full mt-lg" onclick="clearCache()">Clear Cache</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<style>
+.hover\:shadow-lg:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+.transition-all {
+  transition: all 0.2s ease;
+}
+</style>
+
+<script>
+(function() {
+  loadSettings();
+  loadSystemInfo();
+
+  async function loadSettings() {
+    try {
+      const response = await API.get('/settings/general');
+      if (response.data) {
+        Utils.$('#maintenanceMode').checked = response.data.maintenance_mode;
+        Utils.$('#registrationEnabled').checked = response.data.registration_enabled !== false;
+        Utils.$('#emailVerification').checked = response.data.email_verification_required !== false;
+      }
+    } catch (error) {
+      console.error('Failed to load settings:', error);
+    }
+  }
+
+  async function loadSystemInfo() {
+    try {
+      const response = await API.get('/settings/system-info');
+      if (response.data) {
+        Utils.$('#phpVersion').textContent = response.data.php_version || '-';
+        Utils.$('#totalAlumni').textContent = response.data.total_alumni || 0;
+        Utils.$('#totalEvents').textContent = response.data.total_events || 0;
+      }
+    } catch (error) {
+      console.error('Failed to load system info:', error);
+    }
+  }
+
+  Utils.$('#generalSettingsForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = {
+      maintenance_mode: Utils.$('#maintenanceMode').checked,
+      registration_enabled: Utils.$('#registrationEnabled').checked,
+      email_verification_required: Utils.$('#emailVerification').checked
+    };
+
+    try {
+      await API.put('/settings/general', data);
+      Utils.success('Settings saved');
+    } catch (error) {
+      Utils.error(error.message || 'Failed to save settings');
+    }
+  });
+
+  Utils.$('#emailConfigForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData);
+
+    try {
+      await API.put('/settings/email', data);
+      Utils.success('Email configuration saved');
+    } catch (error) {
+      Utils.error(error.message || 'Failed to save email config');
+    }
+  });
+
+  window.clearCache = async function() {
+    try {
+      await API.post('/settings/clear-cache');
+      Utils.success('Cache cleared');
+    } catch (error) {
+      Utils.error('Failed to clear cache');
+    }
+  };
+})();
+</script>
+            <a href="#/admin/events" class="sidebar-link">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                ></path>
+              </svg>
+              Events
+            </a>
+          </div>
+
+          <!-- Management -->
+          <div class="nav-section">
+            <div class="nav-section-title">Management</div>
+            <a href="#/admin/alumni" class="sidebar-link">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 4.354a4 4 0 110 5.292M15 21H3v-2a6 6 0 0112 0v2zm6-16h-2v-1h2v1zm0 0h1v-1h-1v1zm0 4h1v-1h-1v1zm0 0h2v-1h-2v1z"
+                ></path>
+              </svg>
+              Alumni
+            </a>
+            <a href="#/admin/organization" class="sidebar-link">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                ></path>
+              </svg>
+              Organization
+            </a>
+            <a href="#/admin/gamification" class="sidebar-link">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path>
+              </svg>
+              Gamification
+            </a>
+          </div>
+
+          <!-- Configuration -->
+          <div class="nav-section">
+            <div class="nav-section-title">Configuration</div>
+            <a href="#/admin/form-builder" class="sidebar-link">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                ></path>
+              </svg>
+              Form Builder
+            </a>
+            <a href="#/admin/settings" class="sidebar-link active">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                ></path>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                ></path>
+              </svg>
+              Settings
+            </a>
+          </div>
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="sidebar-footer">
+          <div class="sidebar-user">
+            <div class="sidebar-user-avatar" id="userInitials">AD</div>
+            <div class="sidebar-user-info">
+              <div class="sidebar-user-name" id="userName">Admin User</div>
+              <div class="sidebar-user-role" id="userRole">Administrator</div>
+            </div>
+          </div>
+          <button class="btn btn-secondary btn-block" onclick="logout()">
+            Logout
+          </button>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="admin-main" id="adminMain">
+        <!-- Top Bar -->
+        <header class="admin-topbar">
+          <button class="btn btn-ghost sidebar-toggle" id="sidebarToggle">
+            <svg
+              width="24"
+              height="24"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              ></path>
+            </svg>
+          </button>
+          <h1 class="page-title">Settings</h1>
+          <div style="flex: 1"></div>
+        </header>
+
+        <!-- Page Content -->
+        <div class="admin-content">
+          <!-- Status Messages -->
+          <div id="statusMessage"></div>
+
+          <!-- Settings Tabs -->
+          <div class="tabs">
+            <div class="tabs-list">
+              <button class="tab active" onclick="switchTab('theme')">
+                Theme Settings
+              </button>
+              <button class="tab" onclick="switchTab('content')">
+                Site Content
+              </button>
+              <button class="tab" onclick="switchTab('email')">
+                Email Settings
+              </button>
+            </div>
+
+            <!-- Tab 1: Theme Settings -->
+            <div class="tab-panel active" id="theme">
+              <form id="themeForm" class="form">
+                <div class="form-section">
+                  <h3 class="form-section-title">Colors</h3>
+
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label class="form-label">Primary Color</label>
+                      <div class="color-picker">
+                        <input
+                          type="color"
+                          id="primaryColor"
+                          class="color-input"
+                          value="#3b82f6"
+                        />
+                        <span class="color-value" id="primaryColorValue"
+                          >#3b82f6</span
+                        >
+                      </div>
+                      <p class="form-help-text">
+                        Main brand color used throughout the site
+                      </p>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Secondary Color</label>
+                      <div class="color-picker">
+                        <input
+                          type="color"
+                          id="secondaryColor"
+                          class="color-input"
+                          value="#6b7280"
+                        />
+                        <span class="color-value" id="secondaryColorValue"
+                          >#6b7280</span
+                        >
+                      </div>
+                      <p class="form-help-text">Secondary accent color</p>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Success Color</label>
+                      <div class="color-picker">
+                        <input
+                          type="color"
+                          id="successColor"
+                          class="color-input"
+                          value="#10b981"
+                        />
+                        <span class="color-value" id="successColorValue"
+                          >#10b981</span
+                        >
+                      </div>
+                      <p class="form-help-text">
+                        Success/positive feedback color
+                      </p>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Error Color</label>
+                      <div class="color-picker">
+                        <input
+                          type="color"
+                          id="errorColor"
+                          class="color-input"
+                          value="#ef4444"
+                        />
+                        <span class="color-value" id="errorColorValue"
+                          >#ef4444</span
+                        >
+                      </div>
+                      <p class="form-help-text">Error/danger color</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-section">
+                  <h3 class="form-section-title">Typography</h3>
+
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label class="form-label">Primary Font</label>
+                      <select id="primaryFont" class="form-select">
+                        <option value="system">System Font</option>
+                        <option value="inter">Inter</option>
+                        <option value="poppins">Poppins</option>
+                        <option value="roboto">Roboto</option>
+                        <option value="opensans">Open Sans</option>
+                      </select>
+                      <p class="form-help-text">Font for body text and UI</p>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Heading Font</label>
+                      <select id="headingFont" class="form-select">
+                        <option value="system">System Font</option>
+                        <option value="inter">Inter</option>
+                        <option value="poppins">Poppins</option>
+                        <option value="roboto">Roboto</option>
+                        <option value="opensans">Open Sans</option>
+                      </select>
+                      <p class="form-help-text">Font for headings and titles</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-section">
+                  <h3 class="form-section-title">Logo & Branding</h3>
+
+                  <div class="form-group">
+                    <label class="form-label">Logo</label>
+                    <div
+                      class="upload-area"
+                      id="logoUploadArea"
+                      ondrop="handleDrop(event, 'logo')"
+                      ondragover="handleDragOver(event)"
+                      ondragleave="handleDragLeave(event)"
+                    >
+                      <svg
+                        width="40"
+                        height="40"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        style="margin: 0 auto; opacity: 0.5"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M12 4v16m8-8H4"
+                        ></path>
+                      </svg>
+                      <p
+                        style="
+                          margin-top: var(--spacing-sm);
+                          color: var(--gray-600);
+                        "
+                      >
+                        Drag and drop your logo here, or click to select
+                      </p>
+                      <input
+                        type="file"
+                        id="logoInput"
+                        class="hidden"
+                        accept="image/*"
+                        onchange="handleLogoUpload(event)"
+                      />
+                    </div>
+                    <div id="logoPreview" class="upload-preview hidden">
+                      <img id="logoImage" class="upload-preview-image" />
+                      <div>
+                        <p
+                          style="
+                            margin: 0;
+                            font-weight: 500;
+                            color: var(--gray-900);
+                          "
+                          id="logoName"
+                        >
+                          Logo preview
+                        </p>
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-outline-danger"
+                          onclick="clearLogoUpload()"
+                          style="margin-top: var(--spacing-xs)"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">Favicon</label>
+                    <div
+                      class="upload-area"
+                      id="faviconUploadArea"
+                      ondrop="handleDrop(event, 'favicon')"
+                      ondragover="handleDragOver(event)"
+                      ondragleave="handleDragLeave(event)"
+                    >
+                      <svg
+                        width="40"
+                        height="40"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        style="margin: 0 auto; opacity: 0.5"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M12 4v16m8-8H4"
+                        ></path>
+                      </svg>
+                      <p
+                        style="
+                          margin-top: var(--spacing-sm);
+                          color: var(--gray-600);
+                        "
+                      >
+                        Drag and drop your favicon here, or click to select
+                      </p>
+                      <input
+                        type="file"
+                        id="faviconInput"
+                        class="hidden"
+                        accept="image/*"
+                        onchange="handleFaviconUpload(event)"
+                      />
+                    </div>
+                    <div id="faviconPreview" class="upload-preview hidden">
+                      <img id="faviconImage" class="upload-preview-image" />
+                      <div>
+                        <p
+                          style="
+                            margin: 0;
+                            font-weight: 500;
+                            color: var(--gray-900);
+                          "
+                          id="faviconName"
+                        >
+                          Favicon preview
+                        </p>
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-outline-danger"
+                          onclick="clearFaviconUpload()"
+                          style="margin-top: var(--spacing-xs)"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="settings-actions">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    onclick="resetThemeForm()"
+                  >
+                    Reset
+                  </button>
+                  <button type="submit" class="btn btn-primary">
+                    Save Theme Settings
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Tab 2: Site Content -->
+            <div class="tab-panel" id="content">
+              <form id="contentForm" class="form">
+                <div class="form-section">
+                  <h3 class="form-section-title">Homepage Content</h3>
+
+                  <div class="form-row">
+                    <div class="form-group" style="grid-column: 1 / -1">
+                      <label class="form-label">Homepage Title</label>
+                      <input
+                        type="text"
+                        id="homepageTitle"
+                        class="form-input"
+                        placeholder="Welcome to Alumni System"
+                      />
+                      <p class="form-help-text">
+                        Main heading displayed on the homepage
+                      </p>
+                    </div>
+
+                    <div class="form-group" style="grid-column: 1 / -1">
+                      <label class="form-label">Homepage Description</label>
+                      <textarea
+                        id="homepageDescription"
+                        class="form-input"
+                        rows="4"
+                        placeholder="Enter homepage description..."
+                      ></textarea>
+                      <p class="form-help-text">
+                        Brief introduction text shown on homepage
+                      </p>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Hero Image</label>
+                      <div
+                        class="upload-area"
+                        id="heroUploadArea"
+                        ondrop="handleDrop(event, 'hero')"
+                        ondragover="handleDragOver(event)"
+                        ondragleave="handleDragLeave(event)"
+                      >
+                        <svg
+                          width="40"
+                          height="40"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          style="margin: 0 auto; opacity: 0.5"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M12 4v16m8-8H4"
+                          ></path>
+                        </svg>
+                        <p
+                          style="
+                            margin-top: var(--spacing-sm);
+                            color: var(--gray-600);
+                          "
+                        >
+                          Upload hero image
+                        </p>
+                        <input
+                          type="file"
+                          id="heroInput"
+                          class="hidden"
+                          accept="image/*"
+                          onchange="handleHeroUpload(event)"
+                        />
+                      </div>
+                      <div id="heroPreview" class="upload-preview hidden">
+                        <img id="heroImage" class="upload-preview-image" />
+                        <div>
+                          <p
+                            style="
+                              margin: 0;
+                              font-weight: 500;
+                              color: var(--gray-900);
+                            "
+                            id="heroName"
+                          >
+                            Hero image
+                          </p>
+                          <button
+                            type="button"
+                            class="btn btn-sm btn-outline-danger"
+                            onclick="clearHeroUpload()"
+                            style="margin-top: var(--spacing-xs)"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-section">
+                  <h3 class="form-section-title">Footer Content</h3>
+
+                  <div class="form-row">
+                    <div class="form-group" style="grid-column: 1 / -1">
+                      <label class="form-label">Footer Text</label>
+                      <textarea
+                        id="footerText"
+                        class="form-input"
+                        rows="3"
+                        placeholder="Enter footer text..."
+                      ></textarea>
+                      <p class="form-help-text">
+                        Text displayed in the footer of every page
+                      </p>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Facebook URL</label>
+                      <input
+                        type="url"
+                        id="facebookUrl"
+                        class="form-input"
+                        placeholder="https://facebook.com/..."
+                      />
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Twitter URL</label>
+                      <input
+                        type="url"
+                        id="twitterUrl"
+                        class="form-input"
+                        placeholder="https://twitter.com/..."
+                      />
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">LinkedIn URL</label>
+                      <input
+                        type="url"
+                        id="linkedinUrl"
+                        class="form-input"
+                        placeholder="https://linkedin.com/..."
+                      />
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Instagram URL</label>
+                      <input
+                        type="url"
+                        id="instagramUrl"
+                        class="form-input"
+                        placeholder="https://instagram.com/..."
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-section">
+                  <h3 class="form-section-title">Organization Info</h3>
+
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label class="form-label">Organization Name</label>
+                      <input
+                        type="text"
+                        id="orgName"
+                        class="form-input"
+                        placeholder="Your Organization Name"
+                      />
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Contact Email</label>
+                      <input
+                        type="email"
+                        id="contactEmail"
+                        class="form-input"
+                        placeholder="contact@organization.com"
+                      />
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Contact Phone</label>
+                      <input
+                        type="tel"
+                        id="contactPhone"
+                        class="form-input"
+                        placeholder="+1 (555) 000-0000"
+                      />
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Address</label>
+                      <input
+                        type="text"
+                        id="address"
+                        class="form-input"
+                        placeholder="123 Main St, City, State, ZIP"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="settings-actions">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    onclick="resetContentForm()"
+                  >
+                    Reset
+                  </button>
+                  <button type="submit" class="btn btn-primary">
+                    Save Site Content
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Tab 3: Email Settings -->
+            <div class="tab-panel" id="email">
+              <form id="emailForm" class="form">
+                <div class="form-section">
+                  <h3 class="form-section-title">SMTP Configuration</h3>
+
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label class="form-label">SMTP Host</label>
+                      <input
+                        type="text"
+                        id="smtpHost"
+                        class="form-input"
+                        placeholder="smtp.gmail.com"
+                      />
+                      <p class="form-help-text">Email server hostname</p>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">SMTP Port</label>
+                      <input
+                        type="number"
+                        id="smtpPort"
+                        class="form-input"
+                        placeholder="587"
+                      />
+                      <p class="form-help-text">
+                        Usually 587 (TLS) or 465 (SSL)
+                      </p>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">SMTP Username</label>
+                      <input
+                        type="text"
+                        id="smtpUsername"
+                        class="form-input"
+                        placeholder="your-email@gmail.com"
+                      />
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">SMTP Password</label>
+                      <input
+                        type="password"
+                        id="smtpPassword"
+                        class="form-input"
+                        placeholder="••••••••"
+                      />
+                      <p class="form-help-text">
+                        Use app-specific password for Gmail
+                      </p>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">From Email</label>
+                      <input
+                        type="email"
+                        id="fromEmail"
+                        class="form-input"
+                        placeholder="noreply@organization.com"
+                      />
+                      <p class="form-help-text">
+                        Email address used to send notifications
+                      </p>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">From Name</label>
+                      <input
+                        type="text"
+                        id="fromName"
+                        class="form-input"
+                        placeholder="Alumni System"
+                      />
+                      <p class="form-help-text">
+                        Sender name displayed in emails
+                      </p>
+                    </div>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-group" style="grid-column: 1 / -1">
+                      <label
+                        class="checkbox-label"
+                        style="
+                          display: flex;
+                          align-items: center;
+                          gap: var(--spacing-sm);
+                          font-weight: 400;
+                          cursor: pointer;
+                        "
+                      >
+                        <input type="checkbox" id="smtpSecure" />
+                        Use TLS/SSL for SMTP connection
+                      </label>
+                      <p class="form-help-text">
+                        Enable for secure email transmission
+                      </p>
+                    </div>
+                  </div>
+
+                  <div class="form-row">
+                    <button
+                      type="button"
+                      class="btn btn-outline-primary"
+                      id="testEmailBtn"
+                      onclick="testEmailSettings()"
+                    >
+                      Test SMTP Connection
+                    </button>
+                  </div>
+                </div>
+
+                <div class="form-section">
+                  <h3 class="form-section-title">Email Templates</h3>
+
+                  <div id="emailTemplatesList">
+                    <div class="template-item">
+                      <div>
+                        <div class="template-name">Welcome Email</div>
+                        <div class="template-description">
+                          Sent when new alumni register
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-primary"
+                        onclick="editEmailTemplate('welcome')"
+                      >
+                        Edit
+                      </button>
+                    </div>
+
+                    <div class="template-item">
+                      <div>
+                        <div class="template-name">Password Reset</div>
+                        <div class="template-description">
+                          Sent for password recovery
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-primary"
+                        onclick="editEmailTemplate('password_reset')"
+                      >
+                        Edit
+                      </button>
+                    </div>
+
+                    <div class="template-item">
+                      <div>
+                        <div class="template-name">Event Invitation</div>
+                        <div class="template-description">
+                          Sent when events are announced
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-primary"
+                        onclick="editEmailTemplate('event_invite')"
+                      >
+                        Edit
+                      </button>
+                    </div>
+
+                    <div class="template-item">
+                      <div>
+                        <div class="template-name">Event Reminder</div>
+                        <div class="template-description">
+                          Reminder before upcoming events
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-primary"
+                        onclick="editEmailTemplate('event_reminder')"
+                      >
+                        Edit
+                      </button>
+                    </div>
+
+                    <div class="template-item">
+                      <div>
+                        <div class="template-name">
+                          Announcement Notification
+                        </div>
+                        <div class="template-description">
+                          Sent for new announcements
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-primary"
+                        onclick="editEmailTemplate('announcement')"
+                      >
+                        Edit
+                      </button>
+                    </div>
+
+                    <div class="template-item">
+                      <div>
+                        <div class="template-name">Badge Earned</div>
+                        <div class="template-description">
+                          Notification when alumni earn badges
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-primary"
+                        onclick="editEmailTemplate('badge_earned')"
+                      >
+                        Edit
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="settings-actions">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    onclick="resetEmailForm()"
+                  >
+                    Reset
+                  </button>
+                  <button type="submit" class="btn btn-primary">
+                    Save Email Settings
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Email Template Modal -->
+    <div class="modal-overlay" id="emailTemplateModal">
+      <div class="modal modal-lg">
+        <div class="modal-header">
+          <h2 class="modal-title" id="templateModalTitle">
+            Edit Email Template
+          </h2>
+          <button class="modal-close" onclick="closeEmailTemplateModal()">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="templateForm">
+            <div class="form-group">
+              <label class="form-label">Template Subject</label>
+              <input type="text" id="templateSubject" class="form-input" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Template Body</label>
+              <textarea
+                id="templateBody"
+                class="form-input"
+                rows="8"
+                placeholder="Enter email template..."
+              ></textarea>
+              <p class="form-help-text">
+                Available variables: {name}, {email}, {event}, {date}, {link}
+              </p>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            onclick="closeEmailTemplateModal()"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            onclick="saveEmailTemplate()"
+          >
+            Save Template
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../../../assets/js/api.js"></script>
+    <script src="../../../assets/js/utils.js"></script>
+    <script src="../../../assets/js/auth.js"></script>
+    <script>
+      (function () {
+        let currentUser = null;
+        let currentTemplateType = null;
+        let logoFile = null;
+        let faviconFile = null;
+        let heroFile = null;
+
+        // Initialize
+        async function init() {
+          try {
+            // Check authentication
+            const token = localStorage.getItem("alumni_token");
+            if (!token) {
+              window.location.hash = "#/login";
+              return;
+            }
+
+            // Get user profile
+            currentUser = await API.admin.getProfile();
+            if (
+              !currentUser ||
+              !["admin", "system_admin"].includes(currentUser.role)
+            ) {
+              Utils.error("Access denied");
+              window.location.hash = "#/login";
+              return;
+            }
+
+            // Update sidebar with user info
+            updateUserInfo();
+
+            // Load settings
+            await loadSettings();
+
+            // Attach event listeners
+            attachEventListeners();
+          } catch (error) {
+            console.error("Init error:", error);
+            Utils.error("Failed to initialize page");
+          }
+        }
+
+        function updateUserInfo() {
+          const initials = Utils.getInitials(currentUser.name);
+          document.getElementById("userInitials").textContent = initials;
+          document.getElementById("userName").textContent = currentUser.name;
+          document.getElementById("userRole").textContent =
+            currentUser.role === "system_admin"
+              ? "System Administrator"
+              : "Administrator";
+        }
+
+        async function loadSettings() {
+          try {
+            // Load theme settings
+            const themeData = await API.admin.settings.getTheme();
+            if (themeData) {
+              document.getElementById("primaryColor").value =
+                themeData.primaryColor || "#3b82f6";
+              document.getElementById("primaryColorValue").textContent =
+                themeData.primaryColor || "#3b82f6";
+              document.getElementById("secondaryColor").value =
+                themeData.secondaryColor || "#6b7280";
+              document.getElementById("secondaryColorValue").textContent =
+                themeData.secondaryColor || "#6b7280";
+              document.getElementById("successColor").value =
+                themeData.successColor || "#10b981";
+              document.getElementById("successColorValue").textContent =
+                themeData.successColor || "#10b981";
+              document.getElementById("errorColor").value =
+                themeData.errorColor || "#ef4444";
+              document.getElementById("errorColorValue").textContent =
+                themeData.errorColor || "#ef4444";
+              document.getElementById("primaryFont").value =
+                themeData.primaryFont || "system";
+              document.getElementById("headingFont").value =
+                themeData.headingFont || "system";
+            }
+
+            // Load site content settings
+            const contentData = await API.admin.settings.getSiteContent();
+            if (contentData) {
+              document.getElementById("homepageTitle").value =
+                contentData.homepageTitle || "";
+              document.getElementById("homepageDescription").value =
+                contentData.homepageDescription || "";
+              document.getElementById("footerText").value =
+                contentData.footerText || "";
+              document.getElementById("facebookUrl").value =
+                contentData.facebookUrl || "";
+              document.getElementById("twitterUrl").value =
+                contentData.twitterUrl || "";
+              document.getElementById("linkedinUrl").value =
+                contentData.linkedinUrl || "";
+              document.getElementById("instagramUrl").value =
+                contentData.instagramUrl || "";
+              document.getElementById("orgName").value =
+                contentData.orgName || "";
+              document.getElementById("contactEmail").value =
+                contentData.contactEmail || "";
+              document.getElementById("contactPhone").value =
+                contentData.contactPhone || "";
+              document.getElementById("address").value =
+                contentData.address || "";
+            }
+
+            // Load email settings
+            const emailData = await API.admin.settings.getEmail();
+            if (emailData) {
+              document.getElementById("smtpHost").value =
+                emailData.smtpHost || "";
+              document.getElementById("smtpPort").value =
+                emailData.smtpPort || "587";
+              document.getElementById("smtpUsername").value =
+                emailData.smtpUsername || "";
+              document.getElementById("smtpPassword").value =
+                emailData.smtpPassword || "";
+              document.getElementById("fromEmail").value =
+                emailData.fromEmail || "";
+              document.getElementById("fromName").value =
+                emailData.fromName || "";
+              document.getElementById("smtpSecure").checked =
+                emailData.smtpSecure !== false;
+            }
+          } catch (error) {
+            console.warn("Could not load settings:", error.message);
+            // Settings might not exist yet, which is fine
+          }
+        }
+
+        function attachEventListeners() {
+          // Theme form
+          document
+            .getElementById("themeForm")
+            .addEventListener("submit", handleThemeSubmit);
+          document
+            .getElementById("primaryColor")
+            .addEventListener("input", updateColorValue);
+          document
+            .getElementById("secondaryColor")
+            .addEventListener("input", updateColorValue);
+          document
+            .getElementById("successColor")
+            .addEventListener("input", updateColorValue);
+          document
+            .getElementById("errorColor")
+            .addEventListener("input", updateColorValue);
+
+          // Logo upload area click
+          document
+            .getElementById("logoUploadArea")
+            .addEventListener("click", () => {
+              document.getElementById("logoInput").click();
+            });
+          document
+            .getElementById("faviconUploadArea")
+            .addEventListener("click", () => {
+              document.getElementById("faviconInput").click();
+            });
+          document
+            .getElementById("heroUploadArea")
+            .addEventListener("click", () => {
+              document.getElementById("heroInput").click();
+            });
+
+          // Content form
+          document
+            .getElementById("contentForm")
+            .addEventListener("submit", handleContentSubmit);
+
+          // Email form
+          document
+            .getElementById("emailForm")
+            .addEventListener("submit", handleEmailSubmit);
+        }
+
+        function updateColorValue(e) {
+          const input = e.target;
+          const value = input.value;
+          const id = input.id;
+          const valueId = id.replace("Color", "ColorValue");
+          document.getElementById(valueId).textContent = value;
+        }
+
+        function handleDragOver(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          e.currentTarget.classList.add("dragover");
+        }
+
+        function handleDragLeave(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          e.currentTarget.classList.remove("dragover");
+        }
+
+        function handleDrop(e, type) {
+          e.preventDefault();
+          e.stopPropagation();
+          e.currentTarget.classList.remove("dragover");
+
+          const files = e.dataTransfer.files;
+          if (files.length > 0) {
+            const file = files[0];
+            if (type === "logo") {
+              handleLogoUpload({ target: { files: [file] } });
+            } else if (type === "favicon") {
+              handleFaviconUpload({ target: { files: [file] } });
+            } else if (type === "hero") {
+              handleHeroUpload({ target: { files: [file] } });
+            }
+          }
+        }
+
+        function handleLogoUpload(e) {
+          const file = e.target.files[0];
+          if (file) {
+            logoFile = file;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+              document.getElementById("logoImage").src = event.target.result;
+              document.getElementById("logoName").textContent = file.name;
+              document.getElementById("logoPreview").classList.remove("hidden");
+            };
+            reader.readAsDataURL(file);
+          }
+        }
+
+        function handleFaviconUpload(e) {
+          const file = e.target.files[0];
+          if (file) {
+            faviconFile = file;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+              document.getElementById("faviconImage").src = event.target.result;
+              document.getElementById("faviconName").textContent = file.name;
+              document
+                .getElementById("faviconPreview")
+                .classList.remove("hidden");
+            };
+            reader.readAsDataURL(file);
+          }
+        }
+
+        function handleHeroUpload(e) {
+          const file = e.target.files[0];
+          if (file) {
+            heroFile = file;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+              document.getElementById("heroImage").src = event.target.result;
+              document.getElementById("heroName").textContent = file.name;
+              document.getElementById("heroPreview").classList.remove("hidden");
+            };
+            reader.readAsDataURL(file);
+          }
+        }
+
+        function clearLogoUpload() {
+          logoFile = null;
+          document.getElementById("logoInput").value = "";
+          document.getElementById("logoPreview").classList.add("hidden");
+        }
+
+        function clearFaviconUpload() {
+          faviconFile = null;
+          document.getElementById("faviconInput").value = "";
+          document.getElementById("faviconPreview").classList.add("hidden");
+        }
+
+        function clearHeroUpload() {
+          heroFile = null;
+          document.getElementById("heroInput").value = "";
+          document.getElementById("heroPreview").classList.add("hidden");
+        }
+
+        async function handleThemeSubmit(e) {
+          e.preventDefault();
+
+          const formData = new FormData();
+          formData.append(
+            "primaryColor",
+            document.getElementById("primaryColor").value,
+          );
+          formData.append(
+            "secondaryColor",
+            document.getElementById("secondaryColor").value,
+          );
+          formData.append(
+            "successColor",
+            document.getElementById("successColor").value,
+          );
+          formData.append(
+            "errorColor",
+            document.getElementById("errorColor").value,
+          );
+          formData.append(
+            "primaryFont",
+            document.getElementById("primaryFont").value,
+          );
+          formData.append(
+            "headingFont",
+            document.getElementById("headingFont").value,
+          );
+
+          if (logoFile) {
+            formData.append("logo", logoFile);
+          }
+          if (faviconFile) {
+            formData.append("favicon", faviconFile);
+          }
+
+          try {
+            await API.admin.settings.updateTheme(formData);
+            showStatusMessage("Theme settings saved successfully!", "success");
+            logoFile = null;
+            faviconFile = null;
+          } catch (error) {
+            showStatusMessage(
+              "Failed to save theme settings: " + error.message,
+              "error",
+            );
+          }
+        }
+
+        async function handleContentSubmit(e) {
+          e.preventDefault();
+
+          const formData = new FormData();
+          formData.append(
+            "homepageTitle",
+            document.getElementById("homepageTitle").value,
+          );
+          formData.append(
+            "homepageDescription",
+            document.getElementById("homepageDescription").value,
+          );
+          formData.append(
+            "footerText",
+            document.getElementById("footerText").value,
+          );
+          formData.append(
+            "facebookUrl",
+            document.getElementById("facebookUrl").value,
+          );
+          formData.append(
+            "twitterUrl",
+            document.getElementById("twitterUrl").value,
+          );
+          formData.append(
+            "linkedinUrl",
+            document.getElementById("linkedinUrl").value,
+          );
+          formData.append(
+            "instagramUrl",
+            document.getElementById("instagramUrl").value,
+          );
+          formData.append("orgName", document.getElementById("orgName").value);
+          formData.append(
+            "contactEmail",
+            document.getElementById("contactEmail").value,
+          );
+          formData.append(
+            "contactPhone",
+            document.getElementById("contactPhone").value,
+          );
+          formData.append("address", document.getElementById("address").value);
+
+          if (heroFile) {
+            formData.append("heroImage", heroFile);
+          }
+
+          try {
+            await API.admin.settings.updateSiteContent(formData);
+            showStatusMessage("Site content saved successfully!", "success");
+            heroFile = null;
+          } catch (error) {
+            showStatusMessage(
+              "Failed to save site content: " + error.message,
+              "error",
+            );
+          }
+        }
+
+        async function handleEmailSubmit(e) {
+          e.preventDefault();
+
+          const data = {
+            smtpHost: document.getElementById("smtpHost").value,
+            smtpPort: parseInt(document.getElementById("smtpPort").value),
+            smtpUsername: document.getElementById("smtpUsername").value,
+            smtpPassword: document.getElementById("smtpPassword").value,
+            fromEmail: document.getElementById("fromEmail").value,
+            fromName: document.getElementById("fromName").value,
+            smtpSecure: document.getElementById("smtpSecure").checked,
+          };
+
+          try {
+            await API.admin.settings.updateEmail(data);
+            showStatusMessage("Email settings saved successfully!", "success");
+          } catch (error) {
+            showStatusMessage(
+              "Failed to save email settings: " + error.message,
+              "error",
+            );
+          }
+        }
+
+        function resetThemeForm() {
+          if (confirm("Are you sure you want to reset all theme settings?")) {
+            loadSettings();
+            clearLogoUpload();
+            clearFaviconUpload();
+          }
+        }
+
+        function resetContentForm() {
+          if (confirm("Are you sure you want to reset all content settings?")) {
+            loadSettings();
+            clearHeroUpload();
+          }
+        }
+
+        function resetEmailForm() {
+          if (confirm("Are you sure you want to reset all email settings?")) {
+            loadSettings();
+          }
+        }
+
+        async function testEmailSettings() {
+          const btn = document.getElementById("testEmailBtn");
+          btn.disabled = true;
+          btn.textContent = "Testing...";
+
+          try {
+            const data = {
+              smtpHost: document.getElementById("smtpHost").value,
+              smtpPort: parseInt(document.getElementById("smtpPort").value),
+              smtpUsername: document.getElementById("smtpUsername").value,
+              smtpPassword: document.getElementById("smtpPassword").value,
+              smtpSecure: document.getElementById("smtpSecure").checked,
+            };
+
+            await API.post("/admin/settings/test-email", data);
+            showStatusMessage("Email configuration is valid!", "success");
+          } catch (error) {
+            showStatusMessage("Email test failed: " + error.message, "error");
+          } finally {
+            btn.disabled = false;
+            btn.textContent = "Test SMTP Connection";
+          }
+        }
+
+        function editEmailTemplate(type) {
+          currentTemplateType = type;
+          const templateNames = {
+            welcome: "Welcome Email",
+            password_reset: "Password Reset",
+            event_invite: "Event Invitation",
+            event_reminder: "Event Reminder",
+            announcement: "Announcement Notification",
+            badge_earned: "Badge Earned",
+          };
+
+          document.getElementById("templateModalTitle").textContent =
+            "Edit " + templateNames[type];
+          document.getElementById("templateSubject").value = "";
+          document.getElementById("templateBody").value = "";
+
+          // Load template if exists
+          loadEmailTemplate(type);
+
+          document.getElementById("emailTemplateModal").classList.add("active");
+        }
+
+        async function loadEmailTemplate(type) {
+          try {
+            const templates = await API.admin.settings.getEmailTemplates();
+            const template = templates.find((t) => t.type === type);
+            if (template) {
+              document.getElementById("templateSubject").value =
+                template.subject || "";
+              document.getElementById("templateBody").value =
+                template.body || "";
+            }
+          } catch (error) {
+            console.warn("Could not load email template:", error.message);
+          }
+        }
+
+        async function saveEmailTemplate() {
+          if (!currentTemplateType) return;
+
+          const data = {
+            type: currentTemplateType,
+            subject: document.getElementById("templateSubject").value,
+            body: document.getElementById("templateBody").value,
+          };
+
+          try {
+            await API.admin.settings.updateEmailTemplate(
+              currentTemplateType,
+              data,
+            );
+            showStatusMessage("Email template saved successfully!", "success");
+            closeEmailTemplateModal();
+          } catch (error) {
+            showStatusMessage(
+              "Failed to save email template: " + error.message,
+              "error",
+            );
+          }
+        }
+
+        function closeEmailTemplateModal() {
+          document
+            .getElementById("emailTemplateModal")
+            .classList.remove("active");
+          currentTemplateType = null;
+        }
+
+        function showStatusMessage(message, type) {
+          const container = document.getElementById("statusMessage");
+          const className =
+            type === "success" ? "alert-success" : "alert-error";
+          container.innerHTML = `<div class="alert ${className}">${Utils.escapeHtml(message)}</div>`;
+          setTimeout(() => {
+            container.innerHTML = "";
+          }, 5000);
+        }
+
+        // Tab switching
+        window.switchTab = function (tabName) {
+          // Hide all panels
+          document.querySelectorAll(".tab-panel").forEach((panel) => {
+            panel.classList.remove("active");
+          });
+
+          // Remove active class from all tabs
+          document.querySelectorAll(".tab").forEach((tab) => {
+            tab.classList.remove("active");
+          });
+
+          // Show selected panel
+          document.getElementById(tabName).classList.add("active");
+
+          // Add active class to clicked tab
+          event.target.classList.add("active");
+        };
+
+        // Sidebar toggle
+        document
+          .getElementById("sidebarToggle")
+          .addEventListener("click", () => {
+            const sidebar = document.getElementById("adminSidebar");
+            const main = document.getElementById("adminMain");
+            sidebar.classList.toggle("open");
+            main.classList.toggle("expanded");
+          });
+
+        // Logout
+        window.logout = function () {
+          localStorage.removeItem("alumni_token");
+          localStorage.removeItem("alumni_user");
+          window.location.hash = "#/login";
+        };
+
+        // Initialize on page load
+        init();
+      })();
+    </script>
+  </body>
+</html>

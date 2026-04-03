@@ -1,0 +1,258 @@
+<!-- Theme Settings -->
+<div class="dashboard-layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="flex items-center gap-md">
+        <div class="avatar avatar-md bg-primary"><span>A</span></div>
+        <div>
+          <div class="font-medium text-white">Admin</div>
+          <div class="text-xs opacity-75">Administrator</div>
+        </div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="#/admin/dashboard" class="sidebar-link">Dashboard</a>
+      <a href="#/admin/alumni" class="sidebar-link">Alumni</a>
+      <a href="#/admin/events" class="sidebar-link">Events</a>
+      <a href="#/admin/announcements" class="sidebar-link">Announcements</a>
+      <a href="#/admin/organization" class="sidebar-link">Organization</a>
+      <a href="#/admin/form-builder" class="sidebar-link">Form Builder</a>
+      <a href="#/admin/gamification" class="sidebar-link">Gamification</a>
+      <a href="#/admin/settings" class="sidebar-link active">Settings</a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="sidebar-link text-error" onclick="Auth.logout()">
+        Logout
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="content-header">
+      <a href="#/admin/settings" class="btn btn-ghost btn-sm"
+        >← Back to Settings</a
+      >
+      <h1>Theme Settings</h1>
+    </div>
+
+    <div class="content-body">
+      <form id="themeForm" class="card p-xl">
+        <h3 class="font-bold mb-lg">Colors</h3>
+
+        <div class="grid grid-cols-3 gap-lg mb-xl">
+          <div class="form-group">
+            <label class="form-label">Primary Color</label>
+            <div class="flex gap-sm">
+              <input
+                type="color"
+                name="primary_color"
+                id="primaryColor"
+                value="#10b981"
+              />
+              <input
+                type="text"
+                class="form-input"
+                id="primaryColorText"
+                value="#10b981"
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Secondary Color</label>
+            <div class="flex gap-sm">
+              <input
+                type="color"
+                name="secondary_color"
+                id="secondaryColor"
+                value="#6b7280"
+              />
+              <input
+                type="text"
+                class="form-input"
+                id="secondaryColorText"
+                value="#6b7280"
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Accent Color</label>
+            <div class="flex gap-sm">
+              <input
+                type="color"
+                name="accent_color"
+                id="accentColor"
+                value="#f59e0b"
+              />
+              <input
+                type="text"
+                class="form-input"
+                id="accentColorText"
+                value="#f59e0b"
+              />
+            </div>
+          </div>
+        </div>
+
+        <h3 class="font-bold mb-lg">Typography</h3>
+
+        <div class="grid grid-cols-2 gap-lg mb-xl">
+          <div class="form-group">
+            <label class="form-label">Heading Font</label>
+            <select name="heading_font" class="form-input">
+              <option value="Inter">Inter</option>
+              <option value="Roboto">Roboto</option>
+              <option value="Open Sans">Open Sans</option>
+              <option value="Lato">Lato</option>
+              <option value="Poppins">Poppins</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Body Font</label>
+            <select name="body_font" class="form-input">
+              <option value="Inter">Inter</option>
+              <option value="Roboto">Roboto</option>
+              <option value="Open Sans">Open Sans</option>
+              <option value="Lato">Lato</option>
+              <option value="Poppins">Poppins</option>
+            </select>
+          </div>
+        </div>
+
+        <h3 class="font-bold mb-lg">Logo</h3>
+
+        <div class="grid grid-cols-2 gap-lg mb-xl">
+          <div class="form-group">
+            <label class="form-label">Logo URL</label>
+            <input
+              type="url"
+              name="logo_url"
+              class="form-input"
+              placeholder="https://..."
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Favicon URL</label>
+            <input
+              type="url"
+              name="favicon_url"
+              class="form-input"
+              placeholder="https://..."
+            />
+          </div>
+        </div>
+
+        <h3 class="font-bold mb-lg">Layout</h3>
+
+        <div class="grid grid-cols-2 gap-lg mb-xl">
+          <div class="form-group">
+            <label class="form-label">Sidebar Style</label>
+            <select name="sidebar_style" class="form-input">
+              <option value="dark">Dark</option>
+              <option value="light">Light</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Border Radius</label>
+            <select name="border_radius" class="form-input">
+              <option value="none">None</option>
+              <option value="sm">Small</option>
+              <option value="md">Medium</option>
+              <option value="lg">Large</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex gap-md">
+          <button type="submit" class="btn btn-primary">Save Theme</button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            onclick="resetToDefaults()"
+          >
+            Reset to Defaults
+          </button>
+        </div>
+      </form>
+
+      <!-- Preview -->
+      <div class="card p-xl mt-lg">
+        <h3 class="font-bold mb-lg">Preview</h3>
+        <div class="flex gap-md flex-wrap">
+          <button class="btn btn-primary">Primary Button</button>
+          <button class="btn btn-secondary">Secondary Button</button>
+          <span class="badge badge-primary">Primary Badge</span>
+          <span class="badge badge-success">Success Badge</span>
+          <span class="badge badge-warning">Warning Badge</span>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  (function () {
+    loadTheme();
+
+    // Sync color pickers with text inputs
+    ["primary", "secondary", "accent"].forEach((color) => {
+      const picker = Utils.$(`#${color}Color`);
+      const text = Utils.$(`#${color}ColorText`);
+
+      picker.addEventListener("input", () => (text.value = picker.value));
+      text.addEventListener("input", () => {
+        if (/^#[0-9A-Fa-f]{6}$/.test(text.value)) {
+          picker.value = text.value;
+        }
+      });
+    });
+
+    async function loadTheme() {
+      try {
+        const response = await API.get("/settings/theme");
+        const theme = response.data;
+
+        if (theme) {
+          Object.keys(theme).forEach((key) => {
+            const input = document.querySelector(`[name="${key}"]`);
+            if (input) input.value = theme[key];
+          });
+
+          // Update color text inputs
+          ["primary", "secondary", "accent"].forEach((color) => {
+            const val = theme[`${color}_color`];
+            if (val) {
+              Utils.$(`#${color}Color`).value = val;
+              Utils.$(`#${color}ColorText`).value = val;
+            }
+          });
+        }
+      } catch (error) {
+        console.error("Failed to load theme:", error);
+      }
+    }
+
+    Utils.$("#themeForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData);
+
+      try {
+        await API.put("/settings/theme", data);
+        Utils.success("Theme saved");
+      } catch (error) {
+        Utils.error(error.message || "Failed to save theme");
+      }
+    });
+
+    window.resetToDefaults = function () {
+      if (!confirm("Reset theme to defaults?")) return;
+
+      Utils.$("#primaryColor").value = "#10b981";
+      Utils.$("#primaryColorText").value = "#10b981";
+      Utils.$("#secondaryColor").value = "#6b7280";
+      Utils.$("#secondaryColorText").value = "#6b7280";
+      Utils.$("#accentColor").value = "#f59e0b";
+      Utils.$("#accentColorText").value = "#f59e0b";
+    };
+  })();
+</script>

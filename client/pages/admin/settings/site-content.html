@@ -1,0 +1,231 @@
+<!-- Site Content Settings -->
+<div class="dashboard-layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="flex items-center gap-md">
+        <div class="avatar avatar-md bg-primary"><span>A</span></div>
+        <div>
+          <div class="font-medium text-white">Admin</div>
+          <div class="text-xs opacity-75">Administrator</div>
+        </div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="#/admin/dashboard" class="sidebar-link">Dashboard</a>
+      <a href="#/admin/alumni" class="sidebar-link">Alumni</a>
+      <a href="#/admin/events" class="sidebar-link">Events</a>
+      <a href="#/admin/announcements" class="sidebar-link">Announcements</a>
+      <a href="#/admin/organization" class="sidebar-link">Organization</a>
+      <a href="#/admin/form-builder" class="sidebar-link">Form Builder</a>
+      <a href="#/admin/gamification" class="sidebar-link">Gamification</a>
+      <a href="#/admin/settings" class="sidebar-link active">Settings</a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="sidebar-link text-error" onclick="Auth.logout()">
+        Logout
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="content-header">
+      <a href="#/admin/settings" class="btn btn-ghost btn-sm"
+        >← Back to Settings</a
+      >
+      <h1>Site Content</h1>
+    </div>
+
+    <div class="content-body">
+      <form id="siteContentForm" class="card p-xl">
+        <h3 class="font-bold mb-lg">General Information</h3>
+
+        <div class="grid grid-cols-2 gap-lg mb-xl">
+          <div class="form-group">
+            <label class="form-label">Site Name</label>
+            <input
+              type="text"
+              name="site_name"
+              class="form-input"
+              value="MINSU Alumni"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Site Tagline</label>
+            <input
+              type="text"
+              name="site_tagline"
+              class="form-input"
+              value="Stay Connected, Stay Engaged"
+            />
+          </div>
+        </div>
+
+        <div class="form-group mb-xl">
+          <label class="form-label">Site Description</label>
+          <textarea
+            name="site_description"
+            class="form-input"
+            rows="3"
+            placeholder="A brief description of your alumni portal..."
+          ></textarea>
+        </div>
+
+        <h3 class="font-bold mb-lg">Contact Information</h3>
+
+        <div class="grid grid-cols-2 gap-lg mb-xl">
+          <div class="form-group">
+            <label class="form-label">Contact Email</label>
+            <input
+              type="email"
+              name="contact_email"
+              class="form-input"
+              placeholder="alumni@minsu.edu.ph"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contact Phone</label>
+            <input
+              type="tel"
+              name="contact_phone"
+              class="form-input"
+              placeholder="+63 XXX XXX XXXX"
+            />
+          </div>
+          <div class="form-group col-span-2">
+            <label class="form-label">Address</label>
+            <textarea
+              name="address"
+              class="form-input"
+              rows="2"
+              placeholder="University address..."
+            ></textarea>
+          </div>
+        </div>
+
+        <h3 class="font-bold mb-lg">Social Media</h3>
+
+        <div class="grid grid-cols-2 gap-lg mb-xl">
+          <div class="form-group">
+            <label class="form-label">Facebook URL</label>
+            <input
+              type="url"
+              name="facebook_url"
+              class="form-input"
+              placeholder="https://facebook.com/..."
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Twitter/X URL</label>
+            <input
+              type="url"
+              name="twitter_url"
+              class="form-input"
+              placeholder="https://twitter.com/..."
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">LinkedIn URL</label>
+            <input
+              type="url"
+              name="linkedin_url"
+              class="form-input"
+              placeholder="https://linkedin.com/..."
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Instagram URL</label>
+            <input
+              type="url"
+              name="instagram_url"
+              class="form-input"
+              placeholder="https://instagram.com/..."
+            />
+          </div>
+        </div>
+
+        <h3 class="font-bold mb-lg">Homepage Content</h3>
+
+        <div class="form-group mb-lg">
+          <label class="form-label">Hero Title</label>
+          <input
+            type="text"
+            name="hero_title"
+            class="form-input"
+            value="Welcome to MINSU Alumni"
+          />
+        </div>
+
+        <div class="form-group mb-lg">
+          <label class="form-label">Hero Subtitle</label>
+          <textarea
+            name="hero_subtitle"
+            class="form-input"
+            rows="2"
+            placeholder="Your connection to the MINSU community..."
+          ></textarea>
+        </div>
+
+        <div class="form-group mb-xl">
+          <label class="form-label">About Section</label>
+          <textarea
+            name="about_content"
+            class="form-input"
+            rows="5"
+            placeholder="About the alumni association..."
+          ></textarea>
+        </div>
+
+        <h3 class="font-bold mb-lg">Footer</h3>
+
+        <div class="form-group mb-lg">
+          <label class="form-label">Footer Text</label>
+          <input
+            type="text"
+            name="footer_text"
+            class="form-input"
+            value="© 2026 MINSU Alumni Association. All rights reserved."
+          />
+        </div>
+
+        <div class="flex gap-md">
+          <button type="submit" class="btn btn-primary">Save Content</button>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+
+<script>
+  (function () {
+    loadContent();
+
+    async function loadContent() {
+      try {
+        const response = await API.get("/settings/site-content");
+        const content = response.data;
+
+        if (content) {
+          Object.keys(content).forEach((key) => {
+            const input = document.querySelector(`[name="${key}"]`);
+            if (input) input.value = content[key] || "";
+          });
+        }
+      } catch (error) {
+        console.error("Failed to load content:", error);
+      }
+    }
+
+    Utils.$("#siteContentForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData);
+
+      try {
+        await API.put("/settings/site-content", data);
+        Utils.success("Content saved");
+      } catch (error) {
+        Utils.error(error.message || "Failed to save content");
+      }
+    });
+  })();
+</script>

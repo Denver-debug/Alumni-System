@@ -1,0 +1,927 @@
+<!-- Alumni Messages Page -->
+<div class="dashboard-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <button class="btn btn-ghost sidebar-toggle" id="sidebarToggle">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </button>
+      <h1 class="page-title">Messages</h1>
+      <div class="topbar-actions">
+        <button class="btn btn-primary" id="newConversationBtn">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+          New Message
+        </button>
+      </div>
+    </header>
+
+    <div class="messaging-layout">
+      <!-- Conversations List -->
+      <div class="conversations-panel">
+        <!-- Filter Tabs -->
+        <div class="conversation-tabs">
+          <button class="conv-tab active" data-type="all">All</button>
+          <button class="conv-tab" data-type="personal">Personal</button>
+          <button class="conv-tab" data-type="group">Groups</button>
+          <button class="conv-tab" data-type="section">Section</button>
+          <button class="conv-tab" data-type="program">Program</button>
+          <button class="conv-tab" data-type="college">College</button>
+        </div>
+
+        <!-- Search -->
+        <div class="p-md">
+          <input
+            type="text"
+            id="searchConversations"
+            class="form-input"
+            placeholder="Search conversations..."
+          />
+        </div>
+
+        <!-- Conversations List -->
+        <div id="conversationsList" class="conversations-list">
+          <div class="loading-skeleton p-md">Loading conversations...</div>
+        </div>
+      </div>
+
+      <!-- Chat Area -->
+      <div class="chat-panel">
+        <div id="noChatSelected" class="no-chat-selected">
+          <svg
+            width="64"
+            height="64"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1"
+            style="opacity: 0.5"
+          >
+            <path
+              d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+            />
+          </svg>
+          <p>Select a conversation to start chatting</p>
+        </div>
+
+        <div id="chatArea" class="chat-area hidden">
+          <!-- Chat Header -->
+          <div class="chat-header">
+            <div class="flex items-center gap-md">
+              <div class="avatar avatar-md" id="chatAvatar">
+                <span id="chatInitials">?</span>
+              </div>
+              <div>
+                <div class="font-medium" id="chatName">Conversation</div>
+                <div class="text-sm text-secondary" id="chatInfo">-</div>
+              </div>
+            </div>
+            <div class="chat-actions">
+              <button
+                class="btn btn-ghost btn-icon"
+                id="chatInfoBtn"
+                title="Info"
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="16" x2="12" y2="12" />
+                  <line x1="12" y1="8" x2="12" y2="8" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Messages -->
+          <div class="messages-container" id="messagesContainer">
+            <!-- Messages will be rendered here -->
+          </div>
+
+          <!-- Message Input -->
+          <div class="message-input-area">
+            <button
+              class="btn btn-ghost btn-icon"
+              id="attachBtn"
+              title="Attach file"
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"
+                />
+              </svg>
+            </button>
+            <input type="file" id="attachInput" style="display: none" />
+            <textarea
+              id="messageInput"
+              class="form-input"
+              placeholder="Type a message..."
+              rows="1"
+            ></textarea>
+            <button class="btn btn-primary btn-icon" id="sendBtn" title="Send">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <line x1="22" y1="2" x2="11" y2="13" />
+                <polygon points="22 2 15 22 11 13 2 9 22 2" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- New Conversation Modal -->
+<div class="modal" id="newConversationModal">
+  <div class="modal-backdrop"></div>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">New Conversation</h3>
+        <button class="modal-close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="tabs mb-lg">
+          <button class="tab active" data-conv-type="personal">Personal</button>
+          <button class="tab" data-conv-type="group">Group</button>
+        </div>
+
+        <!-- Personal Chat -->
+        <div id="personalChatForm">
+          <div class="form-group">
+            <label class="form-label">Search Alumni</label>
+            <input
+              type="text"
+              id="searchAlumni"
+              class="form-input"
+              placeholder="Search by name or email..."
+            />
+          </div>
+          <div id="alumniResults" class="alumni-results">
+            <!-- Results will appear here -->
+          </div>
+        </div>
+
+        <!-- Group Chat -->
+        <div id="groupChatForm" class="hidden">
+          <div class="form-group">
+            <label class="form-label">Group Name</label>
+            <input
+              type="text"
+              id="groupName"
+              class="form-input"
+              placeholder="Enter group name"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Add Members</label>
+            <input
+              type="text"
+              id="searchMembers"
+              class="form-input"
+              placeholder="Search alumni to add..."
+            />
+          </div>
+          <div id="selectedMembers" class="selected-members mb-md">
+            <!-- Selected members will appear here -->
+          </div>
+          <div id="memberResults" class="alumni-results">
+            <!-- Search results will appear here -->
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button class="btn btn-primary hidden" id="createGroupBtn">
+          Create Group
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .messaging-layout {
+    display: flex;
+    height: calc(100vh - 60px);
+    overflow: hidden;
+  }
+
+  .conversations-panel {
+    width: 320px;
+    border-right: 1px solid var(--gray-200);
+    background: white;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .conversation-tabs {
+    display: flex;
+    overflow-x: auto;
+    padding: var(--spacing-sm);
+    gap: var(--spacing-xs);
+    border-bottom: 1px solid var(--gray-200);
+  }
+
+  .conv-tab {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border: none;
+    background: none;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    white-space: nowrap;
+    cursor: pointer;
+    color: var(--gray-600);
+  }
+
+  .conv-tab.active {
+    background: var(--primary-100);
+    color: var(--primary-700);
+  }
+
+  .conversations-list {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .conversation-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+    cursor: pointer;
+    border-bottom: 1px solid var(--gray-100);
+  }
+
+  .conversation-item:hover {
+    background: var(--gray-50);
+  }
+
+  .conversation-item.active {
+    background: var(--primary-50);
+    border-left: 3px solid var(--primary-600);
+  }
+
+  .conversation-item .meta {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .conversation-item .name {
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .conversation-item .preview {
+    font-size: 0.875rem;
+    color: var(--gray-500);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .conversation-item .time {
+    font-size: 0.75rem;
+    color: var(--gray-400);
+    white-space: nowrap;
+  }
+
+  .conversation-item .unread-badge {
+    background: var(--primary-600);
+    color: white;
+    font-size: 0.75rem;
+    padding: 2px 6px;
+    border-radius: var(--radius-full);
+    min-width: 20px;
+    text-align: center;
+  }
+
+  .chat-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--gray-50);
+  }
+
+  .no-chat-selected {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray-400);
+  }
+
+  .chat-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: white;
+    border-bottom: 1px solid var(--gray-200);
+  }
+
+  .messages-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .message {
+    display: flex;
+    gap: var(--spacing-sm);
+    max-width: 70%;
+  }
+
+  .message.sent {
+    margin-left: auto;
+    flex-direction: row-reverse;
+  }
+
+  .message-content {
+    background: white;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .message.sent .message-content {
+    background: var(--primary-600);
+    color: white;
+  }
+
+  .message-time {
+    font-size: 0.75rem;
+    color: var(--gray-400);
+    margin-top: var(--spacing-xs);
+  }
+
+  .message.sent .message-time {
+    text-align: right;
+  }
+
+  .message-input-area {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: white;
+    border-top: 1px solid var(--gray-200);
+  }
+
+  .message-input-area textarea {
+    flex: 1;
+    resize: none;
+    max-height: 100px;
+  }
+
+  .alumni-results {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .alumni-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+  }
+
+  .alumni-item:hover {
+    background: var(--gray-100);
+  }
+
+  .selected-members {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+  }
+
+  .selected-member {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    background: var(--primary-100);
+    color: var(--primary-700);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-full);
+    font-size: 0.875rem;
+  }
+
+  .selected-member .remove {
+    cursor: pointer;
+    opacity: 0.7;
+  }
+
+  .selected-member .remove:hover {
+    opacity: 1;
+  }
+
+  @media (max-width: 768px) {
+    .conversations-panel {
+      width: 100%;
+      position: absolute;
+      z-index: 10;
+    }
+    .chat-panel {
+      width: 100%;
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    includeSidebar("messages");
+
+    const user = Auth.getUser();
+    let conversations = [];
+    let currentConversation = null;
+    let messages = [];
+    let selectedMembers = [];
+    let filterType = "all";
+
+    // Load conversations
+    loadConversations();
+
+    // Filter tabs
+    Utils.$$(".conv-tab").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        Utils.$$(".conv-tab").forEach((t) => t.classList.remove("active"));
+        tab.classList.add("active");
+        filterType = tab.dataset.type;
+        renderConversations();
+      });
+    });
+
+    // Search conversations
+    Utils.$("#searchConversations").addEventListener(
+      "input",
+      Utils.debounce(renderConversations, 300),
+    );
+
+    // New conversation
+    Utils.$("#newConversationBtn").addEventListener("click", () => {
+      Utils.openModal("#newConversationModal");
+    });
+
+    // Modal tabs
+    Utils.$$("#newConversationModal .tab").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        Utils.$$("#newConversationModal .tab").forEach((t) =>
+          t.classList.remove("active"),
+        );
+        tab.classList.add("active");
+
+        if (tab.dataset.convType === "group") {
+          Utils.$("#personalChatForm").classList.add("hidden");
+          Utils.$("#groupChatForm").classList.remove("hidden");
+          Utils.$("#createGroupBtn").classList.remove("hidden");
+        } else {
+          Utils.$("#groupChatForm").classList.add("hidden");
+          Utils.$("#personalChatForm").classList.remove("hidden");
+          Utils.$("#createGroupBtn").classList.add("hidden");
+        }
+      });
+    });
+
+    // Search alumni
+    Utils.$("#searchAlumni").addEventListener(
+      "input",
+      Utils.debounce(searchAlumni, 300),
+    );
+    Utils.$("#searchMembers").addEventListener(
+      "input",
+      Utils.debounce(searchMembers, 300),
+    );
+
+    // Send message
+    Utils.$("#sendBtn").addEventListener("click", sendMessage);
+    Utils.$("#messageInput").addEventListener("keypress", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    // Create group
+    Utils.$("#createGroupBtn").addEventListener("click", createGroup);
+
+    async function loadConversations() {
+      try {
+        const response = await API.messaging.getConversations();
+        conversations = response.data || [];
+        renderConversations();
+      } catch (error) {
+        console.error("Load conversations error:", error);
+      }
+    }
+
+    function renderConversations() {
+      const search = Utils.$("#searchConversations").value.toLowerCase();
+      let filtered = conversations;
+
+      if (filterType !== "all") {
+        filtered = filtered.filter((c) => c.type === filterType);
+      }
+
+      if (search) {
+        filtered = filtered.filter(
+          (c) =>
+            (c.name || "").toLowerCase().includes(search) ||
+            (c.last_message || "").toLowerCase().includes(search),
+        );
+      }
+
+      const container = Utils.$("#conversationsList");
+
+      if (!filtered.length) {
+        container.innerHTML =
+          '<div class="p-lg text-center text-secondary">No conversations</div>';
+        return;
+      }
+
+      container.innerHTML = filtered
+        .map(
+          (conv) => `
+            <div class="conversation-item ${currentConversation?.id === conv.id ? "active" : ""}" 
+                 onclick="selectConversation(${conv.id})">
+                <div class="avatar avatar-md ${getConvTypeColor(conv.type)}">
+                    <span>${getConvInitials(conv)}</span>
+                </div>
+                <div class="meta">
+                    <div class="name">${Utils.escapeHtml(conv.name || "Unknown")}</div>
+                    <div class="preview">${Utils.escapeHtml(conv.last_message || "No messages yet")}</div>
+                </div>
+                <div class="text-right">
+                    <div class="time">${conv.last_message_at ? Utils.timeAgo(conv.last_message_at) : ""}</div>
+                    ${conv.unread_count ? `<div class="unread-badge">${conv.unread_count}</div>` : ""}
+                </div>
+            </div>
+        `,
+        )
+        .join("");
+    }
+
+    function getConvTypeColor(type) {
+      const colors = {
+        personal: "bg-primary",
+        group: "bg-success",
+        section: "bg-warning",
+        program: "bg-info",
+        college: "bg-danger",
+      };
+      return colors[type] || "bg-secondary";
+    }
+
+    function getConvInitials(conv) {
+      if (conv.type === "personal") {
+        return Utils.getInitials(conv.name || "?");
+      }
+      return conv.type.charAt(0).toUpperCase();
+    }
+
+    window.selectConversation = async (convId) => {
+      try {
+        currentConversation = conversations.find((c) => c.id === convId);
+
+        Utils.$("#noChatSelected").classList.add("hidden");
+        Utils.$("#chatArea").classList.remove("hidden");
+
+        Utils.$("#chatName").textContent =
+          currentConversation.name || "Conversation";
+        Utils.$("#chatInfo").textContent =
+          `${currentConversation.type} · ${currentConversation.participant_count || 2} members`;
+        Utils.$("#chatInitials").textContent =
+          getConvInitials(currentConversation);
+        Utils.$("#chatAvatar").className =
+          `avatar avatar-md ${getConvTypeColor(currentConversation.type)}`;
+
+        // Load messages
+        await loadMessages(convId);
+
+        // Mark as active
+        Utils.$$(".conversation-item").forEach((item) => {
+          item.classList.remove("active");
+        });
+        document
+          .querySelector(`[onclick="selectConversation(${convId})"]`)
+          ?.classList.add("active");
+
+        // Mark as read
+        await API.messaging.markAsRead(convId);
+      } catch (error) {
+        Utils.error("Failed to load conversation");
+      }
+    };
+
+    async function loadMessages(convId) {
+      const response = await API.messaging.getMessages(convId);
+      messages = response.data || [];
+      renderMessages();
+    }
+
+    function renderMessages() {
+      const container = Utils.$("#messagesContainer");
+
+      if (!messages.length) {
+        container.innerHTML =
+          '<div class="text-center text-secondary">No messages yet. Start the conversation!</div>';
+        return;
+      }
+
+      container.innerHTML = messages
+        .map(
+          (msg) => `
+            <div class="message ${msg.sender_id === user.id ? "sent" : ""}">
+                ${
+                  msg.sender_id !== user.id
+                    ? `
+                    <div class="avatar avatar-sm bg-primary">
+                        <span>${Utils.getInitials(msg.sender_name || "?")}</span>
+                    </div>
+                `
+                    : ""
+                }
+                <div>
+                    ${
+                      msg.sender_id !== user.id &&
+                      currentConversation.type !== "personal"
+                        ? `<div class="text-xs text-secondary mb-xs">${Utils.escapeHtml(msg.sender_name)}</div>`
+                        : ""
+                    }
+                    <div class="message-content">${Utils.escapeHtml(msg.content)}</div>
+                    <div class="message-time">${Utils.timeAgo(msg.created_at)}</div>
+                </div>
+            </div>
+        `,
+        )
+        .join("");
+
+      // Scroll to bottom
+      container.scrollTop = container.scrollHeight;
+    }
+
+    async function sendMessage() {
+      if (!currentConversation) return;
+
+      const input = Utils.$("#messageInput");
+      const content = input.value.trim();
+
+      if (!content) return;
+
+      input.value = "";
+
+      try {
+        const response = await API.messaging.sendMessage(
+          currentConversation.id,
+          {
+            content,
+            message_type: "text",
+          },
+        );
+
+        messages.push(response.data);
+        renderMessages();
+      } catch (error) {
+        Utils.error("Failed to send message");
+        input.value = content;
+      }
+    }
+
+    async function searchAlumni() {
+      const search = Utils.$("#searchAlumni").value;
+      if (search.length < 2) {
+        Utils.$("#alumniResults").innerHTML = "";
+        return;
+      }
+
+      try {
+        const response = await API.alumni.search({ query: search, limit: 10 });
+        Utils.$("#alumniResults").innerHTML =
+          (response.data || [])
+            .map(
+              (alumni) => `
+                <div class="alumni-item" onclick="startPersonalChat(${alumni.id}, '${Utils.escapeHtml(alumni.name)}')">
+                    <div class="avatar avatar-sm bg-primary">
+                        <span>${Utils.getInitials(alumni.name)}</span>
+                    </div>
+                    <div>
+                        <div class="font-medium">${Utils.escapeHtml(alumni.name)}</div>
+                        <div class="text-sm text-secondary">${Utils.escapeHtml(alumni.email)}</div>
+                    </div>
+                </div>
+            `,
+            )
+            .join("") ||
+          '<div class="p-md text-secondary">No alumni found</div>';
+      } catch (error) {
+        console.error("Search error:", error);
+      }
+    }
+
+    async function searchMembers() {
+      const search = Utils.$("#searchMembers").value;
+      if (search.length < 2) {
+        Utils.$("#memberResults").innerHTML = "";
+        return;
+      }
+
+      try {
+        const response = await API.alumni.search({ query: search, limit: 10 });
+        const results = (response.data || []).filter(
+          (a) => !selectedMembers.find((m) => m.id === a.id),
+        );
+
+        Utils.$("#memberResults").innerHTML =
+          results
+            .map(
+              (alumni) => `
+                <div class="alumni-item" onclick="addMember(${alumni.id}, '${Utils.escapeHtml(alumni.name)}')">
+                    <div class="avatar avatar-sm bg-primary">
+                        <span>${Utils.getInitials(alumni.name)}</span>
+                    </div>
+                    <div>
+                        <div class="font-medium">${Utils.escapeHtml(alumni.name)}</div>
+                    </div>
+                </div>
+            `,
+            )
+            .join("") ||
+          '<div class="p-md text-secondary">No alumni found</div>';
+      } catch (error) {
+        console.error("Search error:", error);
+      }
+    }
+
+    window.startPersonalChat = async (userId, name) => {
+      try {
+        const response = await API.messaging.createConversation({
+          type: "personal",
+          participant_ids: [userId],
+        });
+
+        Utils.closeModal("#newConversationModal");
+        await loadConversations();
+        selectConversation(response.data.id);
+      } catch (error) {
+        Utils.error(error.message || "Failed to start conversation");
+      }
+    };
+
+    window.addMember = (id, name) => {
+      if (selectedMembers.find((m) => m.id === id)) return;
+
+      selectedMembers.push({ id, name });
+      renderSelectedMembers();
+      Utils.$("#searchMembers").value = "";
+      Utils.$("#memberResults").innerHTML = "";
+    };
+
+    window.removeMember = (id) => {
+      selectedMembers = selectedMembers.filter((m) => m.id !== id);
+      renderSelectedMembers();
+    };
+
+    function renderSelectedMembers() {
+      Utils.$("#selectedMembers").innerHTML = selectedMembers
+        .map(
+          (m) => `
+            <div class="selected-member">
+                ${Utils.escapeHtml(m.name)}
+                <span class="remove" onclick="removeMember(${m.id})">&times;</span>
+            </div>
+        `,
+        )
+        .join("");
+    }
+
+    async function createGroup() {
+      const name = Utils.$("#groupName").value.trim();
+
+      if (!name) {
+        Utils.error("Please enter a group name");
+        return;
+      }
+
+      if (selectedMembers.length < 1) {
+        Utils.error("Please add at least one member");
+        return;
+      }
+
+      Utils.setButtonLoading("#createGroupBtn", true);
+
+      try {
+        const response = await API.messaging.createConversation({
+          type: "group",
+          name,
+          participant_ids: selectedMembers.map((m) => m.id),
+        });
+
+        Utils.closeModal("#newConversationModal");
+        Utils.$("#groupName").value = "";
+        selectedMembers = [];
+        renderSelectedMembers();
+
+        await loadConversations();
+        selectConversation(response.data.id);
+      } catch (error) {
+        Utils.error(error.message || "Failed to create group");
+      } finally {
+        Utils.setButtonLoading("#createGroupBtn", false);
+      }
+    }
+
+    function includeSidebar(activePage) {
+      fetch("/pages/alumni/dashboard.html")
+        .then((r) => r.text())
+        .then((html) => {
+          const doc = new DOMParser().parseFromString(html, "text/html");
+          const sidebar = doc.querySelector(".sidebar");
+          if (sidebar) {
+            Utils.$("#sidebar").innerHTML = sidebar.innerHTML;
+
+            const user = Auth.getUser();
+            if (user) {
+              Utils.$("#sidebarName").textContent = user.name || "Alumni";
+              Utils.$("#sidebarAlumniId").textContent = user.alumni_id || "";
+              Utils.$("#sidebarInitials").textContent = Utils.getInitials(
+                user.name || "A",
+              );
+            }
+
+            Utils.$$(".sidebar-link").forEach((link) => {
+              link.classList.remove("active");
+              if (link.getAttribute("href") === `#/${activePage}`) {
+                link.classList.add("active");
+              }
+            });
+          }
+        });
+
+      setTimeout(() => {
+        const toggle = Utils.$("#sidebarToggle");
+        if (toggle) {
+          toggle.addEventListener("click", () => {
+            Utils.$("#sidebar").classList.toggle("open");
+          });
+        }
+      }, 500);
+    }
+
+    // WebSocket connection for real-time messages
+    // TODO: Implement WebSocket when backend is ready
+  })();
+</script>

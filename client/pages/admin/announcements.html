@@ -1,0 +1,159 @@
+<!-- Admin Announcements Management -->
+<div class="dashboard-layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="flex items-center gap-md">
+        <div class="avatar avatar-md bg-primary"><span>A</span></div>
+        <div>
+          <div class="font-medium text-white">Admin</div>
+          <div class="text-xs opacity-75">Administrator</div>
+        </div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="#/admin/dashboard" class="sidebar-link">Dashboard</a>
+      <a href="#/admin/alumni" class="sidebar-link">Alumni</a>
+      <a href="#/admin/events" class="sidebar-link">Events</a>
+      <a href="#/admin/announcements" class="sidebar-link active">Announcements</a>
+      <a href="#/admin/organization" class="sidebar-link">Organization</a>
+      <a href="#/admin/form-builder" class="sidebar-link">Form Builder</a>
+      <a href="#/admin/gamification" class="sidebar-link">Gamification</a>
+      <a href="#/admin/settings" class="sidebar-link">Settings</a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="sidebar-link text-error" onclick="Auth.logout()">Logout</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="content-header">
+      <h1>Announcements</h1>
+      <a href="#/admin/announcements/create" class="btn btn-primary">+ Create Announcement</a>
+    </div>
+
+
+    <div class="content-body">
+      <!-- Filters -->
+      <div class="card p-lg mb-lg">
+        <div class="grid grid-cols-4 gap-md">
+          <input type="text" id="searchInput" class="form-input" placeholder="Search announcements...">
+          <select id="statusFilter" class="form-input">
+            <option value="">All Status</option>
+            <option value="draft">Draft</option>
+            <option value="published">Published</option>
+            <option value="archived">Archived</option>
+          </select>
+          <select id="priorityFilter" class="form-input">
+            <option value="">All Priority</option>
+            <option value="normal">Normal</option>
+            <option value="important">Important</option>
+            <option value="urgent">Urgent</option>
+          </select>
+          <button class="btn btn-primary" onclick="applyFilters()">Filter</button>
+        </div>
+      </div>
+
+      <!-- Announcements Table -->
+      <div class="card">
+        <div id="announcementsTable">
+          <div class="loading-spinner p-xl">Loading...</div>
+        </div>
+        <div class="card-footer" id="pagination"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+(function() {
+  let currentPage = 1;
+  let filters = {};
+
+  loadAnnouncements();
+
+  window.applyFilters = function() {
+    filters = {
+      search: Utils.$('#searchInput').value,
+      status: Utils.$('#statusFilter').value,
+      priority: Utils.$('#priorityFilter').value
+    };
+    currentPage = 1;
+    loadAnnouncements();
+  };
+
+  async function loadAnnouncements() {
+    try {
+      const params = new URLSearchParams({ page: currentPage, limit: 20, ...filters });
+      const response = await API.get(`/announcements?${params}`);
+      const container = Utils.$('#announcementsTable');
+      const announcements = response.data.data || response.data;
+      const total = response.data.total || announcements.length;
+
+      if (!announcements || announcements.length === 0) {
+        container.innerHTML = '<div class="text-center text-muted p-xl">No announcements found</div>';
+        return;
+      }
+
+      container.innerHTML = `
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Target</th>
+              <th>Priority</th>
+              <th>Status</th>
+              <th>Publish Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${announcements.map(a => `
+              <tr>
+                <td><strong>${Utils.escapeHtml(a.title)}</strong></td>
+                <td><span class="badge badge-secondary">${a.target_type || 'all'}</span></td>
+                <td><span class="badge badge-${a.priority === 'urgent' ? 'error' : a.priority === 'important' ? 'warning' : 'secondary'}">${a.priority}</span></td>
+                <td><span class="badge badge-${a.status === 'published' ? 'success' : a.status === 'draft' ? 'warning' : 'secondary'}">${a.status}</span></td>
+                <td>${a.publish_date ? new Date(a.publish_date).toLocaleDateString() : '-'}</td>
+                <td>
+                  <div class="flex gap-xs">
+                    <a href="#/admin/announcements/${a.id}" class="btn btn-sm btn-ghost">Edit</a>
+                    <button class="btn btn-sm btn-ghost text-error" onclick="deleteAnnouncement(${a.id})">Delete</button>
+                  </div>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+
+      // Pagination
+      const totalPages = Math.ceil(total / 20);
+      Utils.$('#pagination').innerHTML = `
+        <div class="flex justify-between items-center">
+          <button class="btn btn-sm btn-ghost" onclick="goToPage(${currentPage - 1})" ${currentPage <= 1 ? 'disabled' : ''}>Previous</button>
+          <span>Page ${currentPage} of ${totalPages}</span>
+          <button class="btn btn-sm btn-ghost" onclick="goToPage(${currentPage + 1})" ${currentPage >= totalPages ? 'disabled' : ''}>Next</button>
+        </div>
+      `;
+    } catch (error) {
+      Utils.$('#announcementsTable').innerHTML = '<div class="alert alert-error m-lg">Failed to load announcements</div>';
+    }
+  }
+
+  window.goToPage = function(page) {
+    currentPage = page;
+    loadAnnouncements();
+  };
+
+  window.deleteAnnouncement = async function(id) {
+    if (!confirm('Delete this announcement?')) return;
+    try {
+      await API.delete(`/announcements/${id}`);
+      Utils.success('Announcement deleted');
+      loadAnnouncements();
+    } catch (error) {
+      Utils.error(error.message || 'Failed to delete');
+    }
+  };
+})();
+</script>

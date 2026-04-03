@@ -1,0 +1,140 @@
+<!-- Conversation / Messages Detail -->
+<div class="dashboard-layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="flex items-center gap-md">
+        <div class="avatar avatar-md bg-primary">
+          <span id="sidebarInitials">A</span>
+        </div>
+        <div>
+          <div class="font-medium text-white" id="sidebarName">Alumni</div>
+          <div class="text-xs opacity-75" id="sidebarAlumniId">Loading...</div>
+        </div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="#/dashboard" class="sidebar-link">Dashboard</a>
+      <a href="#/messages" class="sidebar-link active">Messages</a>
+    </nav>
+  </aside>
+
+  <main class="main-content" style="display: flex; flex-direction: column">
+    <div
+      class="content-header"
+      style="border-bottom: 1px solid var(--gray-200)"
+    >
+      <div class="flex items-center gap-md">
+        <a href="#/messages" class="btn btn-ghost btn-sm">←</a>
+        <div class="avatar avatar-sm bg-primary">
+          <span id="conversationAvatar">?</span>
+        </div>
+        <div>
+          <div class="font-medium" id="conversationName">Loading...</div>
+          <div class="text-xs text-muted" id="conversationType"></div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="flex-1 overflow-auto p-lg"
+      id="messagesContainer"
+      style="background: var(--gray-50)"
+    >
+      <div class="loading-spinner">Loading messages...</div>
+    </div>
+
+    <div
+      class="p-md"
+      style="border-top: 1px solid var(--gray-200); background: white"
+    >
+      <form id="messageForm" class="flex gap-sm">
+        <input
+          type="text"
+          id="messageInput"
+          class="form-input flex-1"
+          placeholder="Type a message..."
+          autocomplete="off"
+        />
+        <button type="submit" class="btn btn-primary">Send</button>
+      </form>
+    </div>
+  </main>
+</div>
+
+<script>
+  (function () {
+    const user = Auth.user;
+    if (user) {
+      Utils.$("#sidebarName").textContent = user.name || "Alumni";
+      Utils.$("#sidebarInitials").textContent = Auth.getInitials();
+    }
+
+    const id = Router.getParam("id");
+    if (id) {
+      loadConversation(id);
+      loadMessages(id);
+    }
+
+    async function loadConversation(id) {
+      try {
+        const response = await API.get(`/messages/conversations/${id}`);
+        const conv = response.data;
+        Utils.$("#conversationName").textContent = conv.name || "Conversation";
+        Utils.$("#conversationType").textContent = conv.type;
+        Utils.$("#conversationAvatar").textContent = (conv.name ||
+          "?")[0].toUpperCase();
+      } catch (error) {
+        console.error("Failed to load conversation:", error);
+      }
+    }
+
+    async function loadMessages(conversationId) {
+      try {
+        const response = await API.get(
+          `/messages/conversations/${conversationId}/messages`,
+        );
+        const container = Utils.$("#messagesContainer");
+
+        if (!response.data || response.data.length === 0) {
+          container.innerHTML =
+            '<div class="text-center text-muted p-xl">No messages yet. Start the conversation!</div>';
+          return;
+        }
+
+        container.innerHTML = response.data
+          .map(
+            (msg) => `
+        <div class="flex mb-md ${msg.sender_id === user.id ? "justify-end" : "justify-start"}">
+          <div class="max-w-xs lg:max-w-md p-sm rounded-lg ${msg.sender_id === user.id ? "bg-primary text-white" : "bg-white shadow"}">
+            ${msg.sender_id !== user.id ? `<div class="text-xs font-medium mb-xs">${Utils.escapeHtml(msg.sender_name || "Unknown")}</div>` : ""}
+            <div>${Utils.escapeHtml(msg.content)}</div>
+            <div class="text-xs opacity-75 mt-xs">${new Date(msg.created_at).toLocaleTimeString()}</div>
+          </div>
+        </div>
+      `,
+          )
+          .join("");
+
+        container.scrollTop = container.scrollHeight;
+      } catch (error) {
+        Utils.$("#messagesContainer").innerHTML =
+          '<div class="alert alert-error">Failed to load messages</div>';
+      }
+    }
+
+    Utils.$("#messageForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const input = Utils.$("#messageInput");
+      const content = input.value.trim();
+      if (!content) return;
+
+      try {
+        await API.post(`/messages/conversations/${id}/messages`, { content });
+        input.value = "";
+        loadMessages(id);
+      } catch (error) {
+        Utils.error("Failed to send message");
+      }
+    });
+  })();
+</script>

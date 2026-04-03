@@ -1,0 +1,151 @@
+<!-- Admin Login Page - MINSU-Style Design -->
+<div class="page-wrapper">
+  <div class="auth-card">
+    <!-- Header Section with Gradient -->
+    <div class="auth-header">
+      <div class="auth-logo">
+        <img
+          src="/assets/images/logo.png"
+          alt="Alumni Logo"
+          onerror="
+            this.style.display = 'none';
+            this.nextElementSibling.style.display = 'flex';
+          "
+        />
+        <span class="auth-logo-text" style="display: none">AMS</span>
+      </div>
+      <h1 class="auth-title">Admin Portal</h1>
+      <p class="auth-subtitle">Alumni Management System</p>
+    </div>
+
+    <!-- Form Section -->
+    <div class="auth-body">
+      <h2 class="auth-form-title">Administrator Login</h2>
+
+      <!-- Error Alert -->
+      <div
+        id="loginError"
+        class="alert alert-error mb-md"
+        style="display: none"
+      >
+        <span id="loginErrorText"></span>
+      </div>
+
+      <!-- Login Form -->
+      <form id="adminLoginForm">
+        <div class="form-group">
+          <label class="form-label" for="email">Email Address</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            class="auth-input"
+            placeholder="Enter your admin email"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <div class="input-password-wrapper">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              class="auth-input"
+              placeholder="Enter your password"
+              required
+            />
+            <button type="button" class="password-toggle" id="togglePassword">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-auth mt-md" id="loginBtn">
+          Login
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const loginForm = Utils.$("#adminLoginForm");
+    const togglePassword = Utils.$("#togglePassword");
+    const passwordInput = Utils.$("#password");
+    const errorDiv = Utils.$("#loginError");
+    const errorText = Utils.$("#loginErrorText");
+
+    // Password visibility toggle
+    togglePassword.addEventListener("click", () => {
+      const type = passwordInput.type === "password" ? "text" : "password";
+      passwordInput.type = type;
+      togglePassword.innerHTML =
+        type === "password"
+          ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>'
+          : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+    });
+
+    // Show error function
+    function showError(message) {
+      errorText.textContent = message;
+      errorDiv.style.display = "flex";
+    }
+
+    // Hide error function
+    function hideError() {
+      errorDiv.style.display = "none";
+    }
+
+    // Handle form submission
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      hideError();
+
+      const email = Utils.$("#email").value.trim();
+      const password = passwordInput.value;
+
+      if (!email || !password) {
+        showError("Please fill in all fields");
+        return;
+      }
+
+      Utils.setButtonLoading("#loginBtn", true);
+
+      try {
+        const response = await Auth.login(email, password);
+        const user = response.data.user;
+
+        // Check if user is admin
+        if (!["admin", "system_admin"].includes(user.role)) {
+          showError("Access denied. This portal is for administrators only.");
+          Auth.logout();
+          return;
+        }
+
+        Utils.success("Login successful!");
+
+        // Redirect to admin dashboard
+        Router.navigate("/admin/dashboard");
+      } catch (error) {
+        showError(
+          error.message || "Invalid admin credentials. Please try again.",
+        );
+      } finally {
+        Utils.setButtonLoading("#loginBtn", false);
+      }
+    });
+  })();
+</script>

@@ -1,0 +1,651 @@
+<!-- Alumni Profile Page -->
+<div class="dashboard-layout">
+  <!-- Include sidebar via JS -->
+  <aside class="sidebar" id="sidebar"></aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <header class="topbar">
+      <button class="btn btn-ghost sidebar-toggle" id="sidebarToggle">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </button>
+      <h1 class="page-title">My Profile</h1>
+    </header>
+
+    <div class="content-wrapper p-lg">
+      <!-- Profile Header -->
+      <div class="card mb-lg">
+        <div class="card-body p-xl">
+          <div class="flex items-start gap-xl flex-wrap">
+            <!-- Avatar Section -->
+            <div class="text-center">
+              <div
+                class="avatar avatar-2xl mb-md"
+                style="width: 120px; height: 120px; font-size: 2rem"
+              >
+                <img
+                  src=""
+                  alt=""
+                  id="profileAvatar"
+                  onerror="this.style.display = 'none'"
+                />
+                <span id="profileInitials">A</span>
+              </div>
+              <button class="btn btn-secondary btn-sm" id="changeAvatarBtn">
+                Change Photo
+              </button>
+              <input
+                type="file"
+                id="avatarInput"
+                accept="image/*"
+                style="display: none"
+              />
+            </div>
+
+            <!-- Info Section -->
+            <div class="flex-1">
+              <div class="flex justify-between items-start mb-md">
+                <div>
+                  <h2 class="text-2xl font-bold" id="profileName">
+                    Loading...
+                  </h2>
+                  <p class="text-secondary" id="profileAlumniId">-</p>
+                </div>
+                <button class="btn btn-primary" id="editProfileBtn">
+                  Edit Profile
+                </button>
+              </div>
+
+              <div class="grid grid-cols-3 gap-lg mt-lg">
+                <div>
+                  <div class="text-sm text-secondary">Email</div>
+                  <div class="font-medium" id="profileEmail">-</div>
+                </div>
+                <div>
+                  <div class="text-sm text-secondary">College</div>
+                  <div class="font-medium" id="profileCollege">-</div>
+                </div>
+                <div>
+                  <div class="text-sm text-secondary">Program</div>
+                  <div class="font-medium" id="profileProgram">-</div>
+                </div>
+                <div>
+                  <div class="text-sm text-secondary">Section</div>
+                  <div class="font-medium" id="profileSection">-</div>
+                </div>
+                <div>
+                  <div class="text-sm text-secondary">Batch Year</div>
+                  <div class="font-medium" id="profileBatchYear">-</div>
+                </div>
+                <div>
+                  <div class="text-sm text-secondary">Graduation Year</div>
+                  <div class="font-medium" id="profileGradYear">-</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Points Card -->
+            <div
+              class="card"
+              style="min-width: 200px; background: var(--primary-50)"
+            >
+              <div class="card-body text-center">
+                <div class="text-sm text-secondary">Total Points</div>
+                <div class="text-3xl font-bold text-primary" id="profilePoints">
+                  0
+                </div>
+                <div class="badge badge-primary mt-sm" id="profileBadge">
+                  Bronze
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs mb-lg">
+        <button class="tab active" data-tab="details">Profile Details</button>
+        <button class="tab" data-tab="activity">Activity History</button>
+        <button class="tab" data-tab="security">Security</button>
+      </div>
+
+      <!-- Tab Content: Details -->
+      <div class="tab-content" id="tab-details">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Profile Information</h3>
+          </div>
+          <div class="card-body">
+            <form id="profileForm">
+              <div id="dynamicFields">
+                <!-- Dynamic form fields will be loaded here -->
+                <div class="loading-skeleton">Loading profile fields...</div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content: Activity -->
+      <div class="tab-content hidden" id="tab-activity">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Points History</h3>
+          </div>
+          <div class="card-body p-0">
+            <div id="pointsHistory">
+              <div class="loading-skeleton p-lg">Loading history...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content: Security -->
+      <div class="tab-content hidden" id="tab-security">
+        <div class="grid grid-cols-2 gap-lg">
+          <!-- Change Password -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Change Password</h3>
+            </div>
+            <div class="card-body">
+              <form id="passwordForm">
+                <div class="form-group">
+                  <label class="form-label">Current Password</label>
+                  <input
+                    type="password"
+                    name="current_password"
+                    class="form-input"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">New Password</label>
+                  <input
+                    type="password"
+                    name="new_password"
+                    class="form-input"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Confirm New Password</label>
+                  <input
+                    type="password"
+                    name="confirm_password"
+                    class="form-input"
+                    required
+                  />
+                </div>
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  id="changePasswordBtn"
+                >
+                  Update Password
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Account Info -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Account Information</h3>
+            </div>
+            <div class="card-body">
+              <div class="mb-md">
+                <div class="text-sm text-secondary">Account Created</div>
+                <div class="font-medium" id="accountCreated">-</div>
+              </div>
+              <div class="mb-md">
+                <div class="text-sm text-secondary">Last Login</div>
+                <div class="font-medium" id="lastLogin">-</div>
+              </div>
+              <div class="mb-md">
+                <div class="text-sm text-secondary">Email Verified</div>
+                <div id="emailVerified">-</div>
+              </div>
+              <div>
+                <div class="text-sm text-secondary">Auth Provider</div>
+                <div class="font-medium" id="authProvider">-</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Edit Profile Modal -->
+<div class="modal" id="editProfileModal">
+  <div class="modal-backdrop"></div>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Edit Profile</h3>
+        <button class="modal-close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="editProfileForm">
+          <div class="grid grid-cols-2 gap-md">
+            <div class="form-group">
+              <label class="form-label">Full Name</label>
+              <input type="text" name="name" class="form-input" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input type="email" name="email" class="form-input" disabled />
+            </div>
+            <div class="form-group">
+              <label class="form-label">College</label>
+              <select name="college_id" class="form-select" id="collegeSelect">
+                <option value="">Select College</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Program</label>
+              <select name="program_id" class="form-select" id="programSelect">
+                <option value="">Select Program</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Section</label>
+              <select name="section_id" class="form-select" id="sectionSelect">
+                <option value="">Select Section</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Batch Year</label>
+              <input
+                type="number"
+                name="batch_year"
+                class="form-input"
+                min="1950"
+                max="2100"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Graduation Year</label>
+              <input
+                type="number"
+                name="graduation_year"
+                class="form-input"
+                min="1950"
+                max="2100"
+              />
+            </div>
+          </div>
+
+          <!-- Dynamic Fields -->
+          <div id="editDynamicFields" class="mt-lg">
+            <!-- Will be populated with custom fields -->
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button class="btn btn-primary" id="saveProfileBtn">
+          Save Changes
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    // Include sidebar
+    loadSidebar();
+
+    const user = Auth.getUser();
+    let profile = null;
+    let formFields = [];
+
+    // Load profile
+    loadProfile();
+
+    // Tab switching
+    Utils.$$(".tab").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        Utils.$$(".tab").forEach((t) => t.classList.remove("active"));
+        Utils.$$(".tab-content").forEach((c) => c.classList.add("hidden"));
+
+        tab.classList.add("active");
+        Utils.$(`#tab-${tab.dataset.tab}`).classList.remove("hidden");
+
+        // Load tab-specific data
+        if (tab.dataset.tab === "activity") {
+          loadPointsHistory();
+        }
+      });
+    });
+
+    // Avatar upload
+    Utils.$("#changeAvatarBtn").addEventListener("click", () => {
+      Utils.$("#avatarInput").click();
+    });
+
+    Utils.$("#avatarInput").addEventListener("change", async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      try {
+        const response = await API.auth.updateProfile({ profile_image: file });
+        Utils.$("#profileAvatar").src = response.data.profile_image;
+        Utils.$("#profileAvatar").style.display = "block";
+        Utils.success("Profile photo updated!");
+      } catch (error) {
+        Utils.error("Failed to update photo");
+      }
+    });
+
+    // Edit profile modal
+    Utils.$("#editProfileBtn").addEventListener("click", () => {
+      populateEditModal();
+      Utils.openModal("#editProfileModal");
+    });
+
+    // Save profile
+    Utils.$("#saveProfileBtn").addEventListener("click", async () => {
+      const form = Utils.$("#editProfileForm");
+      const formData = Utils.serializeForm(form);
+
+      Utils.setButtonLoading("#saveProfileBtn", true);
+
+      try {
+        await API.alumni.updateProfile(formData);
+        Utils.success("Profile updated successfully!");
+        Utils.closeModal("#editProfileModal");
+        loadProfile();
+      } catch (error) {
+        Utils.error(error.message || "Failed to update profile");
+      } finally {
+        Utils.setButtonLoading("#saveProfileBtn", false);
+      }
+    });
+
+    // Change password
+    Utils.$("#passwordForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = Utils.serializeForm(e.target);
+
+      if (formData.new_password !== formData.confirm_password) {
+        Utils.error("Passwords do not match");
+        return;
+      }
+
+      Utils.setButtonLoading("#changePasswordBtn", true);
+
+      try {
+        await API.auth.changePassword(formData);
+        Utils.success("Password changed successfully!");
+        e.target.reset();
+      } catch (error) {
+        Utils.error(error.message || "Failed to change password");
+      } finally {
+        Utils.setButtonLoading("#changePasswordBtn", false);
+      }
+    });
+
+    // College/Program/Section cascade
+    Utils.$("#collegeSelect").addEventListener("change", async (e) => {
+      const collegeId = e.target.value;
+      Utils.$("#programSelect").innerHTML =
+        '<option value="">Select Program</option>';
+      Utils.$("#sectionSelect").innerHTML =
+        '<option value="">Select Section</option>';
+
+      if (collegeId) {
+        const programs = await API.organization.getPrograms(collegeId);
+        programs.data.forEach((p) => {
+          Utils.$("#programSelect").innerHTML +=
+            `<option value="${p.id}">${Utils.escapeHtml(p.name)}</option>`;
+        });
+      }
+    });
+
+    Utils.$("#programSelect").addEventListener("change", async (e) => {
+      const programId = e.target.value;
+      Utils.$("#sectionSelect").innerHTML =
+        '<option value="">Select Section</option>';
+
+      if (programId) {
+        const sections = await API.organization.getSections(programId);
+        sections.data.forEach((s) => {
+          Utils.$("#sectionSelect").innerHTML +=
+            `<option value="${s.id}">${Utils.escapeHtml(s.name)}</option>`;
+        });
+      }
+    });
+
+    async function loadProfile() {
+      try {
+        const [profileRes, fieldsRes] = await Promise.all([
+          API.alumni.getProfile(),
+          API.formBuilder.getFields({ is_active: true }),
+        ]);
+
+        profile = profileRes.data;
+        formFields = fieldsRes.data || [];
+
+        // Update display
+        Utils.$("#profileName").textContent = profile.name || "Unknown";
+        Utils.$("#profileAlumniId").textContent = profile.alumni_id || "-";
+        Utils.$("#profileEmail").textContent = profile.email || "-";
+        Utils.$("#profileCollege").textContent = profile.college_name || "-";
+        Utils.$("#profileProgram").textContent = profile.program_name || "-";
+        Utils.$("#profileSection").textContent = profile.section_name || "-";
+        Utils.$("#profileBatchYear").textContent = profile.batch_year || "-";
+        Utils.$("#profileGradYear").textContent =
+          profile.graduation_year || "-";
+        Utils.$("#profilePoints").textContent = profile.total_points || 0;
+        Utils.$("#profileBadge").textContent = profile.badge_level || "Bronze";
+        Utils.$("#profileInitials").textContent = Utils.getInitials(
+          profile.name || "A",
+        );
+
+        if (profile.profile_image) {
+          Utils.$("#profileAvatar").src = profile.profile_image;
+          Utils.$("#profileAvatar").style.display = "block";
+        }
+
+        // Security tab info
+        Utils.$("#accountCreated").textContent = Utils.formatDate(
+          profile.created_at,
+        );
+        Utils.$("#lastLogin").textContent = profile.last_login
+          ? Utils.formatDateTime(profile.last_login)
+          : "Never";
+        Utils.$("#emailVerified").innerHTML = profile.email_verified
+          ? '<span class="badge badge-success">Verified</span>'
+          : '<span class="badge badge-warning">Not Verified</span>';
+        Utils.$("#authProvider").textContent = profile.auth_provider || "Email";
+
+        // Render dynamic fields in profile tab
+        renderDynamicFields();
+      } catch (error) {
+        console.error("Load profile error:", error);
+        Utils.error("Failed to load profile");
+      }
+    }
+
+    function renderDynamicFields() {
+      const container = Utils.$("#dynamicFields");
+
+      if (!formFields.length) {
+        container.innerHTML =
+          '<p class="text-secondary">No additional profile fields.</p>';
+        return;
+      }
+
+      const html = formFields
+        .map((field) => {
+          const value = profile?.custom_fields?.[field.field_name] || "-";
+          return `
+                <div class="mb-md">
+                    <div class="text-sm text-secondary">${Utils.escapeHtml(field.field_label)}</div>
+                    <div class="font-medium">${Utils.escapeHtml(value)}</div>
+                </div>
+            `;
+        })
+        .join("");
+
+      container.innerHTML = `<div class="grid grid-cols-3 gap-lg">${html}</div>`;
+    }
+
+    async function populateEditModal() {
+      const form = Utils.$("#editProfileForm");
+
+      // Load colleges
+      const colleges = await API.organization.getColleges();
+      Utils.$("#collegeSelect").innerHTML =
+        '<option value="">Select College</option>' +
+        colleges.data
+          .map(
+            (c) =>
+              `<option value="${c.id}">${Utils.escapeHtml(c.name)}</option>`,
+          )
+          .join("");
+
+      // Populate form with current values
+      form.elements.name.value = profile?.name || "";
+      form.elements.email.value = profile?.email || "";
+      form.elements.batch_year.value = profile?.batch_year || "";
+      form.elements.graduation_year.value = profile?.graduation_year || "";
+
+      // Set college and load programs/sections
+      if (profile?.college_id) {
+        Utils.$("#collegeSelect").value = profile.college_id;
+        Utils.$("#collegeSelect").dispatchEvent(new Event("change"));
+
+        setTimeout(() => {
+          if (profile.program_id) {
+            Utils.$("#programSelect").value = profile.program_id;
+            Utils.$("#programSelect").dispatchEvent(new Event("change"));
+
+            setTimeout(() => {
+              if (profile.section_id) {
+                Utils.$("#sectionSelect").value = profile.section_id;
+              }
+            }, 300);
+          }
+        }, 300);
+      }
+
+      // Render dynamic fields in edit modal
+      const editFieldsContainer = Utils.$("#editDynamicFields");
+      editFieldsContainer.innerHTML = formFields
+        .map((field) => renderFormField(field))
+        .join("");
+    }
+
+    function renderFormField(field) {
+      const value = profile?.custom_fields?.[field.field_name] || "";
+      let inputHtml = "";
+
+      switch (field.field_type) {
+        case "text":
+        case "email":
+        case "phone":
+        case "url":
+          inputHtml = `<input type="${field.field_type}" name="${field.field_name}" class="form-input" value="${Utils.escapeHtml(value)}" ${field.is_required ? "required" : ""}>`;
+          break;
+        case "textarea":
+          inputHtml = `<textarea name="${field.field_name}" class="form-input" rows="3" ${field.is_required ? "required" : ""}>${Utils.escapeHtml(value)}</textarea>`;
+          break;
+        case "select":
+          const options = field.field_options || [];
+          inputHtml = `<select name="${field.field_name}" class="form-select" ${field.is_required ? "required" : ""}>
+                    <option value="">Select...</option>
+                    ${options.map((opt) => `<option value="${opt}" ${value === opt ? "selected" : ""}>${Utils.escapeHtml(opt)}</option>`).join("")}
+                </select>`;
+          break;
+        case "date":
+          inputHtml = `<input type="date" name="${field.field_name}" class="form-input" value="${value}" ${field.is_required ? "required" : ""}>`;
+          break;
+        case "checkbox":
+          inputHtml = `<input type="checkbox" name="${field.field_name}" class="form-check-input" ${value === "true" || value === true ? "checked" : ""}>`;
+          break;
+        default:
+          inputHtml = `<input type="text" name="${field.field_name}" class="form-input" value="${Utils.escapeHtml(value)}">`;
+      }
+
+      return `
+            <div class="form-group" style="width: ${field.column_width || "100%"};">
+                <label class="form-label ${field.is_required ? "required" : ""}">${Utils.escapeHtml(field.field_label)}</label>
+                ${inputHtml}
+            </div>
+        `;
+    }
+
+    async function loadPointsHistory() {
+      try {
+        const response = await API.gamification.getPointsHistory();
+        const container = Utils.$("#pointsHistory");
+
+        if (!response.data?.length) {
+          container.innerHTML =
+            '<div class="p-lg text-center text-secondary">No activity yet.</div>';
+          return;
+        }
+
+        container.innerHTML = `
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Activity</th>
+                            <th>Points</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${response.data
+                          .map(
+                            (item) => `
+                            <tr>
+                                <td>${Utils.formatDate(item.created_at)}</td>
+                                <td>${Utils.escapeHtml(item.description)}</td>
+                                <td class="${item.type === "earned" ? "text-success" : "text-danger"}">
+                                    ${item.type === "earned" ? "+" : "-"}${item.points}
+                                </td>
+                            </tr>
+                        `,
+                          )
+                          .join("")}
+                    </tbody>
+                </table>
+            `;
+      } catch (error) {
+        console.error("Load history error:", error);
+      }
+    }
+
+    function loadSidebar() {
+      const sidebar = Utils.$("#sidebar");
+      // Reuse sidebar from dashboard
+      sidebar.innerHTML = document.querySelector(".sidebar").innerHTML;
+
+      // Update active link
+      Utils.$$(".sidebar-link").forEach((link) => {
+        link.classList.remove("active");
+        if (link.getAttribute("href") === "#/profile") {
+          link.classList.add("active");
+        }
+      });
+    }
+  })();
+</script>

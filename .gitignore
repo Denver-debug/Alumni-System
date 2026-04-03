@@ -1,0 +1,50 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Environment files
+.env
+.env.local
+.env.production
+server/.env
+
+# Build outputs
+dist/
+build/
+.vite/
+
+# Uploads (user-generated content)
+server/uploads/*
+!server/uploads/.gitkeep
+
+# Logs
+logs/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# PM2
+.pm2/
+
+# Composer
+composer.phar
+
+# Database backups (keep schema.sql for initial setup)
+# *.sql
+database/backups/
+
+# Temporary setup scripts
+create_directories.*
+create_dirs.*
+run-*.bat
+setup-dirs.*
+setup_dirs.*
+setup-structure.*

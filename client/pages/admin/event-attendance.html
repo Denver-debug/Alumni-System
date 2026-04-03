@@ -1,0 +1,265 @@
+<!-- Admin Event Attendance -->
+<div class="dashboard-layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="flex items-center gap-md">
+        <div class="avatar avatar-md bg-primary"><span>A</span></div>
+        <div>
+          <div class="font-medium text-white">Admin</div>
+          <div class="text-xs opacity-75">Administrator</div>
+        </div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="#/admin/dashboard" class="sidebar-link">Dashboard</a>
+      <a href="#/admin/alumni" class="sidebar-link">Alumni</a>
+      <a href="#/admin/events" class="sidebar-link active">Events</a>
+      <a href="#/admin/announcements" class="sidebar-link">Announcements</a>
+      <a href="#/admin/organization" class="sidebar-link">Organization</a>
+      <a href="#/admin/form-builder" class="sidebar-link">Form Builder</a>
+      <a href="#/admin/gamification" class="sidebar-link">Gamification</a>
+      <a href="#/admin/settings" class="sidebar-link">Settings</a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="sidebar-link text-error" onclick="Auth.logout()">
+        Logout
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="content-header">
+      <a href="#/admin/events" class="btn btn-ghost btn-sm">← Back to Events</a>
+      <h1>Event Attendance</h1>
+    </div>
+
+    <div class="content-body">
+      <!-- Event Info -->
+      <div class="card p-lg mb-lg" id="eventInfo">
+        <div class="loading-spinner">Loading event...</div>
+      </div>
+
+      <!-- Quick Check-in -->
+      <div class="card p-lg mb-lg">
+        <h3 class="font-bold mb-md">Quick Check-in</h3>
+        <div class="flex gap-md">
+          <input
+            type="text"
+            id="checkInInput"
+            class="form-input flex-1"
+            placeholder="Enter Alumni ID or Email"
+          />
+          <button class="btn btn-primary" onclick="quickCheckIn()">
+            Check In
+          </button>
+        </div>
+      </div>
+
+      <!-- Attendance Stats -->
+      <div class="grid grid-cols-4 gap-lg mb-lg">
+        <div class="card p-lg text-center">
+          <div class="text-3xl font-bold text-primary" id="totalRegistered">
+            0
+          </div>
+          <div class="text-sm text-muted">Registered</div>
+        </div>
+        <div class="card p-lg text-center">
+          <div class="text-3xl font-bold text-success" id="totalAttended">
+            0
+          </div>
+          <div class="text-sm text-muted">Attended</div>
+        </div>
+        <div class="card p-lg text-center">
+          <div class="text-3xl font-bold text-warning" id="totalPending">0</div>
+          <div class="text-sm text-muted">Pending</div>
+        </div>
+        <div class="card p-lg text-center">
+          <div class="text-3xl font-bold text-error" id="totalAbsent">0</div>
+          <div class="text-sm text-muted">Absent</div>
+        </div>
+      </div>
+
+      <!-- Attendance List -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Attendees</h2>
+          <div class="flex gap-sm">
+            <button
+              class="btn btn-sm btn-secondary"
+              onclick="exportAttendance()"
+            >
+              Export CSV
+            </button>
+          </div>
+        </div>
+        <div id="attendanceList">
+          <div class="loading-spinner p-xl">Loading...</div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  (function () {
+    const eventId = Router.getParam("id");
+    if (!eventId) {
+      Router.navigate("/admin/events");
+      return;
+    }
+
+    loadEventInfo();
+    loadAttendance();
+
+    async function loadEventInfo() {
+      try {
+        const response = await API.get(`/events/${eventId}`);
+        const event = response.data;
+
+        Utils.$("#eventInfo").innerHTML = `
+        <div class="flex justify-between items-start">
+          <div>
+            <h2 class="text-xl font-bold mb-sm">${Utils.escapeHtml(event.title)}</h2>
+            <div class="text-muted">
+              ${new Date(event.event_date).toLocaleDateString()} ${event.event_time || ""} • ${Utils.escapeHtml(event.location || "Online")}
+            </div>
+          </div>
+          <div class="flex items-center gap-md">
+            <span class="badge badge-${event.status === "ongoing" ? "success" : event.status === "upcoming" ? "primary" : "secondary"}">${event.status}</span>
+            <span class="badge badge-warning">🏆 ${event.points_reward || 0} pts</span>
+          </div>
+        </div>
+      `;
+      } catch (error) {
+        Utils.$("#eventInfo").innerHTML =
+          '<div class="alert alert-error">Event not found</div>';
+      }
+    }
+
+    async function loadAttendance() {
+      try {
+        const response = await API.get(`/events/${eventId}/attendance`);
+        const attendees = response.data;
+        const container = Utils.$("#attendanceList");
+
+        // Calculate stats
+        const registered = attendees.length;
+        const attended = attendees.filter(
+          (a) => a.status === "attended",
+        ).length;
+        const pending = attendees.filter(
+          (a) => a.status === "registered",
+        ).length;
+        const absent = attendees.filter((a) => a.status === "absent").length;
+
+        Utils.$("#totalRegistered").textContent = registered;
+        Utils.$("#totalAttended").textContent = attended;
+        Utils.$("#totalPending").textContent = pending;
+        Utils.$("#totalAbsent").textContent = absent;
+
+        if (!attendees || attendees.length === 0) {
+          container.innerHTML =
+            '<div class="text-center text-muted p-xl">No registrations yet</div>';
+          return;
+        }
+
+        container.innerHTML = `
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Alumni ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Status</th>
+              <th>Check-in Time</th>
+              <th>Points</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${attendees
+              .map(
+                (a) => `
+              <tr>
+                <td><code>${a.alumni_id || "-"}</code></td>
+                <td>${Utils.escapeHtml(a.name || "-")}</td>
+                <td>${Utils.escapeHtml(a.email)}</td>
+                <td>
+                  <span class="badge badge-${a.status === "attended" ? "success" : a.status === "registered" ? "warning" : "error"}">${a.status}</span>
+                </td>
+                <td>${a.check_in_time ? new Date(a.check_in_time).toLocaleString() : "-"}</td>
+                <td>${a.points_awarded || 0}</td>
+                <td>
+                  <div class="flex gap-xs">
+                    ${a.status !== "attended" ? `<button class="btn btn-xs btn-success" onclick="markAttended(${a.user_id})">Check In</button>` : ""}
+                    ${a.status !== "absent" ? `<button class="btn btn-xs btn-error" onclick="markAbsent(${a.user_id})">Absent</button>` : ""}
+                  </div>
+                </td>
+              </tr>
+            `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+      `;
+      } catch (error) {
+        Utils.$("#attendanceList").innerHTML =
+          '<div class="alert alert-error m-lg">Failed to load attendance</div>';
+      }
+    }
+
+    window.quickCheckIn = async function () {
+      const input = Utils.$("#checkInInput");
+      const identifier = input.value.trim();
+      if (!identifier) return;
+
+      try {
+        await API.post(`/events/${eventId}/check-in`, { identifier });
+        Utils.success("Checked in successfully!");
+        input.value = "";
+        loadAttendance();
+      } catch (error) {
+        Utils.error(error.message || "Failed to check in");
+      }
+    };
+
+    window.markAttended = async function (userId) {
+      try {
+        await API.put(`/events/${eventId}/attendance/${userId}`, {
+          status: "attended",
+        });
+        Utils.success("Marked as attended");
+        loadAttendance();
+      } catch (error) {
+        Utils.error(error.message || "Failed to update");
+      }
+    };
+
+    window.markAbsent = async function (userId) {
+      try {
+        await API.put(`/events/${eventId}/attendance/${userId}`, {
+          status: "absent",
+        });
+        Utils.success("Marked as absent");
+        loadAttendance();
+      } catch (error) {
+        Utils.error(error.message || "Failed to update");
+      }
+    };
+
+    window.exportAttendance = async function () {
+      try {
+        const response = await API.get(`/events/${eventId}/attendance/export`);
+        const blob = new Blob([response.data], { type: "text/csv" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `event_${eventId}_attendance.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+      } catch (error) {
+        Utils.error("Failed to export");
+      }
+    };
+  })();
+</script>

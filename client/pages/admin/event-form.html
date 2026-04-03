@@ -1,0 +1,231 @@
+<!-- Admin Event Form -->
+<div class="dashboard-layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="flex items-center gap-md">
+        <div class="avatar avatar-md bg-primary"><span>A</span></div>
+        <div>
+          <div class="font-medium text-white">Admin</div>
+          <div class="text-xs opacity-75">Administrator</div>
+        </div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="#/admin/dashboard" class="sidebar-link">Dashboard</a>
+      <a href="#/admin/alumni" class="sidebar-link">Alumni</a>
+      <a href="#/admin/events" class="sidebar-link active">Events</a>
+      <a href="#/admin/announcements" class="sidebar-link">Announcements</a>
+      <a href="#/admin/organization" class="sidebar-link">Organization</a>
+      <a href="#/admin/form-builder" class="sidebar-link">Form Builder</a>
+      <a href="#/admin/gamification" class="sidebar-link">Gamification</a>
+      <a href="#/admin/settings" class="sidebar-link">Settings</a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="sidebar-link text-error" onclick="Auth.logout()">
+        Logout
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="content-header">
+      <a href="#/admin/events" class="btn btn-ghost btn-sm">← Back to Events</a>
+      <h1 id="pageTitle">Create Event</h1>
+    </div>
+
+    <div class="content-body">
+      <form id="eventForm" class="card p-xl">
+        <div class="grid grid-cols-2 gap-lg">
+          <div class="form-group col-span-2">
+            <label class="form-label required">Event Title</label>
+            <input type="text" name="title" class="form-input" required />
+          </div>
+
+          <div class="form-group col-span-2">
+            <label class="form-label">Description</label>
+            <textarea name="description" class="form-input" rows="4"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label required">Event Date</label>
+            <input type="date" name="event_date" class="form-input" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Event Time</label>
+            <input type="time" name="event_time" class="form-input" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Event Type</label>
+            <select name="event_type" class="form-input">
+              <option value="seminar">Seminar</option>
+              <option value="reunion">Reunion</option>
+              <option value="workshop">Workshop</option>
+              <option value="networking">Networking</option>
+              <option value="career_fair">Career Fair</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Venue Type</label>
+            <select
+              name="venue_type"
+              class="form-input"
+              onchange="toggleVenueFields(this.value)"
+            >
+              <option value="physical">Physical Venue</option>
+              <option value="online">Online</option>
+              <option value="hybrid">Hybrid</option>
+            </select>
+          </div>
+
+          <div class="form-group" id="locationField">
+            <label class="form-label">Location</label>
+            <input
+              type="text"
+              name="location"
+              class="form-input"
+              placeholder="Venue address"
+            />
+          </div>
+
+          <div class="form-group" id="onlineLinkField" style="display: none">
+            <label class="form-label">Online Link</label>
+            <input
+              type="url"
+              name="online_link"
+              class="form-input"
+              placeholder="https://zoom.us/..."
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Maximum Attendees</label>
+            <input
+              type="number"
+              name="max_attendees"
+              class="form-input"
+              min="0"
+              placeholder="0 = Unlimited"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Registration Deadline</label>
+            <input
+              type="date"
+              name="registration_deadline"
+              class="form-input"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Points Reward</label>
+            <input
+              type="number"
+              name="points_reward"
+              class="form-input"
+              min="0"
+              value="20"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Status</label>
+            <select name="status" class="form-input">
+              <option value="draft">Draft</option>
+              <option value="upcoming">Upcoming</option>
+              <option value="ongoing">Ongoing</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+
+          <div class="form-group col-span-2">
+            <label class="form-label">Cover Image URL</label>
+            <input
+              type="url"
+              name="cover_image"
+              class="form-input"
+              placeholder="https://..."
+            />
+          </div>
+        </div>
+
+        <div class="flex gap-md mt-lg">
+          <button type="submit" class="btn btn-primary">Save Event</button>
+          <a href="#/admin/events" class="btn btn-secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+
+<script>
+  (function () {
+    const form = Utils.$("#eventForm");
+    const eventId = Router.getParam("id");
+    const isEdit = !!eventId;
+
+    if (isEdit) {
+      Utils.$("#pageTitle").textContent = "Edit Event";
+      loadEvent(eventId);
+    }
+
+    async function loadEvent(id) {
+      try {
+        const response = await API.get(`/events/${id}`);
+        const event = response.data;
+
+        Object.keys(event).forEach((key) => {
+          const input = form.elements[key];
+          if (input) {
+            input.value = event[key] || "";
+          }
+        });
+
+        toggleVenueFields(event.venue_type);
+      } catch (error) {
+        Utils.error("Failed to load event");
+      }
+    }
+
+    window.toggleVenueFields = function (type) {
+      const locationField = Utils.$("#locationField");
+      const onlineField = Utils.$("#onlineLinkField");
+
+      if (type === "online") {
+        locationField.style.display = "none";
+        onlineField.style.display = "block";
+      } else if (type === "hybrid") {
+        locationField.style.display = "block";
+        onlineField.style.display = "block";
+      } else {
+        locationField.style.display = "block";
+        onlineField.style.display = "none";
+      }
+    };
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData);
+
+      try {
+        if (isEdit) {
+          await API.put(`/events/${eventId}`, data);
+          Utils.success("Event updated");
+        } else {
+          await API.post("/events", data);
+          Utils.success("Event created");
+        }
+        Router.navigate("/admin/events");
+      } catch (error) {
+        Utils.error(error.message || "Failed to save event");
+      }
+    });
+  })();
+</script>

@@ -1,0 +1,233 @@
+<!-- Login Page - MINSU-Style Design -->
+<div class="page-wrapper">
+  <div class="auth-card">
+    <!-- Header Section with Gradient -->
+    <div class="auth-header">
+      <div class="auth-logo">
+        <img
+          src="/assets/images/logo.png"
+          alt="Alumni Logo"
+          onerror="
+            this.style.display = 'none';
+            this.nextElementSibling.style.display = 'flex';
+          "
+        />
+        <span class="auth-logo-text" style="display: none">AMS</span>
+      </div>
+      <h1 class="auth-title">Alumni Network</h1>
+      <p class="auth-subtitle">Alumni Management System</p>
+    </div>
+
+    <!-- Form Section -->
+    <div class="auth-body">
+      <h2 class="auth-form-title">Welcome Back!</h2>
+
+      <!-- Error Alert -->
+      <div
+        id="loginError"
+        class="alert alert-error mb-md"
+        style="display: none"
+      >
+        <span id="loginErrorText"></span>
+      </div>
+
+      <!-- Login Form -->
+      <form id="loginForm">
+        <div class="form-group">
+          <label class="form-label" for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            class="auth-input"
+            placeholder="Enter your email"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <div class="input-password-wrapper">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              class="auth-input"
+              placeholder="Enter your password"
+              required
+            />
+            <button type="button" class="password-toggle" id="togglePassword">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            </button>
+          </div>
+          <div class="auth-links">
+            <a href="#/verify-email" class="auth-link auth-link-blue"
+              >Need to verify email?</a
+            >
+            <a href="#/forgot-password" class="auth-link">Forgot Password?</a>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-auth mt-md" id="loginBtn">
+          Login
+        </button>
+      </form>
+
+      <!-- Divider -->
+      <div class="auth-divider">
+        <span>or continue with</span>
+      </div>
+
+      <!-- Google Sign In -->
+      <button type="button" class="btn-google" id="googleLoginBtn">
+        <svg width="18" height="18" viewBox="0 0 24 24">
+          <path
+            fill="#4285F4"
+            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+          />
+          <path
+            fill="#34A853"
+            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+          />
+          <path
+            fill="#FBBC05"
+            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+          />
+          <path
+            fill="#EA4335"
+            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+          />
+        </svg>
+        Sign in with Google
+      </button>
+
+      <!-- Register Link -->
+      <p class="auth-toggle">
+        Don't have an account?
+        <span class="auth-toggle-link" onclick="Router.navigate('/register')"
+          >Sign Up</span
+        >
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const loginForm = Utils.$("#loginForm");
+    const googleBtn = Utils.$("#googleLoginBtn");
+    const togglePassword = Utils.$("#togglePassword");
+    const passwordInput = Utils.$("#password");
+    const errorDiv = Utils.$("#loginError");
+    const errorText = Utils.$("#loginErrorText");
+
+    // Password visibility toggle
+    togglePassword.addEventListener("click", () => {
+      const type = passwordInput.type === "password" ? "text" : "password";
+      passwordInput.type = type;
+      togglePassword.innerHTML =
+        type === "password"
+          ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>'
+          : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+    });
+
+    // Show error function
+    function showError(message) {
+      errorText.textContent = message;
+      errorDiv.style.display = "flex";
+    }
+
+    // Hide error function
+    function hideError() {
+      errorDiv.style.display = "none";
+    }
+
+    // Handle form submission
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      hideError();
+
+      const email = Utils.$("#email").value.trim();
+      const password = passwordInput.value;
+
+      if (!email || !password) {
+        showError("Please fill in all fields");
+        return;
+      }
+
+      Utils.setButtonLoading("#loginBtn", true);
+
+      try {
+        const response = await Auth.login(email, password);
+
+        Utils.success("Login successful!");
+
+        // Redirect based on role
+        const user = response.data.user;
+        if (["admin", "system_admin"].includes(user.role)) {
+          Router.navigate("/admin/dashboard");
+        } else {
+          Router.navigate("/dashboard");
+        }
+      } catch (error) {
+        // Check for verification required
+        if (error.errors?.requiresVerification) {
+          sessionStorage.setItem("verify_email", email);
+          Router.navigate("/verify-email");
+          return;
+        }
+
+        showError(error.message || "Invalid credentials. Please try again.");
+      } finally {
+        Utils.setButtonLoading("#loginBtn", false);
+      }
+    });
+
+    // Handle Google Sign In
+    googleBtn.addEventListener("click", async () => {
+      if (typeof firebase === "undefined") {
+        showError("Google Sign-In is not configured");
+        return;
+      }
+
+      Utils.setButtonLoading("#googleLoginBtn", true);
+      hideError();
+
+      try {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        const result = await firebase.auth().signInWithPopup(provider);
+        const idToken = await result.user.getIdToken();
+
+        const response = await Auth.googleLogin(idToken);
+
+        Utils.success(
+          response.data.isNewUser
+            ? "Account created successfully!"
+            : "Login successful!",
+        );
+
+        const user = response.data.user;
+        if (["admin", "system_admin"].includes(user.role)) {
+          Router.navigate("/admin/dashboard");
+        } else {
+          Router.navigate("/dashboard");
+        }
+      } catch (error) {
+        console.error("Google login error:", error);
+        showError(error.message || "Google sign-in failed");
+      } finally {
+        Utils.setButtonLoading("#googleLoginBtn", false);
+      }
+    });
+  })();
+</script>
