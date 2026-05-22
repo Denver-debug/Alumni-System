@@ -18,7 +18,7 @@ try {
             u.id, u.alumni_id, u.name, u.profile_image,
             ap.total_points, ap.badge_level,
             c.name as college_name,
-            (SELECT COUNT(*) FROM event_attendances WHERE user_id = u.id AND status = 'attended') as events_attended
+            (SELECT COUNT(*) FROM event_attendances WHERE user_id = u.id) as events_attended
         FROM users u
         INNER JOIN alumni_profiles ap ON u.id = ap.user_id
         LEFT JOIN colleges c ON ap.college_id = c.id
@@ -32,7 +32,7 @@ try {
                 COALESCE(SUM(pt.points), 0) as total_points,
                 ap.badge_level,
                 c.name as college_name,
-                (SELECT COUNT(*) FROM event_attendances ea WHERE ea.user_id = u.id AND ea.status = 'attended' AND MONTH(ea.check_in_time) = MONTH(CURDATE())) as events_attended
+                (SELECT COUNT(*) FROM event_attendances ea WHERE ea.user_id = u.id AND MONTH(ea.check_in_time) = MONTH(CURDATE()) AND YEAR(ea.check_in_time) = YEAR(CURDATE())) as events_attended
             FROM users u
             INNER JOIN alumni_profiles ap ON u.id = ap.user_id
             LEFT JOIN colleges c ON ap.college_id = c.id
@@ -47,7 +47,7 @@ try {
                 COALESCE(SUM(pt.points), 0) as total_points,
                 ap.badge_level,
                 c.name as college_name,
-                (SELECT COUNT(*) FROM event_attendances ea WHERE ea.user_id = u.id AND ea.status = 'attended' AND WEEK(ea.check_in_time) = WEEK(CURDATE())) as events_attended
+                (SELECT COUNT(*) FROM event_attendances ea WHERE ea.user_id = u.id AND WEEK(ea.check_in_time) = WEEK(CURDATE()) AND YEAR(ea.check_in_time) = YEAR(CURDATE())) as events_attended
             FROM users u
             INNER JOIN alumni_profiles ap ON u.id = ap.user_id
             LEFT JOIN colleges c ON ap.college_id = c.id
@@ -64,6 +64,12 @@ try {
     $stmt->execute();
     
     $leaderboard = $stmt->fetchAll();
+    
+    // Process profile images for all users
+    foreach ($leaderboard as &$user) {
+        $user = processUserData($user);
+    }
+    unset($user); // Break reference
     
     respondSuccess([
         'leaderboard' => $leaderboard,

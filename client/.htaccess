@@ -1,0 +1,22 @@
+# Block direct access to SPA partials under /pages
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Support cached bundles that resolve API requests relative to /client/.
+  RewriteRule ^api/v1/?(.*)$ /server/index.php [QSA,L]
+  RewriteRule ^server/api/?(.*)$ /server/index.php [QSA,L]
+
+  # Backward compatibility for stale SPA route maps that still request .html
+  # partials after the templates were converted to PHP.
+  RewriteCond %{REQUEST_URI} /pages/ [NC]
+  RewriteCond %{HTTP:X-Requested-With} ^XMLHttpRequest$ [NC,OR]
+  RewriteCond %{HTTP:Accept} !text/html [NC]
+  RewriteRule ^pages/(.+)\.html$ pages/$1.php [QSA,L]
+
+  # Block normal browser visits to partials, but allow SPA fetches. New bundles
+  # send X-Requested-With; stale bundles may only send Accept: */*.
+  RewriteCond %{REQUEST_URI} /pages/ [NC]
+  RewriteCond %{HTTP:X-Requested-With} !^XMLHttpRequest$ [NC]
+  RewriteCond %{HTTP:Accept} text/html [NC]
+  RewriteRule ^pages/ - [F,L]
+</IfModule>

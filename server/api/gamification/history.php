@@ -18,11 +18,17 @@ try {
     $offset = (int)($_GET['offset'] ?? 0);
     
     $stmt = $db->prepare("
-        SELECT 
+        SELECT
             pt.*,
             e.title as event_title
         FROM point_transactions pt
-        LEFT JOIN events e ON pt.event_id = e.id
+        LEFT JOIN events e ON (
+            pt.reference_id = e.id
+            AND (
+                pt.reference_type = 'event'
+                OR pt.source = 'event_attendance'
+            )
+        )
         WHERE pt.user_id = :user_id
         ORDER BY pt.created_at DESC
         LIMIT :limit OFFSET :offset

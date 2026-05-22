@@ -48,7 +48,7 @@ try {
         $data = json_decode(file_get_contents('php://input'), true);
         $newStatus = $data['status'] ?? null;
         
-        if (!in_array($newStatus, ['pending', 'approved', 'fulfilled', 'rejected'])) {
+        if (!in_array($newStatus, ['pending', 'approved', 'claimed', 'rejected', 'expired'], true)) {
             http_response_code(400);
             echo json_encode(['success' => false, 'message' => 'Invalid status']);
             exit;
@@ -69,19 +69,26 @@ try {
         
         // If rejecting, refund points
         if ($newStatus === 'rejected' && $redemption['status'] !== 'rejected') {
-            $stmt = $db->prepare("SELECT points_cost FROM rewards WHERE id = ?");
-            $stmt->execute([$redemption['reward_id']]);
-            $reward = $stmt->fetch();
-            
-            $stmt = $db->prepare("UPDATE alumni_profiles SET total_points = total_points + ? WHERE user_id = ?");
-            $stmt->execute([$reward['points_cost'], $redemption['user_id']]);
-            
-            $stmt = $db->prepare("INSERT INTO point_transactions (user_id, points, type, description, created_at) VALUES (?, ?, 'earned', 'Redemption refund', NOW())");
-            $stmt->execute([$redemption['user_id'], $reward['points_cost']]);
+            $refund = (int)($redemption['points_spent'] ?? 0);
+
+            $stmt = $db->prepare("UPDATE alumni_profiles SET total_points = total_points + ?, updated_at = NOW() WHERE user_id = ?");
+            $stmt->execute([$refund, $redemption['user_id']]);
+
+            $stmt = $db->prepare('SELECT COALESCE(total_points, 0) FROM alumni_profiles WHERE user_id = ?');
+            $stmt->execute([$redemption['user_id']]);
+            $balanceAfter = (int)$stmt->fetchColumn();
+
+            $stmt = $db->prepare("\n                INSERT INTO point_transactions (\n                    user_id, points, type, source, reference_id, reference_type, description, balance_after, created_at\n                ) VALUES (\n                    ?, ?, 'bonus', 'reward_redemption', ?, 'redemption', 'Redemption refund', ?, NOW()\n                )\n            ");
+            $stmt->execute([$redemption['user_id'], $refund, $redemptionId, $balanceAfter]);
         }
-        
-        $stmt = $db->prepare("UPDATE reward_redemptions SET status = ?, updated_at = NOW() WHERE id = ?");
-        $stmt->execute([$newStatus, $redemptionId]);
+
+        if ($newStatus === 'claimed') {
+            $stmt = $db->prepare("UPDATE reward_redemptions SET status = ?, claimed_at = NOW(), updated_at = NOW() WHERE id = ?");
+            $stmt->execute([$newStatus, $redemptionId]);
+        } else {
+            $stmt = $db->prepare("UPDATE reward_redemptions SET status = ?, updated_at = NOW() WHERE id = ?");
+            $stmt->execute([$newStatus, $redemptionId]);
+        }
         
         $db->commit();
         

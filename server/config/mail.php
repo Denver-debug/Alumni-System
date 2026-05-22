@@ -8,9 +8,16 @@
 require_once __DIR__ . '/database.php';
 
 // Check if PHPMailer is available via Composer
-$autoloadPath = __DIR__ . '/../vendor/autoload.php';
-if (file_exists($autoloadPath)) {
-    require_once $autoloadPath;
+$autoloadPaths = [
+    __DIR__ . '/../vendor/autoload.php',
+    __DIR__ . '/../../vendor/autoload.php',
+];
+
+foreach ($autoloadPaths as $autoloadPath) {
+    if (file_exists($autoloadPath)) {
+        require_once $autoloadPath;
+        break;
+    }
 }
 
 use PHPMailer\PHPMailer\PHPMailer;
@@ -49,12 +56,12 @@ class EmailService {
         
         // SMTP configuration
         $this->mailer->isSMTP();
-        $this->mailer->Host = $this->settings['smtp_host'] ?? getenv('SMTP_HOST') ?: 'smtp.gmail.com';
+        $this->mailer->Host = $this->settings['smtp_host'] ?? (getenv('MAIL_HOST') ?: (getenv('SMTP_HOST') ?: 'smtp.gmail.com'));
         $this->mailer->SMTPAuth = true;
-        $this->mailer->Username = $this->settings['smtp_username'] ?? getenv('SMTP_USERNAME') ?: '';
-        $this->mailer->Password = $this->settings['smtp_password'] ?? getenv('SMTP_PASSWORD') ?: '';
+        $this->mailer->Username = $this->settings['smtp_username'] ?? (getenv('MAIL_USERNAME') ?: (getenv('SMTP_USERNAME') ?: ''));
+        $this->mailer->Password = $this->settings['smtp_password'] ?? (getenv('MAIL_PASSWORD') ?: (getenv('SMTP_PASSWORD') ?: ''));
         $this->mailer->SMTPSecure = ($this->settings['smtp_encryption'] ?? 'tls') === 'ssl' ? PHPMailer::ENCRYPTION_SMTPS : PHPMailer::ENCRYPTION_STARTTLS;
-        $this->mailer->Port = (int) ($this->settings['smtp_port'] ?? getenv('SMTP_PORT') ?: 587);
+        $this->mailer->Port = (int) ($this->settings['smtp_port'] ?? (getenv('MAIL_PORT') ?: (getenv('SMTP_PORT') ?: 587)));
         
         // Default sender
         $fromEmail = $this->settings['from_email'] ?? getenv('MAIL_FROM_ADDRESS') ?: 'noreply@alumni.edu';

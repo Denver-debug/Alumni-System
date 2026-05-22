@@ -71,8 +71,8 @@ try {
         $message = 'Alumni deactivated';
     }
     
-    $stmt = $db->prepare("INSERT INTO admin_activities (admin_id, action, target_type, target_id, details, ip_address, created_at) VALUES (?, ?, 'alumni', ?, ?, ?, NOW())");
-    $stmt->execute([$admin['id'], $permanent ? 'delete' : 'deactivate', $userId, json_encode(['name' => $user['name'], 'email' => $user['email']]), $_SERVER['REMOTE_ADDR'] ?? null]);
+    $actionText = $permanent ? 'Permanently deleted alumni: ' : 'Deactivated alumni: ';
+    logAdminActivity((int)$admin['id'], $permanent ? 'delete' : 'deactivate', $actionText . $user['name'], 'alumni', (int)$userId);
     
     echo json_encode(['success' => true, 'message' => $message]);
     

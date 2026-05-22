@@ -40,8 +40,11 @@ try {
     $params = ['current_user_id' => $user['id']];
     
     if ($query) {
-        $sql .= " AND (u.name LIKE :query OR u.email LIKE :query OR u.alumni_id LIKE :query)";
-        $params['query'] = '%' . $query . '%';
+        $sql .= " AND (u.name LIKE :query_name OR u.email LIKE :query_email OR u.alumni_id LIKE :query_alumni_id)";
+        $searchTerm = '%' . $query . '%';
+        $params['query_name'] = $searchTerm;
+        $params['query_email'] = $searchTerm;
+        $params['query_alumni_id'] = $searchTerm;
     }
     
     if ($collegeId) {

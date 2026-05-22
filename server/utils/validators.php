@@ -173,11 +173,15 @@ class Validator {
                 $exceptId = $params[2] ?? null;
                 
                 if ($value && $table) {
+                    if (!validateSqlIdentifier($table) || !validateSqlIdentifier($column)) {
+                        return "$label validation configuration is invalid";
+                    }
+
                     $db = Database::getInstance();
-                    $sql = "SELECT COUNT(*) as count FROM $table WHERE $column = ?";
+                    $sql = "SELECT COUNT(*) as count FROM `{$table}` WHERE `{$column}` = ?";
                     $sqlParams = [$value];
                     
-                    if ($exceptId) {
+                    if ($exceptId !== null && $exceptId !== '') {
                         $sql .= " AND id != ?";
                         $sqlParams[] = $exceptId;
                     }
@@ -194,8 +198,12 @@ class Validator {
                 $column = $params[1] ?? 'id';
                 
                 if ($value && $table) {
+                    if (!validateSqlIdentifier($table) || !validateSqlIdentifier($column)) {
+                        return "$label validation configuration is invalid";
+                    }
+
                     $db = Database::getInstance();
-                    $result = $db->fetchOne("SELECT COUNT(*) as count FROM $table WHERE $column = ?", [$value]);
+                    $result = $db->fetchOne("SELECT COUNT(*) as count FROM `{$table}` WHERE `{$column}` = ?", [$value]);
                     if ($result['count'] === 0) {
                         return "$label does not exist";
                     }

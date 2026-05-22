@@ -6,6 +6,7 @@
 
 require_once __DIR__ . '/../../../config/database.php';
 require_once __DIR__ . '/../../../middleware/auth.php';
+require_once __DIR__ . '/../../../utils/helpers.php';
 
 header('Content-Type: application/json');
 
@@ -14,6 +15,17 @@ requireAdmin();
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     http_response_code(405);
     echo json_encode(['success' => false, 'message' => 'Method not allowed']);
+    exit;
+}
+
+// Get current admin user for campus filtering
+$currentUser = getCurrentUser();
+$userRole = $currentUser['role'] ?? 'alumni';
+$userCampusId = $currentUser['campus_id'] ?? null;
+
+if (in_array($userRole, ['campus_admin', 'staff'], true) && !$userCampusId) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'message' => 'Campus assignment required']);
     exit;
 }
 
@@ -28,6 +40,12 @@ try {
     // Build query with filters
     $whereConditions = ["u.role = 'alumni'"];
     $params = [];
+    
+    // Campus-based filtering for campus_admin and staff
+    if (in_array($userRole, ['campus_admin', 'staff']) && $userCampusId) {
+        $whereConditions[] = "COALESCE(ap.campus_id, u.campus_id) = ?";
+        $params[] = $userCampusId;
+    }
     
     // Search filter
     if (!empty($_GET['search'])) {
@@ -54,6 +72,12 @@ try {
     if (!empty($_GET['program_id'])) {
         $whereConditions[] = "ap.program_id = ?";
         $params[] = intval($_GET['program_id']);
+    }
+
+    // Campus filter
+    if (!empty($_GET['campus_id'])) {
+        $whereConditions[] = "COALESCE(ap.campus_id, u.campus_id) = ?";
+        $params[] = intval($_GET['campus_id']);
     }
     
     // Section filter
@@ -102,6 +126,8 @@ try {
         SELECT 
             u.id, u.alumni_id, u.name, u.email, u.profile_image, u.status,
             u.email_verified, u.last_login, u.created_at,
+            COALESCE(ap.campus_id, u.campus_id) as campus_id,
+            cam.name as campus_name, cam.code as campus_code,
             ap.batch_year, ap.graduation_year, ap.total_points, ap.badge_level,
             c.name as college_name, c.code as college_code,
             p.name as program_name, p.code as program_code,
@@ -109,6 +135,7 @@ try {
         FROM users u
         LEFT JOIN alumni_profiles ap ON u.id = ap.user_id
         LEFT JOIN colleges c ON ap.college_id = c.id
+        LEFT JOIN campuses cam ON cam.id = COALESCE(ap.campus_id, u.campus_id)
         LEFT JOIN programs p ON ap.program_id = p.id
         LEFT JOIN sections s ON ap.section_id = s.id
         WHERE $whereClause
@@ -122,6 +149,7 @@ try {
     $stmt = $db->prepare($sql);
     $stmt->execute($params);
     $alumni = $stmt->fetchAll();
+    $alumni = processUsersData($alumni);
     
     $totalPages = ceil($total / $limit);
     

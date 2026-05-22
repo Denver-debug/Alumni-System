@@ -44,15 +44,21 @@ Alumni_system/
 │   │   ├── admin/         # Admin panel pages
 │   │   ├── alumni/        # Alumni dashboard pages
 │   │   └── auth/          # Authentication pages
-│   └── index.html         # Main entry point
+│   └── index.php          # Main entry point
 ├── server/                 # Backend API
+│   ├── api/               # API endpoints
 │   ├── config/            # Database & environment config
-│   ├── controllers/       # API controllers
 │   ├── middleware/        # Auth & CORS middleware
 │   ├── models/            # Database models
+│   ├── utils/             # Utility functions
+│   ├── uploads/           # User uploaded files
 │   └── index.php          # API router
 ├── database/              # SQL schema and migrations
-└── vendor/                # Composer dependencies
+│   ├── migrations/        # Database migration files
+│   └── schema.sql         # Main database schema
+├── vendor/                # Composer dependencies (not in repo)
+├── composer.json          # PHP dependencies
+└── README.md              # This file
 ```
 
 ## Installation
@@ -88,24 +94,33 @@ Alumni_system/
 4. **Import database**
 
    ```bash
-   mysql -u root -p < database/schema.sql
+   # Import main schema
+   mysql -u root -p alumni_system < database/schema.sql
+   
+   # Run migrations in order
+   mysql -u root -p alumni_system < database/migrations/001_add_multi_campus_support_SAFE.sql
+   mysql -u root -p alumni_system < database/migrations/002_verification_system.sql
+   mysql -u root -p alumni_system < database/migrations/003_analytics_views.sql
+   mysql -u root -p alumni_system < database/migrations/004_security_tables.sql
+   mysql -u root -p alumni_system < database/migrations/005_messaging_enhancements.sql
+   mysql -u root -p alumni_system < database/migrations/006_add_verification_email_templates.sql
    ```
 
-5. **Start the servers**
+5. **Start the servers (Development)**
 
-   Terminal 1 - Backend:
-
+   **Terminal 1 - Backend:**
    ```bash
    cd server
    php -S localhost:8000 index.php
    ```
-
-   Terminal 2 - Frontend:
-
+   
+   **Terminal 2 - Frontend:**
    ```bash
    cd client
    php -S localhost:3000
    ```
+
+   **For Production Deployment:** See [DEPLOYMENT.md](DEPLOYMENT.md)
 
 6. **Access the application**
    - Frontend: http://localhost:3000
@@ -178,7 +193,9 @@ GOOGLE_CLIENT_SECRET=your-google-client-secret
 
 ## License
 
-This project is proprietary software developed for Mindoro State University.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+Developed for Mindoro State University (MINSU).
 
 ## Support
 

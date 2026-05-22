@@ -6,6 +6,10 @@ const Auth = {
   user: null,
   token: null,
   isLoading: false,
+  hasVerifiedSession: false,
+  verifiedToken: null,
+  verificationPromise: null,
+  verifyingToken: null,
   listeners: [],
 
   /**
@@ -14,6 +18,8 @@ const Auth = {
   init() {
     this.token = API.getToken();
     this.user = API.getUser();
+    this.hasVerifiedSession = false;
+    this.verifiedToken = null;
 
     // Verify token if exists
     if (this.token) {
@@ -61,22 +67,106 @@ const Auth = {
    * Verify current token
    */
   async verifyToken() {
-    if (!this.token) return false;
+    const storedToken = API.getToken();
+    this.token = storedToken || this.token;
+    this.user = API.getUser() || this.user;
+
+    if (!this.token) {
+      this.hasVerifiedSession = false;
+      this.verifiedToken = null;
+      return false;
+    }
+
+    if (
+      this.hasVerifiedSession &&
+      this.verifiedToken === this.token &&
+      this.user
+    ) {
+      return true;
+    }
+
+    if (this.verificationPromise && this.verifyingToken === this.token) {
+      return this.verificationPromise;
+    }
+
+    const tokenToVerify = this.token;
+    this.verifyingToken = tokenToVerify;
+    this.verificationPromise = (async () => {
+      try {
+        this.setLoading(true);
+        const response = await API.auth.getProfile({
+          skipAuthRedirect: true,
+          skipAuthRefresh: true,
+        });
+
+        const currentToken = API.getToken() || this.token;
+        if (currentToken !== tokenToVerify) {
+          return this.isAuthenticated();
+        }
+
+        const responseUser = response?.data?.user || {};
+        this.token = tokenToVerify;
+        this.user = { ...(this.user || {}), ...responseUser };
+        this.hasVerifiedSession = true;
+        this.verifiedToken = this.token;
+        API.setUser(this.user);
+        this.notify();
+        return true;
+      } catch (error) {
+        console.error("Token verification failed:", error);
+        const currentToken = API.getToken() || this.token;
+        if (currentToken !== tokenToVerify) {
+          return this.isAuthenticated();
+        }
+
+        this.token = null;
+        this.user = null;
+        this.hasVerifiedSession = false;
+        this.verifiedToken = null;
+        API.removeToken();
+        this.notify();
+        return false;
+      } finally {
+        this.setLoading(false);
+        this.verificationPromise = null;
+        this.verifyingToken = null;
+      }
+    })();
+
+    return this.verificationPromise;
+  },
+
+  /**
+   * Refresh user profile data without tearing down the session.
+   */
+  async hydrateUserProfile(options = {}) {
+    const requireImage = options.requireImage === true;
+
+    if (!this.token) {
+      return false;
+    }
+
+    if (requireImage && this.user && this.user.profile_image) {
+      return true;
+    }
 
     try {
-      this.setLoading(true);
-      const response = await API.auth.getProfile();
-      this.user = response.data.user;
-      API.setUser(this.user);
-      this.notify();
-      return true;
+      const response = await API.auth.getProfile({
+        skipAuthRedirect: true,
+        skipAuthRefresh: true,
+      });
+      const responseUser = response?.data?.user;
+
+      if (responseUser) {
+        this.user = { ...(this.user || {}), ...responseUser };
+        API.setUser(this.user);
+        return true;
+      }
     } catch (error) {
-      console.error("Token verification failed:", error);
-      this.logout();
-      return false;
-    } finally {
-      this.setLoading(false);
+      console.warn("Profile refresh failed:", error);
     }
+
+    return false;
   },
 
   /**
@@ -103,8 +193,51 @@ const Auth = {
       this.token = response.data.token;
       this.user = response.data.user;
 
+      // Restore cached profile image if available
+      try {
+        const cached = localStorage.getItem("alumni_profile_cache");
+        if (cached) {
+          const cachedData = JSON.parse(cached);
+          // Only use cached image if it's for the same user and not too old (30 days)
+          const cacheAge = new Date() - new Date(cachedData.cached_at);
+          const thirtyDays = 30 * 24 * 60 * 60 * 1000;
+
+          if (cachedData.email === this.user.email && cacheAge < thirtyDays) {
+            console.log(
+              "Restoring cached profile image:",
+              cachedData.profile_image,
+            );
+            // Use cached image only as fallback when server response is missing
+            if (!this.user.profile_image && cachedData.profile_image) {
+              this.user.profile_image = cachedData.profile_image;
+              console.log("Profile image restored from cache (fallback)");
+            }
+            // Fallback for name and alumni_id (already correct)
+            this.user.name = cachedData.name || this.user.name;
+            this.user.alumni_id = cachedData.alumni_id || this.user.alumni_id;
+          } else {
+            console.log("Cache expired or different user");
+          }
+        } else {
+          console.log("No cached profile found");
+        }
+      } catch (e) {
+        console.error("Failed to restore cached profile:", e);
+      }
+
+      // Save token and user (with restored image) to localStorage
       API.setToken(this.token);
       API.setUser(this.user);
+
+      // Ensure profile image stays available after re-login.
+      await this.hydrateUserProfile({ requireImage: true });
+      this.hasVerifiedSession = true;
+      this.verifiedToken = this.token;
+
+      // Initialize session manager
+      if (typeof SessionManager !== "undefined") {
+        SessionManager.init();
+      }
 
       this.notify();
       return response;
@@ -124,8 +257,53 @@ const Auth = {
       this.token = response.data.token;
       this.user = response.data.user;
 
+      // Restore cached profile image if available
+      try {
+        const cached = localStorage.getItem("alumni_profile_cache");
+        if (cached) {
+          const cachedData = JSON.parse(cached);
+          // Only use cached image if it's for the same user and not too old (30 days)
+          const cacheAge = new Date() - new Date(cachedData.cached_at);
+          const thirtyDays = 30 * 24 * 60 * 60 * 1000;
+
+          if (cachedData.email === this.user.email && cacheAge < thirtyDays) {
+            console.log(
+              "Restoring cached profile image (Google):",
+              cachedData.profile_image,
+            );
+            // Use cached image only as fallback when server response is missing
+            if (!this.user.profile_image && cachedData.profile_image) {
+              this.user.profile_image = cachedData.profile_image;
+              console.log(
+                "Profile image restored from cache (Google fallback)",
+              );
+            }
+            // Fallback for name and alumni_id (already correct)
+            this.user.name = cachedData.name || this.user.name;
+            this.user.alumni_id = cachedData.alumni_id || this.user.alumni_id;
+          } else {
+            console.log("Cache expired or different user (Google)");
+          }
+        } else {
+          console.log("No cached profile found (Google)");
+        }
+      } catch (e) {
+        console.error("Failed to restore cached profile (Google):", e);
+      }
+
+      // Save token and user (with restored image) to localStorage
       API.setToken(this.token);
       API.setUser(this.user);
+
+      // Ensure profile image stays available after re-login.
+      await this.hydrateUserProfile({ requireImage: true });
+      this.hasVerifiedSession = true;
+      this.verifiedToken = this.token;
+
+      // Initialize session manager
+      if (typeof SessionManager !== "undefined") {
+        SessionManager.init();
+      }
 
       this.notify();
       return response;
@@ -148,6 +326,13 @@ const Auth = {
 
         API.setToken(this.token);
         API.setUser(this.user);
+        this.hasVerifiedSession = true;
+        this.verifiedToken = this.token;
+
+        // Initialize session manager
+        if (typeof SessionManager !== "undefined") {
+          SessionManager.init();
+        }
 
         this.notify();
       }
@@ -210,26 +395,75 @@ const Auth = {
   /**
    * Logout
    */
-  logout() {
+  logout(redirectPath = "/") {
+    // Preserve profile data before clearing
+    const user = this.user || API.getUser();
+    if (user) {
+      const profileCache = {
+        profile_image: user.profile_image,
+        name: user.name,
+        alumni_id: user.alumni_id,
+        email: user.email,
+        cached_at: new Date().toISOString(),
+      };
+
+      console.log("Caching profile data on logout:", profileCache);
+
+      try {
+        localStorage.setItem(
+          "alumni_profile_cache",
+          JSON.stringify(profileCache),
+        );
+        console.log("Profile cache saved successfully");
+      } catch (e) {
+        console.error("Failed to cache profile data:", e);
+      }
+    } else {
+      console.log("No user data to cache");
+    }
+
+    // Destroy session manager
+    if (
+      typeof SessionManager !== "undefined" &&
+      SessionManager.state.isActive
+    ) {
+      SessionManager.destroy();
+    }
+
     this.token = null;
     this.user = null;
+    this.hasVerifiedSession = false;
+    this.verifiedToken = null;
+    this.verificationPromise = null;
+    this.verifyingToken = null;
     API.removeToken();
     this.notify();
-    Router.navigate("/login");
+    const targetPath = String(redirectPath || "").trim() || "/";
+    Router.navigate(targetPath);
   },
 
   /**
    * Check if user is authenticated
    */
   isAuthenticated() {
-    return !!this.token && !!this.user;
+    return (
+      !!this.token &&
+      !!this.user &&
+      this.hasVerifiedSession &&
+      this.verifiedToken === this.token
+    );
   },
 
   /**
    * Check if user is admin
    */
   isAdmin() {
-    return this.user && ["admin", "system_admin"].includes(this.user.role);
+    return (
+      this.isAuthenticated() &&
+      ["admin", "system_admin", "campus_admin", "staff"].includes(
+        this.user.role,
+      )
+    );
   },
 
   /**

@@ -52,6 +52,13 @@ try {
         $stmt->execute([$user['id'], $conversationId, $limit, $offset]);
         $messages = $stmt->fetchAll();
         
+        // Process profile images
+        foreach ($messages as &$message) {
+            if (isset($message['sender_image'])) {
+                $message['sender_image'] = resolveProfileImageUrl($message['sender_image']);
+            }
+        }
+        
         // Mark as read
         $stmt = $db->prepare("
             INSERT IGNORE INTO message_reads (message_id, user_id, read_at)

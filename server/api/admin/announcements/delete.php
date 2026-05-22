@@ -50,8 +50,7 @@ try {
     $db->commit();
     
     $admin = getCurrentUser();
-    $stmt = $db->prepare("INSERT INTO admin_activities (admin_id, action, target_type, target_id, details, ip_address, created_at) VALUES (?, 'delete', 'announcement', ?, ?, ?, NOW())");
-    $stmt->execute([$admin['id'], $announcementId, json_encode(['title' => $announcement['title']]), $_SERVER['REMOTE_ADDR'] ?? null]);
+    logAdminActivity((int)$admin['id'], 'delete', 'Deleted announcement: ' . $announcement['title'], 'announcement', (int)$announcementId);
     
     echo json_encode(['success' => true, 'message' => 'Announcement deleted']);
     

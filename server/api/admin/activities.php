@@ -24,26 +24,26 @@ try {
             u.name as admin_name,
             u.email as admin_email
         FROM admin_activities aa
-        LEFT JOIN users u ON aa.admin_id = u.id
+        LEFT JOIN users u ON aa.user_id = u.id
         WHERE 1=1
     ";
     $params = [];
     
     if ($action) {
-        $sql .= " AND aa.action = :action";
+        $sql .= " AND aa.activity_type = :action";
         $params['action'] = $action;
     }
     
     if ($adminId) {
-        $sql .= " AND aa.admin_id = :admin_id";
-        $params['admin_id'] = $adminId;
+        $sql .= " AND aa.user_id = :admin_id";
+        $params['admin_id'] = (int)$adminId;
     }
     
     $sql .= " ORDER BY aa.created_at DESC LIMIT :limit OFFSET :offset";
     
     $stmt = $db->prepare($sql);
     foreach ($params as $key => $value) {
-        $stmt->bindValue($key, $value);
+        $stmt->bindValue(':' . $key, $value);
     }
     $stmt->bindValue('limit', $limit, PDO::PARAM_INT);
     $stmt->bindValue('offset', $offset, PDO::PARAM_INT);

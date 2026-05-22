@@ -8,7 +8,34 @@ require_once __DIR__ . '/database.php';
 
 // JWT Configuration
 define('JWT_SECRET', getenv('JWT_SECRET') ?: 'your-super-secret-jwt-key-change-in-production');
-define('JWT_EXPIRY', getenv('JWT_EXPIRY') ?: 86400 * 30); // 30 days in seconds
+
+// Supports JWT_EXPIRY values like 30, 30d, 12h, 45m, or 3600.
+$jwtExpiryRaw = getenv('JWT_EXPIRY');
+$jwtExpirySeconds = 86400 * 30;
+
+if (is_string($jwtExpiryRaw) && trim($jwtExpiryRaw) !== '') {
+    $jwtExpiryValue = strtolower(trim($jwtExpiryRaw));
+
+    if (preg_match('/^(\d+)\s*([smhd]?)$/', $jwtExpiryValue, $matches)) {
+        $amount = (int)$matches[1];
+        $unit = $matches[2] ?? '';
+
+        if ($unit === 'm') {
+            $jwtExpirySeconds = $amount * 60;
+        } elseif ($unit === 'h') {
+            $jwtExpirySeconds = $amount * 3600;
+        } elseif ($unit === 'd') {
+            $jwtExpirySeconds = $amount * 86400;
+        } elseif ($unit === 's') {
+            $jwtExpirySeconds = $amount;
+        } else {
+            // Backward compatibility: plain small numbers are treated as days.
+            $jwtExpirySeconds = $amount <= 365 ? $amount * 86400 : $amount;
+        }
+    }
+}
+
+define('JWT_EXPIRY', max(60, $jwtExpirySeconds));
 define('JWT_ALGORITHM', 'HS256');
 
 /**
@@ -53,9 +80,9 @@ class JWT {
     }
     
     /**
-     * Verify and decode JWT token
+     * Decode JWT token and optionally ignore expiry validation.
      */
-    public static function verify(string $token): ?array {
+    public static function decode(string $token, bool $ignoreExpiry = false): ?array {
         $parts = explode('.', $token);
         
         if (count($parts) !== 3) {
@@ -80,19 +107,37 @@ class JWT {
         }
         
         // Check expiration
-        if (isset($payload['exp']) && $payload['exp'] < time()) {
+        if (!$ignoreExpiry && isset($payload['exp']) && $payload['exp'] < time()) {
             return null;
         }
         
         return $payload;
+    }
+
+    /**
+     * Verify and decode JWT token
+     */
+    public static function verify(string $token): ?array {
+        return self::decode($token, false);
     }
     
     /**
      * Get token from Authorization header
      */
     public static function getTokenFromHeader(): ?string {
-        $headers = getallheaders();
-        $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? '';
+        $authHeader = $_SERVER['HTTP_AUTHORIZATION']
+            ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION']
+            ?? '';
+
+        if (!$authHeader && function_exists('getallheaders')) {
+            $headers = getallheaders();
+            $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? '';
+        }
+
+        if (!$authHeader && function_exists('apache_request_headers')) {
+            $headers = apache_request_headers();
+            $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? '';
+        }
         
         if (preg_match('/Bearer\s+(.+)$/i', $authHeader, $matches)) {
             return $matches[1];
@@ -104,10 +149,19 @@ class JWT {
     /**
      * Refresh token (generate new with same payload)
      */
-    public static function refresh(string $token): ?string {
-        $payload = self::verify($token);
+    public static function refresh(string $token, bool $allowExpired = false): ?string {
+        $payload = self::decode($token, $allowExpired);
         
         if (!$payload) {
+            return null;
+        }
+
+        // Reject very old expired tokens when refreshing with expiry bypass.
+        if (
+            $allowExpired &&
+            isset($payload['exp']) &&
+            $payload['exp'] < (time() - (86400 * 14))
+        ) {
             return null;
         }
         
@@ -182,11 +236,48 @@ function generateCode(int $length = 6): string {
 }
 
 /**
- * Generate Alumni ID
+ * Resolve Alumni ID prefix from settings with constant fallback.
  */
-function generateAlumniId(string $collegeCode): string {
+function getAlumniIdPrefix(): string {
+    $fallback = defined('ALUMNI_ID_PREFIX') ? ALUMNI_ID_PREFIX : 'ALM';
+    $fallback = strtoupper(trim((string)$fallback));
+    if (!preg_match('/^[A-Z]{3}$/', $fallback)) {
+        $fallback = 'ALM';
+    }
+
+    try {
+        $db = Database::getInstance();
+        $setting = $db->fetchOne(
+            "SELECT content_value FROM site_content WHERE section = ? AND content_key = ? LIMIT 1",
+            ['settings', 'alumni_id_prefix']
+        );
+
+        $prefix = strtoupper(trim((string)($setting['content_value'] ?? '')));
+        if (preg_match('/^[A-Z]{3}$/', $prefix)) {
+            return $prefix;
+        }
+    } catch (Throwable $e) {
+        error_log('Alumni ID prefix lookup fallback: ' . $e->getMessage());
+    }
+
+    return $fallback;
+}
+
+/**
+ * Generate legacy Alumni ID format used by older auth flows.
+ *
+ * The current profile-aware generator lives in utils/helpers.php as
+ * generateAlumniId($db, $campusId, $collegeId, $graduationYear).
+ */
+function generateLegacyAlumniId(string $collegeCode): string {
     $db = Database::getInstance();
-    $year = date('Y');
+    $yearFormat = defined('ALUMNI_ID_YEAR_FORMAT') ? ALUMNI_ID_YEAR_FORMAT : 'Y';
+    $year = date($yearFormat);
+    $prefix = getAlumniIdPrefix();
+    $sequenceLength = defined('ALUMNI_ID_SEQUENCE_LENGTH') ? (int)ALUMNI_ID_SEQUENCE_LENGTH : 5;
+    if ($sequenceLength < 1) {
+        $sequenceLength = 5;
+    }
     
     // Get or create sequence
     $sequence = $db->fetchOne(
@@ -211,7 +302,13 @@ function generateAlumniId(string $collegeCode): string {
         ]);
     }
     
-    return sprintf('ALM-%s-%s-%05d', $year, strtoupper($collegeCode), $newSeq);
+    return sprintf(
+        '%s-%s-%s-%0' . $sequenceLength . 'd',
+        $prefix,
+        $year,
+        strtoupper($collegeCode),
+        $newSeq
+    );
 }
 
 /**
@@ -232,7 +329,8 @@ function getCurrentUser(): ?array {
     
     $db = Database::getInstance();
     $user = $db->fetchOne(
-        "SELECT id, alumni_id, email, name, role, profile_image, status, email_verified 
+        "SELECT id, alumni_id, email, name, role, profile_image, status, email_verified,
+                verification_status, verified_at, rejection_reason, campus_id
          FROM users WHERE id = ? AND status = 'active'",
         [$payload['user_id']]
     );

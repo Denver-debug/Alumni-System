@@ -105,18 +105,19 @@ const Utils = {
       info: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
     };
 
-    const colors = {
-      success: "color: #059669;",
-      error: "color: #dc2626;",
-      warning: "color: #d97706;",
-      info: "color: #2563eb;",
-    };
+    const toastType = Object.prototype.hasOwnProperty.call(icons, type)
+      ? type
+      : "info";
 
-    const toast = this.createElement("div", { className: "toast" }, []);
+    const toast = this.createElement(
+      "div",
+      { className: `toast toast-${toastType}` },
+      [],
+    );
     toast.innerHTML = `
-            <span style="${colors[type]}">${icons[type]}</span>
-            <span style="flex: 1;">${this.escapeHtml(message)}</span>
-            <button class="toast-close" style="background: none; border: none; cursor: pointer; padding: 4px;">
+            <span class="toast-icon" aria-hidden="true">${icons[toastType]}</span>
+            <span class="toast-message">${this.escapeHtml(message)}</span>
+            <button type="button" class="toast-close" aria-label="Dismiss notification">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
                 </svg>
@@ -256,6 +257,72 @@ const Utils = {
   },
 
   /**
+   * Open a template modal by selector (for page-level static modals).
+   */
+  openModal(selector) {
+    const modal = typeof selector === "string" ? this.$(selector) : selector;
+    if (!modal) return null;
+
+    modal.classList.add("active");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("overflow-hidden");
+
+    if (!modal.dataset.modalInitialized) {
+      const dismiss = (event) => {
+        const trigger = event.target.closest("[data-dismiss='modal']");
+        if (!trigger) return;
+        event.preventDefault();
+        this.closeModal(modal);
+      };
+
+      const clickOutside = (event) => {
+        if (
+          event.target.classList.contains("modal-backdrop") ||
+          event.target === modal
+        ) {
+          this.closeModal(modal);
+        }
+      };
+
+      modal.addEventListener("click", dismiss);
+      modal.addEventListener("click", clickOutside);
+      modal.dataset.modalInitialized = "true";
+    }
+
+    return modal;
+  },
+
+  /**
+   * Close a template modal by selector.
+   */
+  closeModal(selector) {
+    const modal = typeof selector === "string" ? this.$(selector) : selector;
+    if (!modal) return;
+
+    modal.classList.remove("active");
+    modal.setAttribute("aria-hidden", "true");
+
+    if (!document.querySelector(".modal[id].active")) {
+      document.body.classList.remove("overflow-hidden");
+    }
+  },
+
+  /**
+   * Get initials from a name string.
+   */
+  getInitials(name = "") {
+    const clean = String(name || "").trim();
+    if (!clean) return "?";
+
+    return clean
+      .split(/\s+/)
+      .map((part) => part[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  },
+
+  /**
    * Confirm dialog
    */
   confirm(message, options = {}) {
@@ -305,28 +372,44 @@ const Utils = {
   showLoading(container = "body", message = "Loading...") {
     const target =
       typeof container === "string" ? this.$(container) : container;
+    if (!target) {
+      return () => {};
+    }
+
+    const isBodyTarget = target === document.body;
 
     const existing = target.querySelector(".loading-overlay");
     if (existing) existing.remove();
 
-    const overlay = this.createElement("div", { className: "loading-overlay" });
+    const overlay = this.createElement("div", {
+      className: isBodyTarget
+        ? "loading-overlay loading-overlay-fixed"
+        : "loading-overlay",
+    });
     overlay.innerHTML = `
-            <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+            <div class="loading-panel" role="status" aria-live="polite">
                 <div class="spinner spinner-lg"></div>
-                <span>${this.escapeHtml(message)}</span>
+                <span class="loading-message">${this.escapeHtml(message)}</span>
             </div>
         `;
-    overlay.style.cssText = `
-            position: absolute; inset: 0; 
-            background: rgba(255,255,255,0.8); 
-            display: flex; align-items: center; justify-content: center;
-            z-index: 100;
-        `;
 
-    target.style.position = "relative";
+    const needsPositionContext =
+      !isBodyTarget && window.getComputedStyle(target).position === "static";
+    if (needsPositionContext) {
+      target.dataset.loadingOverlayPositionAdjusted = "true";
+      target.style.position = "relative";
+    }
+
     target.appendChild(overlay);
 
-    return () => overlay.remove();
+    return () => {
+      overlay.remove();
+
+      if (target.dataset.loadingOverlayPositionAdjusted === "true") {
+        target.style.position = "";
+        delete target.dataset.loadingOverlayPositionAdjusted;
+      }
+    };
   },
 
   /**
@@ -466,6 +549,23 @@ const Utils = {
     }
 
     return d.toLocaleDateString();
+  },
+
+  /**
+   * Format datetime
+   */
+  formatDateTime(date, includeSeconds = false) {
+    const d = new Date(date);
+    if (Number.isNaN(d.getTime())) return "-";
+
+    return d.toLocaleString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      ...(includeSeconds ? { second: "2-digit" } : {}),
+    });
   },
 
   /**

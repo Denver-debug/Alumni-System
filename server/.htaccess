@@ -1,0 +1,18 @@
+# Alumni Management System - Server API Configuration
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /server/
+
+    # Route /server/api/* requests to the API router.
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^api/?(.*)$ index.php [QSA,L]
+
+    # Block sensitive server files from direct web access.
+    RewriteRule ^\.env$ - [F,L]
+    RewriteRule ^config/ - [F,L]
+    RewriteRule ^vendor/ - [F,L]
+</IfModule>
+
+Options -Indexes
+DirectoryIndex index.php

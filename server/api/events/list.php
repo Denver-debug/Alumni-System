@@ -16,6 +16,7 @@ try {
 
 try {
     $db = Database::getInstance()->getConnection();
+    syncEventStatuses($db);
     
     // Query parameters
     $search = $_GET['search'] ?? '';
@@ -62,7 +63,7 @@ try {
     $sql = "
         SELECT 
             e.*,
-            (SELECT COUNT(*) FROM event_attendances WHERE event_id = e.id) as registered_count
+            (SELECT COUNT(*) FROM event_rsvps WHERE event_id = e.id AND status IN ('going', 'maybe')) as registered_count
         FROM events e
         WHERE $whereClause
         ORDER BY e.event_date ASC, e.event_time ASC
@@ -79,12 +80,25 @@ try {
     
     $events = $stmt->fetchAll();
     
-    // Get user's registrations if authenticated
+    // Get user's registrations and attendance if authenticated
     $myRegistrations = [];
+    $myAttendance = [];
     if ($user) {
-        $stmt = $db->prepare("SELECT event_id FROM event_attendances WHERE user_id = :user_id");
+        $stmt = $db->prepare("SELECT event_id FROM event_rsvps WHERE user_id = :user_id AND status IN ('going', 'maybe')");
         $stmt->execute(['user_id' => $user['id']]);
         $myRegistrations = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        
+        // Get attendance records
+        $stmt = $db->prepare("SELECT event_id, check_in_time, points_awarded FROM event_attendances WHERE user_id = :user_id");
+        $stmt->execute(['user_id' => $user['id']]);
+        $attendanceRecords = $stmt->fetchAll();
+        foreach ($attendanceRecords as $record) {
+            $myAttendance[$record['event_id']] = [
+                'attended' => true,
+                'check_in_time' => $record['check_in_time'],
+                'points_awarded' => $record['points_awarded']
+            ];
+        }
     }
     
     respondSuccess([
@@ -92,7 +106,8 @@ try {
         'total' => $total,
         'page' => $page,
         'per_page' => $limit,
-        'my_registrations' => $myRegistrations
+        'my_registrations' => $myRegistrations,
+        'my_attendance' => $myAttendance
     ]);
     
 } catch (Exception $e) {

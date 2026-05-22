@@ -1,0 +1,1505 @@
+/* ══════════════════════════════════════════════════════════
+   ADMIN PREMIUM STYLES - Next Gen UI Framework
+   ══════════════════════════════════════════════════════════ */
+
+/* --- Typography & Global Aesthetics --- */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap');
+
+:root {
+  --font-premium-display: 'Sora', 'Manrope', sans-serif;
+  --font-premium-body: 'Manrope', sans-serif;
+  
+  --premium-bg-light: var(--color-background);
+  --premium-glass-bg: rgba(255, 255, 255, 0.9);
+  --premium-glass-border: rgba(15, 23, 42, 0.1);
+  --premium-glass-shadow: 0 18px 36px -28px rgba(15, 23, 42, 0.35);
+  
+  --premium-accent-primary: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-500) 100%);
+  --premium-accent-secondary: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
+  --premium-accent-warning: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
+  --premium-accent-danger: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  --premium-accent-info: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
+  
+  --premium-text-main: var(--color-text);
+  --premium-text-muted: var(--color-text-secondary);
+  
+  --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+body[data-app-section="admin"] {
+  font-family: var(--font-premium-body);
+  background-color: var(--premium-bg-light);
+  background-image: 
+    radial-gradient(at 10% -10%, rgba(15, 143, 124, 0.12) 0px, transparent 45%),
+    radial-gradient(at 90% 0%, rgba(14, 116, 144, 0.08) 0px, transparent 50%),
+    radial-gradient(at 90% 85%, rgba(245, 158, 11, 0.06) 0px, transparent 55%);
+  background-attachment: fixed;
+}
+
+/* Typography Overrides */
+h1, h2, h3, h4, h5, h6, 
+.page-title, .card-title, .stat-value, .analytics-card-value {
+  font-family: var(--font-premium-display);
+  letter-spacing: -0.02em;
+}
+
+/* --- Layout Elements --- */
+
+/* Topbar Glassmorphism */
+.admin-topbar {
+  background: var(--premium-glass-bg) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--premium-glass-border) !important;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+
+/* Sidebar Improvements */
+.sidebar {
+  background: var(--color-surface) !important;
+  border-right: 1px solid var(--color-border) !important;
+  box-shadow: 2px 0 20px rgba(0,0,0,0.02);
+}
+
+.sidebar-header {
+  border-bottom: 1px solid var(--color-border) !important;
+}
+
+.sidebar-brand-name {
+  color: var(--premium-text-main) !important;
+  font-family: var(--font-premium-display);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.sidebar-brand-subtitle {
+  color: var(--premium-text-muted) !important;
+}
+
+.sidebar-link {
+  color: var(--premium-text-muted) !important;
+  border-radius: 8px !important;
+  margin: 4px 12px !important;
+  transition: var(--transition-smooth);
+}
+
+.sidebar-link:hover {
+  background: rgba(15, 143, 124, 0.08) !important;
+  color: var(--primary-700) !important;
+  transform: translateX(2px);
+}
+
+.sidebar-link.active {
+  background: var(--premium-accent-primary) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+}
+
+.sidebar-section-title {
+  color: #94a3b8 !important;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+/* --- Cards & Containers --- */
+.card-improved, .stat-card-improved, .analytics-card {
+  background: var(--premium-glass-bg) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--premium-glass-border) !important;
+  border-radius: 16px !important;
+  box-shadow: var(--premium-glass-shadow) !important;
+  transition: var(--transition-smooth);
+  overflow: hidden !important;
+  width: 100%;
+}
+
+.card-body, .card-improved .card-body {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.card-improved:hover {
+  box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.08) !important;
+  transform: translateY(-2px);
+}
+
+.card-header {
+  background: transparent !important;
+  border-bottom: 1px solid rgba(0,0,0,0.04) !important;
+  padding: 1.5rem 1.5rem 1rem 1.5rem !important;
+}
+
+/* --- Stat Cards Enhanced --- */
+.stat-card-improved {
+  position: relative;
+  overflow: hidden !important;
+  padding: 1.75rem !important;
+  z-index: 1;
+}
+
+.stat-card-improved::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
+  z-index: -1;
+  border-radius: inherit;
+}
+
+.stat-icon {
+  position: relative;
+  box-shadow: 0 8px 16px -4px rgba(0,0,0,0.15);
+  transition: var(--transition-smooth);
+}
+
+.stat-card-improved:hover .stat-icon {
+  transform: scale(1.05) rotate(-3deg);
+}
+
+.stat-icon.bg-primary { background: var(--premium-accent-primary) !important; }
+.stat-icon.bg-success { background: var(--premium-accent-primary) !important; } /* Unified theme */
+.stat-icon.bg-warning { background: var(--premium-accent-warning) !important; }
+.stat-icon.bg-info    { background: var(--premium-accent-info) !important; }
+
+/* Glowing effect behind icon */
+.stat-card-improved .stat-icon::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+  background: inherit;
+  filter: blur(12px);
+  opacity: 0.4;
+  z-index: -1;
+  transition: var(--transition-smooth);
+}
+
+.stat-card-improved:hover .stat-icon::after {
+  opacity: 0.7;
+  filter: blur(16px);
+}
+
+.stat-value {
+  font-size: 2.25rem !important;
+  background: linear-gradient(135deg, #111827 0%, #374151 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.25rem !important;
+}
+
+.stat-label {
+  font-size: 0.85rem !important;
+  color: var(--premium-text-muted) !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.02em !important;
+  text-transform: none !important;
+}
+
+/* --- Analytics Overview Cards --- */
+#analyticsOverview .analytics-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 1.5rem;
+  text-align: left;
+}
+
+.analytics-card-label {
+  font-family: var(--font-premium-body);
+  font-size: 0.8rem !important;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6b7280;
+  margin-bottom: 0.5rem;
+}
+
+.analytics-card-value {
+  font-size: 2.5rem !important;
+  font-weight: 700;
+  background: var(--premium-accent-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.1;
+}
+
+.analytics-card-foot {
+  font-size: 0.75rem !important;
+  color: #9ca3af;
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* --- Tables Enhanced --- */
+.table-improved {
+  width: 100%;
+}
+
+.table-improved thead th {
+  background: transparent !important;
+  border-bottom: 2px solid rgba(0,0,0,0.05) !important;
+  font-family: var(--font-premium-body);
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  color: #9ca3af !important;
+}
+
+.table-improved tbody tr {
+  border-bottom: 1px solid rgba(0,0,0,0.03) !important;
+  transition: var(--transition-smooth);
+}
+
+.table-improved tbody tr:hover {
+  background: rgba(255,255,255,0.6) !important;
+  transform: none;
+}
+
+.table-improved tbody td {
+  padding: 1.25rem 1rem !important;
+  color: #374151 !important;
+}
+
+/* --- Chart Shells --- */
+.chart-shell {
+  background: rgba(255,255,255,0.4);
+  border-radius: 12px;
+  padding: 1.25rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-canvas-container {
+  position: relative;
+  flex-grow: 1;
+  min-height: 240px;
+  width: 100%;
+}
+
+.chart-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.25rem;
+}
+
+.chart-pill {
+  background: rgba(16, 185, 129, 0.1);
+  color: #059669;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.chart-subtitle {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #9ca3af;
+  margin-bottom: 0.25rem;
+}
+
+.chart-title {
+  font-family: var(--font-premium-display);
+  font-size: 1.15rem !important;
+  font-weight: 700;
+  color: #111827;
+}
+
+/* --- Animations --- */
+@keyframes fadeInSlideUp {
+  0% { opacity: 0; transform: translateY(15px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.dashboard-charts-grid > div, 
+#analyticsOverview > div,
+.grid-cols-4.mb-lg > div,
+.grid-cols-2.gap-lg > div,
+.card-improved.mt-lg {
+  animation: fadeInSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.dashboard-charts-grid > div:nth-child(1) { animation-delay: 0.05s; }
+.dashboard-charts-grid > div:nth-child(2) { animation-delay: 0.1s; }
+.dashboard-charts-grid > div:nth-child(3) { animation-delay: 0.15s; }
+.dashboard-charts-grid > div:nth-child(4) { animation-delay: 0.2s; }
+
+#analyticsOverview > div:nth-child(1) { animation-delay: 0.25s; }
+#analyticsOverview > div:nth-child(2) { animation-delay: 0.3s; }
+#analyticsOverview > div:nth-child(3) { animation-delay: 0.35s; }
+#analyticsOverview > div:nth-child(4) { animation-delay: 0.4s; }
+
+/* Scrollbar Enhancement */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.1);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0,0,0,0.2);
+}
+
+/* --- Premium Forms --- */
+.form-input, .form-select, .form-textarea, .form-improved .form-input, .form-improved .form-select, .form-improved .form-textarea {
+  background: #ffffff !important;
+  border: 1px solid rgba(15, 23, 42, 0.12) !important;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-radius: 10px !important;
+  transition: var(--transition-smooth);
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.08);
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus, .form-improved .form-input:focus, .form-improved .form-select:focus, .form-improved .form-textarea:focus {
+  background: #ffffff !important;
+  border-color: #10b981 !important;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15) !important;
+  transform: none;
+}
+
+/* --- Premium Buttons --- */
+.btn-primary {
+  background: var(--premium-accent-primary) !important;
+  border: none !important;
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.22) !important;
+  transition: var(--transition-smooth);
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(16, 185, 129, 0.32) !important;
+  filter: brightness(1.05);
+}
+
+.btn-secondary {
+  background: #ffffff !important;
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+  backdrop-filter: none;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06) !important;
+  color: #374151 !important;
+  transition: var(--transition-smooth);
+}
+
+.btn-secondary:hover {
+  background: #ffffff !important;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.1) !important;
+  transform: translateY(-1px);
+}
+
+/* --- Premium Badges --- */
+.badge, .badge-improved {
+  padding: 0.35rem 0.85rem !important;
+  border-radius: 20px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.02em !important;
+  border: none !important;
+}
+
+.badge-success, .badge-improved.badge-success {
+  background: rgba(16, 185, 129, 0.15) !important;
+  color: #059669 !important;
+}
+
+.badge-warning, .badge-improved.badge-warning {
+  background: rgba(245, 158, 11, 0.15) !important;
+  color: #b45309 !important;
+}
+
+.badge-danger, .badge-improved.badge-danger {
+  background: rgba(239, 68, 68, 0.15) !important;
+  color: #b91c1c !important;
+}
+
+.badge-info, .badge-improved.badge-info {
+  background: rgba(59, 130, 246, 0.15) !important;
+  color: #1d4ed8 !important;
+}
+
+/* --- Premium Modals --- */
+.modal-backdrop, .modal-improved .modal-backdrop {
+  background: rgba(17, 24, 39, 0.4) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+
+.modal-content, .modal-improved .modal-content {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+  border-radius: 20px !important;
+  overflow: hidden;
+}
+
+.modal-header, .modal-improved .modal-header {
+  background: rgba(255, 255, 255, 0.5) !important;
+  border-bottom: 1px solid rgba(0,0,0,0.05) !important;
+}
+
+.modal-footer, .modal-improved .modal-footer {
+  background: rgba(249, 250, 251, 0.5) !important;
+  border-top: 1px solid rgba(0,0,0,0.05) !important;
+}
+
+/* --- Premium Tabs --- */
+.tabs-improved {
+  border-bottom: 2px solid rgba(0,0,0,0.05) !important;
+}
+
+.tabs-improved .tab-btn {
+  color: #6b7280 !important;
+  font-weight: 600 !important;
+  transition: var(--transition-smooth);
+  position: relative;
+}
+
+.tabs-improved .tab-btn:hover {
+  color: #111827 !important;
+  background: transparent !important;
+}
+
+.tabs-improved .tab-btn.active {
+  color: #059669 !important;
+  border-bottom-color: transparent !important;
+}
+
+.tabs-improved .tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--premium-accent-primary);
+  border-radius: 3px 3px 0 0;
+  box-shadow: 0 -2px 8px rgba(16, 185, 129, 0.4);
+}
+
+/* Animations for Page Transitions */
+.main-content {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* List Item Hover */
+.list-group-item {
+  transition: var(--transition-smooth);
+}
+.list-group-item:hover {
+  background: rgba(255,255,255,0.8);
+  transform: translateX(2px);
+}
+
+/* --- Layout Overflow Fixes --- */
+.stats-grid, .grid-cols-4, .grid-cols-3, .grid-cols-2 {
+  display: grid;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.stats-grid {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.card-improved, .stat-card-improved, .card, .stat-card {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tabs, .tabs-improved {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.admin-content, .content-wrapper, .main-content {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+.dashboard-layout {
+  display: flex;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+.main-content {
+  flex: 1;
+  min-width: 0; /* Critical for flex children to not overflow */
+}
+
+/* Route-level stability fixes loaded after page styles. */
+body[data-app-section="admin"] .dashboard-layout .content-header,
+body[data-app-section="admin"] .dashboard-layout .admin-topbar {
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  padding-left: clamp(1rem, 2vw, 1.5rem) !important;
+  padding-right: clamp(1rem, 2vw, 1.5rem) !important;
+  gap: clamp(0.55rem, 1.2vw, 0.85rem) !important;
+  justify-content: flex-start !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .content-header > .flex-1,
+body[data-app-section="admin"] .dashboard-layout .admin-topbar > .flex-1 {
+  display: none !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .content-header h1,
+body[data-app-section="admin"] .dashboard-layout .admin-topbar .page-title,
+body[data-app-section="admin"] .dashboard-layout .admin-topbar h1 {
+  flex: 0 1 auto !important;
+  max-width: min(42vw, 42rem);
+  margin-right: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+  letter-spacing: 0 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .topbar-actions {
+  margin-left: auto !important;
+  flex: 0 0 auto !important;
+  flex-wrap: nowrap !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .admin-shell-user {
+  margin-left: auto !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .topbar-actions + .admin-shell-user {
+  margin-left: 0 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout #alumniTable,
+body[data-app-section="admin"] .dashboard-layout .table-container,
+body[data-app-section="admin"] .dashboard-layout .table-responsive,
+body[data-app-section="admin"] .dashboard-layout .card-body.p-0 {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto !important;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table,
+body[data-app-section="admin"] .dashboard-layout .data-table,
+body[data-app-section="admin"] .dashboard-layout .table-improved {
+  width: 100% !important;
+  min-width: 1080px !important;
+  table-layout: auto !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table th,
+body[data-app-section="admin"] .dashboard-layout .table td,
+body[data-app-section="admin"] .dashboard-layout .data-table th,
+body[data-app-section="admin"] .dashboard-layout .data-table td,
+body[data-app-section="admin"] .dashboard-layout .table-improved th,
+body[data-app-section="admin"] .dashboard-layout .table-improved td {
+  max-width: none !important;
+  white-space: nowrap !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+  line-height: 1.35;
+}
+
+body[data-app-section="admin"] .dashboard-layout .alumni-id-code,
+body[data-app-section="admin"] .dashboard-layout .points-badge,
+body[data-app-section="admin"] .dashboard-layout .badge {
+  display: inline-flex;
+  align-items: center;
+  max-width: none !important;
+  white-space: nowrap !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+  letter-spacing: 0 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table td .flex,
+body[data-app-section="admin"] .dashboard-layout .table-improved td .flex {
+  flex-wrap: nowrap !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid {
+  grid-template-columns: repeat(2, minmax(320px, 1fr)) !important;
+  align-items: stretch;
+}
+
+body[data-app-section="admin"] .dashboard-layout .chart-empty-state,
+body[data-app-section="admin"] .dashboard-layout .chart-error-state {
+  min-height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 1rem;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  background: #f8fafc;
+  color: #64748b;
+  text-align: center;
+}
+
+body[data-app-section="admin"] .dashboard-layout .chart-error-state {
+  border-color: #fecaca;
+  background: #fff7f7;
+  color: #991b1b;
+}
+
+body[data-app-section="admin"] .dashboard-layout .chart-state-title {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+body[data-app-section="admin"] .dashboard-layout .chart-error-state .chart-state-title {
+  color: #991b1b;
+}
+
+@media (max-width: 1120px) {
+  body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 760px) {
+  body[data-app-section="admin"] .dashboard-layout .content-header h1,
+  body[data-app-section="admin"] .dashboard-layout .admin-topbar .page-title,
+  body[data-app-section="admin"] .dashboard-layout .admin-topbar h1 {
+    max-width: calc(100vw - 11rem);
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .admin-shell-user-meta {
+    display: none !important;
+  }
+}
+
+/* Prevent card and panel headings from being clipped by hidden card shells. */
+body[data-app-section="admin"] .dashboard-layout .card-header,
+body[data-app-section="admin"] .dashboard-layout .card-improved .card-header,
+body[data-app-section="admin"] .dashboard-layout .admin-panel-header,
+body[data-app-section="admin"] .dashboard-layout .theme-ui-panel-header {
+  padding-left: clamp(1.35rem, 1.8vw, 1.65rem) !important;
+  padding-right: clamp(1.25rem, 1.8vw, 1.5rem) !important;
+  padding-top: clamp(1rem, 1.5vw, 1.2rem) !important;
+  padding-bottom: clamp(0.85rem, 1.3vw, 1rem) !important;
+  min-height: 3.75rem !important;
+  align-items: center !important;
+  overflow: visible !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .card-title,
+body[data-app-section="admin"] .dashboard-layout .card-header h2,
+body[data-app-section="admin"] .dashboard-layout .card-header h3,
+body[data-app-section="admin"] .dashboard-layout .card-header h4,
+body[data-app-section="admin"] .dashboard-layout .admin-panel-title,
+body[data-app-section="admin"] .dashboard-layout .theme-ui-panel-title {
+  display: block !important;
+  padding-left: 0.18rem !important;
+  margin-left: 0 !important;
+  text-indent: 0 !important;
+  transform: none !important;
+  letter-spacing: 0 !important;
+  line-height: 1.45 !important;
+  padding-top: 0.08rem !important;
+  padding-bottom: 0.08rem !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  white-space: normal !important;
+  overflow-wrap: break-word !important;
+  word-break: normal !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid > .card,
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid > .card-improved {
+  overflow: hidden !important;
+  border-radius: 14px !important;
+  background: #ffffff !important;
+  border: 1px solid #dbe5df !important;
+  box-shadow:
+    0 16px 34px -28px rgb(15 23 42 / 0.34),
+    0 4px 14px -12px rgb(5 150 105 / 0.22) !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid > .card > .card-header,
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid > .card-improved > .card-header {
+  display: none !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid > .card > .card-body,
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid > .card-improved > .card-body {
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid .chart-shell {
+  padding: clamp(1rem, 1.7vw, 1.35rem) !important;
+  background:
+    linear-gradient(180deg, #ffffff 0%, #fbfdfc 100%) !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid .chart-head {
+  min-height: 3.1rem;
+  align-items: center !important;
+  border-bottom: 1px solid #e5eee9 !important;
+  margin-bottom: clamp(0.95rem, 1.5vw, 1.25rem) !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid .chart-title {
+  font-size: clamp(1.05rem, 1.25vw, 1.18rem) !important;
+  line-height: 1.35 !important;
+  letter-spacing: 0 !important;
+  color: #111827 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid .chart-subtitle {
+  font-size: 0.72rem !important;
+  letter-spacing: 0.08em !important;
+  color: #536273 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid .chart-pill {
+  background: #e8f8f1 !important;
+  color: #047857 !important;
+  border: 1px solid #c8efdc !important;
+  box-shadow: 0 8px 18px -16px rgb(5 150 105 / 0.5) !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid .chart-row {
+  min-height: 2.45rem;
+}
+
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid .chart-row-track {
+  height: 0.55rem !important;
+  background: #eef2f1 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid .chart-row-fill {
+  background: linear-gradient(90deg, #047857 0%, #10b981 100%) !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .dashboard-charts-grid > .stat-card-improved,
+body[data-app-section="admin"] .dashboard-layout #analyticsOverview > .analytics-card {
+  min-height: 116px !important;
+  max-height: none !important;
+  border-radius: 14px !important;
+  border: 1px solid #dbe5df !important;
+  background:
+    linear-gradient(180deg, #ffffff 0%, #fbfdfc 100%) !important;
+  box-shadow:
+    0 16px 34px -30px rgb(15 23 42 / 0.42),
+    0 4px 14px -14px rgb(5 150 105 / 0.26) !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .dashboard-charts-grid > .stat-card-improved {
+  padding: clamp(1rem, 1.7vw, 1.25rem) !important;
+  gap: clamp(0.85rem, 1.3vw, 1rem) !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .dashboard-charts-grid .stat-icon {
+  width: 3rem !important;
+  height: 3rem !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .dashboard-charts-grid .stat-value,
+body[data-app-section="admin"] .dashboard-layout #analyticsOverview .analytics-card-value {
+  color: #111827 !important;
+  background: none !important;
+  -webkit-text-fill-color: currentColor !important;
+  line-height: 1.15 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout #analyticsOverview > .analytics-card {
+  align-items: flex-start !important;
+  justify-content: center !important;
+  text-align: left !important;
+  padding: clamp(1rem, 1.6vw, 1.2rem) !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout #analyticsOverview .analytics-card-label {
+  color: #536273 !important;
+  line-height: 1.35 !important;
+  margin-bottom: 0.35rem !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout #analyticsOverview .analytics-card-foot {
+  color: #64748b !important;
+  line-height: 1.35 !important;
+}
+
+body[data-app-section="admin"] .modal-improved {
+  z-index: 3000 !important;
+  padding: clamp(1rem, 2vw, 1.5rem) !important;
+}
+
+body[data-app-section="admin"].modal-open {
+  overflow: hidden;
+}
+
+body[data-app-section="admin"] .modal-improved .modal-backdrop {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 0 !important;
+  display: block !important;
+  padding: 0 !important;
+}
+
+body[data-app-section="admin"] .modal-improved .modal-dialog {
+  position: relative !important;
+  z-index: 2 !important;
+  width: min(100%, 640px) !important;
+  max-height: calc(100vh - 2rem) !important;
+  overflow: visible !important;
+}
+
+body[data-app-section="admin"] .modal-improved .modal-content {
+  max-height: calc(100vh - 2rem) !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+body[data-app-section="admin"] .modal-improved .modal-body {
+  overflow-y: auto !important;
+}
+
+/* Final readable inset layer: keep text away from card and panel edges. */
+body[data-app-section="admin"] .dashboard-layout {
+  --admin-readable-x: clamp(1.45rem, 2.2vw, 2rem);
+  --admin-readable-y: clamp(1rem, 1.7vw, 1.35rem);
+  --admin-chart-readable-x: clamp(1.4rem, 2.1vw, 1.9rem);
+}
+
+body[data-app-section="admin"] .dashboard-layout .card-header,
+body[data-app-section="admin"] .dashboard-layout .card-improved .card-header,
+body[data-app-section="admin"] .dashboard-layout .admin-panel-header,
+body[data-app-section="admin"] .dashboard-layout .theme-ui-panel-header {
+  padding-left: var(--admin-readable-x) !important;
+  padding-right: var(--admin-readable-x) !important;
+  padding-top: var(--admin-readable-y) !important;
+  padding-bottom: var(--admin-readable-y) !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .card-title,
+body[data-app-section="admin"] .dashboard-layout .card-header h2,
+body[data-app-section="admin"] .dashboard-layout .card-header h3,
+body[data-app-section="admin"] .dashboard-layout .card-header h4,
+body[data-app-section="admin"] .dashboard-layout .admin-panel-title,
+body[data-app-section="admin"] .dashboard-layout .theme-ui-panel-title {
+  max-width: 100%;
+  padding-left: 0.28rem !important;
+  padding-right: 0.28rem !important;
+  line-height: 1.5 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .card-body:not(.p-0),
+body[data-app-section="admin"] .dashboard-layout .card-improved .card-body:not(.p-0),
+body[data-app-section="admin"] .dashboard-layout .admin-panel-body,
+body[data-app-section="admin"] .dashboard-layout .theme-ui-panel-body {
+  padding-left: var(--admin-readable-x) !important;
+  padding-right: var(--admin-readable-x) !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid .chart-shell {
+  padding-left: var(--admin-chart-readable-x) !important;
+  padding-right: var(--admin-chart-readable-x) !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid .chart-head,
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid .chart-list,
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid .snapshot-layout,
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid .line-chart-wrap {
+  padding-left: 0.28rem !important;
+  padding-right: 0.28rem !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid .chart-row {
+  padding-left: 0.08rem !important;
+  padding-right: 0.08rem !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .list-group-item,
+body[data-app-section="admin"] .dashboard-layout .card-body.p-0 > .p-lg,
+body[data-app-section="admin"] .dashboard-layout .card-body.p-0 > .p-md,
+body[data-app-section="admin"] .dashboard-layout .card-body.p-0 > .text-secondary {
+  padding-left: var(--admin-readable-x) !important;
+  padding-right: var(--admin-readable-x) !important;
+}
+
+/* Roomier standard card headers, e.g. Upcoming Events and Security Center. */
+body[data-app-section="admin"] .dashboard-layout .card-improved > .card-header,
+body[data-app-section="admin"] .dashboard-layout .card > .card-header {
+  padding: 1.15rem 1.65rem !important;
+  min-height: 4rem !important;
+  gap: 1rem !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .card-improved > .card-header .card-title,
+body[data-app-section="admin"] .dashboard-layout .card > .card-header .card-title,
+body[data-app-section="admin"] .dashboard-layout .card-improved > .card-header h2,
+body[data-app-section="admin"] .dashboard-layout .card-improved > .card-header h3,
+body[data-app-section="admin"] .dashboard-layout .card > .card-header h2,
+body[data-app-section="admin"] .dashboard-layout .card > .card-header h3 {
+  padding: 0.12rem 0 !important;
+  margin: 0 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .card-improved > .card-header .btn,
+body[data-app-section="admin"] .dashboard-layout .card > .card-header .btn {
+  margin-left: auto !important;
+  flex: 0 0 auto !important;
+}
+
+/* Final admin repair layer: keep premium page styles aligned with saved theme. */
+body[data-app-section="admin"] .dashboard-layout .sidebar,
+body[data-app-section="admin"] .theme-ui-sidebar {
+  background: var(--admin-surface) !important;
+  border-right-color: var(--admin-border) !important;
+  box-shadow: 10px 0 28px -30px rgb(15 23 42 / 0.65) !important;
+}
+
+body[data-app-section="admin"][data-admin-sidebar-style="dark"] .dashboard-layout .sidebar,
+body[data-app-section="admin"][data-admin-sidebar-style="dark"] .theme-ui-sidebar {
+  background: linear-gradient(180deg, #0f172a 0%, #111c31 100%) !important;
+  border-right-color: #26344c !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-link,
+body[data-app-section="admin"] .dashboard-layout .sidebar-section-toggle,
+body[data-app-section="admin"] .theme-ui-sidebar-link,
+body[data-app-section="admin"] .theme-ui-sidebar-toggle {
+  color: var(--admin-sidebar-link) !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-link:hover,
+body[data-app-section="admin"] .dashboard-layout .sidebar-section-toggle:hover,
+body[data-app-section="admin"] .theme-ui-sidebar-link:hover,
+body[data-app-section="admin"] .theme-ui-sidebar-toggle:hover {
+  background: var(--admin-sidebar-link-hover) !important;
+  color: var(--admin-heading) !important;
+}
+
+body[data-app-section="admin"][data-admin-sidebar-style="dark"] .dashboard-layout .sidebar-link:hover,
+body[data-app-section="admin"][data-admin-sidebar-style="dark"] .theme-ui-sidebar-link:hover {
+  color: #f8fafc !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-link.active,
+body[data-app-section="admin"] .theme-ui-sidebar-link.active {
+  background: var(--admin-sidebar-link-active) !important;
+  border-color: var(--admin-sidebar-link-active-border) !important;
+  color: var(--admin-sidebar-link-active-text) !important;
+  box-shadow: inset 3px 0 0 var(--color-primary) !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-section-title,
+body[data-app-section="admin"] .dashboard-layout .sidebar-section-chevron {
+  color: var(--admin-sidebar-link) !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .dashboard-charts-grid > .stat-card-improved,
+body[data-app-section="admin"] .dashboard-layout .stats-grid > .stat-card-improved,
+body[data-app-section="admin"] .dashboard-layout .stat-card-improved {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: clamp(0.85rem, 1.4vw, 1.1rem) !important;
+  min-height: 116px !important;
+  padding: clamp(1rem, 1.6vw, 1.25rem) !important;
+  overflow: hidden !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .stat-card-improved .stat-icon {
+  position: relative !important;
+  inset: auto !important;
+  flex: 0 0 48px !important;
+  width: 48px !important;
+  height: 48px !important;
+  min-width: 48px !important;
+  margin: 0 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .stat-card-improved .stat-info {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  display: grid !important;
+  gap: 0.18rem !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .stat-card-improved .stat-value,
+body[data-app-section="admin"] .dashboard-layout .analytics-card-value {
+  font-size: clamp(1.45rem, 2.2vw, 1.85rem) !important;
+  line-height: 1.1 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .analytics-card {
+  display: grid !important;
+  align-content: center !important;
+  justify-items: start !important;
+  min-height: 104px !important;
+  padding: clamp(1rem, 1.6vw, 1.2rem) !important;
+  text-align: left !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table-container,
+body[data-app-section="admin"] .dashboard-layout .table-responsive,
+body[data-app-section="admin"] .dashboard-layout .card-body.p-0:has(> table) {
+  border: 1px solid var(--admin-line) !important;
+  border-radius: 10px !important;
+  background: #ffffff !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table,
+body[data-app-section="admin"] .dashboard-layout .data-table,
+body[data-app-section="admin"] .dashboard-layout .table-improved {
+  width: 100% !important;
+  min-width: 720px !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  table-layout: auto !important;
+  background: #ffffff !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table th,
+body[data-app-section="admin"] .dashboard-layout .table td,
+body[data-app-section="admin"] .dashboard-layout .data-table th,
+body[data-app-section="admin"] .dashboard-layout .data-table td,
+body[data-app-section="admin"] .dashboard-layout .table-improved th,
+body[data-app-section="admin"] .dashboard-layout .table-improved td {
+  padding: 0.9rem 1rem !important;
+  max-width: 26rem !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+  border-bottom: 1px solid #e6ede8 !important;
+  line-height: 1.45 !important;
+  vertical-align: middle !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table thead th,
+body[data-app-section="admin"] .dashboard-layout .data-table thead th,
+body[data-app-section="admin"] .dashboard-layout .table-improved thead th {
+  background: linear-gradient(180deg, #f8fbf9 0%, #eef5f1 100%) !important;
+  color: #334155 !important;
+  border-bottom: 1px solid #d9e4dd !important;
+  font-size: 0.75rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+  white-space: nowrap !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table tbody tr,
+body[data-app-section="admin"] .dashboard-layout .data-table tbody tr,
+body[data-app-section="admin"] .dashboard-layout .table-improved tbody tr {
+  background: #ffffff !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table tbody tr:hover,
+body[data-app-section="admin"] .dashboard-layout .data-table tbody tr:hover,
+body[data-app-section="admin"] .dashboard-layout .table-improved tbody tr:hover {
+  background: var(--primary-50) !important;
+  box-shadow: inset 3px 0 0 var(--color-primary) !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table td .flex,
+body[data-app-section="admin"] .dashboard-layout .table-improved td .flex {
+  flex-wrap: wrap !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table .action-buttons,
+body[data-app-section="admin"] .dashboard-layout .table-improved .action-buttons {
+  flex-wrap: nowrap !important;
+}
+
+/* Admin hardening layer: sidebar parity, table breathing room, and mobile data cards. */
+body[data-app-section="admin"] {
+  --admin-shell-sidebar-width: var(--admin-sidebar-width, 304px);
+  --admin-shell-table-x: clamp(1.35rem, 2.5vw, 1.9rem);
+  --admin-shell-table-y: 0.95rem;
+}
+
+body[data-app-section="admin"] .dashboard-layout,
+body[data-app-section="admin"] .theme-ui-shell,
+body[data-app-section="admin"] .dashboard-layout .main-content,
+body[data-app-section="admin"] .theme-ui-page,
+body[data-app-section="admin"] .theme-ui-content {
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar,
+body[data-app-section="admin"] .theme-ui-sidebar {
+  width: var(--admin-shell-sidebar-width) !important;
+  max-width: 86vw !important;
+  box-sizing: border-box !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-nav,
+body[data-app-section="admin"] .theme-ui-sidebar {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-section-links,
+body[data-app-section="admin"] .theme-ui-sidebar-links {
+  display: grid !important;
+  gap: 5px !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-section.collapsed .sidebar-section-links,
+body[data-app-section="admin"] .theme-ui-sidebar-section.collapsed .theme-ui-sidebar-links {
+  display: none !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-link,
+body[data-app-section="admin"] .theme-ui-sidebar-link {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  min-height: 40px !important;
+  padding: 9px 12px !important;
+  margin: 0 !important;
+  border: 1px solid transparent !important;
+  border-radius: 8px !important;
+  font-size: 0.94rem !important;
+  font-weight: 400 !important;
+  line-height: 1.25 !important;
+  letter-spacing: 0 !important;
+  text-decoration: none !important;
+  white-space: normal !important;
+  box-shadow: none !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-link.active,
+body[data-app-section="admin"] .theme-ui-sidebar-link.active {
+  font-weight: 400 !important;
+  box-shadow: inset 4px 0 0 var(--color-primary) !important;
+}
+
+body[data-app-section="admin"] .sidebar-link-icon,
+body[data-app-section="admin"] .theme-ui-link-icon {
+  width: 18px !important;
+  height: 18px !important;
+  flex: 0 0 18px !important;
+  display: inline-grid !important;
+  place-items: center !important;
+}
+
+body[data-app-section="admin"] .sidebar-link-icon svg,
+body[data-app-section="admin"] .theme-ui-link-icon svg {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-section-toggle,
+body[data-app-section="admin"] .theme-ui-sidebar-toggle {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  min-height: 34px !important;
+  padding: 8px 12px !important;
+  border-radius: 8px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important;
+}
+
+body[data-app-section="admin"] .admin-table-scroll,
+body[data-app-section="admin"] .table-container,
+body[data-app-section="admin"] .table-responsive,
+body[data-app-section="admin"] .admin-record-table-shell,
+body[data-app-section="admin"] .id-card-results-table-wrap,
+body[data-app-section="admin"] #alumniTable {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  border: 1px solid var(--admin-modern-line, var(--admin-line, #dfe7df)) !important;
+  border-radius: 8px !important;
+  background: #ffffff !important;
+}
+
+body[data-app-section="admin"] .card-body.p-0:has(table),
+body[data-app-section="admin"] .card-body.p-0:has(.admin-table-scroll),
+body[data-app-section="admin"] .card-body.p-0:has(.table-responsive),
+body[data-app-section="admin"] .card-body.p-0:has(.id-card-results-table-wrap) {
+  padding: clamp(0.95rem, 1.6vw, 1.2rem) clamp(1.25rem, 2.4vw, 1.8rem) clamp(1.05rem, 1.8vw, 1.35rem) !important;
+}
+
+body[data-app-section="admin"] .admin-responsive-table,
+body[data-app-section="admin"] .table,
+body[data-app-section="admin"] .data-table,
+body[data-app-section="admin"] .table-improved,
+body[data-app-section="admin"] .compact-table {
+  width: 100% !important;
+  min-width: 920px !important;
+  table-layout: auto !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  background: #ffffff !important;
+}
+
+body[data-app-section="admin"] .admin-responsive-table th,
+body[data-app-section="admin"] .admin-responsive-table td,
+body[data-app-section="admin"] .table th,
+body[data-app-section="admin"] .table td,
+body[data-app-section="admin"] .data-table th,
+body[data-app-section="admin"] .data-table td,
+body[data-app-section="admin"] .table-improved th,
+body[data-app-section="admin"] .table-improved td,
+body[data-app-section="admin"] .compact-table th,
+body[data-app-section="admin"] .compact-table td {
+  padding: var(--admin-shell-table-y) 1.15rem !important;
+  max-width: 26rem !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+  line-height: 1.45 !important;
+  vertical-align: middle !important;
+}
+
+body[data-app-section="admin"] .admin-responsive-table th:first-child,
+body[data-app-section="admin"] .admin-responsive-table td:first-child,
+body[data-app-section="admin"] .table th:first-child,
+body[data-app-section="admin"] .table td:first-child,
+body[data-app-section="admin"] .data-table th:first-child,
+body[data-app-section="admin"] .data-table td:first-child,
+body[data-app-section="admin"] .table-improved th:first-child,
+body[data-app-section="admin"] .table-improved td:first-child,
+body[data-app-section="admin"] .compact-table th:first-child,
+body[data-app-section="admin"] .compact-table td:first-child {
+  padding-left: var(--admin-shell-table-x) !important;
+}
+
+body[data-app-section="admin"] .admin-responsive-table th:last-child,
+body[data-app-section="admin"] .admin-responsive-table td:last-child,
+body[data-app-section="admin"] .table th:last-child,
+body[data-app-section="admin"] .table td:last-child,
+body[data-app-section="admin"] .data-table th:last-child,
+body[data-app-section="admin"] .data-table td:last-child,
+body[data-app-section="admin"] .table-improved th:last-child,
+body[data-app-section="admin"] .table-improved td:last-child,
+body[data-app-section="admin"] .compact-table th:last-child,
+body[data-app-section="admin"] .compact-table td:last-child {
+  padding-right: var(--admin-shell-table-x) !important;
+}
+
+@media (max-width: 980px) {
+  body[data-app-section="admin"] {
+    --admin-shell-sidebar-width: min(84vw, 304px);
+  }
+
+  body[data-app-section="admin"] .dashboard-layout,
+  body[data-app-section="admin"] .theme-ui-page {
+    padding-left: 0 !important;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .sidebar,
+  body[data-app-section="admin"] .theme-ui-sidebar {
+    position: fixed !important;
+    top: var(--admin-modern-topbar-height, 72px) !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    height: calc(100vh - var(--admin-modern-topbar-height, 72px)) !important;
+    transform: translateX(-106%) !important;
+    z-index: 1400 !important;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .sidebar.open,
+  body[data-app-section="admin"] .theme-ui-sidebar.open,
+  body[data-app-section="admin"] .theme-ui-shell.settings-sidebar-open .theme-ui-sidebar {
+    transform: translateX(0) !important;
+  }
+
+  body[data-app-section="admin"] .dashboard-sidebar-backdrop.active,
+  body[data-app-section="admin"] .theme-ui-sidebar-backdrop.active {
+    display: block !important;
+    position: fixed !important;
+    inset: var(--admin-modern-topbar-height, 72px) 0 0 0 !important;
+    z-index: 1300 !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    background: rgb(15 23 42 / 0.36) !important;
+  }
+
+  body[data-app-section="admin"] .admin-shell-user-meta,
+  body[data-app-section="admin"] .theme-ui-user-meta {
+    display: none !important;
+  }
+}
+
+@media (max-width: 680px) {
+  body[data-app-section="admin"] {
+    --admin-modern-topbar-height: 64px;
+    --admin-shell-table-x: 0;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .admin-content,
+  body[data-app-section="admin"] .dashboard-layout .content-body,
+  body[data-app-section="admin"] .dashboard-layout .content-wrapper,
+  body[data-app-section="admin"] .theme-ui-content {
+    padding: 0.85rem !important;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .grid,
+  body[data-app-section="admin"] .dashboard-layout .grid-cols-6,
+  body[data-app-section="admin"] .dashboard-layout .grid-cols-5,
+  body[data-app-section="admin"] .dashboard-layout .grid-cols-4,
+  body[data-app-section="admin"] .dashboard-layout .grid-cols-3,
+  body[data-app-section="admin"] .dashboard-layout .grid-cols-2,
+  body[data-app-section="admin"] .dashboard-layout .dashboard-charts-grid,
+  body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid,
+  body[data-app-section="admin"] .dashboard-layout .dashboard-insight-grid,
+  body[data-app-section="admin"] .dashboard-layout .admin-filter-grid,
+  body[data-app-section="admin"] .dashboard-layout .field-section-grid,
+  body[data-app-section="admin"] .theme-ui-content .settings-form-grid,
+  body[data-app-section="admin"] .theme-ui-content .email-settings-grid,
+  body[data-app-section="admin"] .theme-ui-content .email-template-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  body[data-app-section="admin"] .admin-table-scroll,
+  body[data-app-section="admin"] .table-container,
+  body[data-app-section="admin"] .table-responsive,
+  body[data-app-section="admin"] .id-card-results-table-wrap,
+  body[data-app-section="admin"] #alumniTable {
+    overflow: visible !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  body[data-app-section="admin"] .admin-responsive-table {
+    display: block !important;
+    min-width: 0 !important;
+    background: transparent !important;
+  }
+
+  body[data-app-section="admin"] .admin-responsive-table thead {
+    display: none !important;
+  }
+
+  body[data-app-section="admin"] .admin-responsive-table tbody {
+    display: grid !important;
+    gap: 0.8rem !important;
+  }
+
+  body[data-app-section="admin"] .admin-responsive-table tr {
+    display: grid !important;
+    width: 100% !important;
+    padding: 0.78rem 0.9rem !important;
+    border: 1px solid var(--admin-modern-line, var(--admin-line, #dfe7df)) !important;
+    border-radius: 8px !important;
+    background: #ffffff !important;
+    box-shadow: 0 10px 26px -22px rgb(15 23 42 / 0.8), 0 2px 8px -6px rgb(15 23 42 / 0.32) !important;
+  }
+
+  body[data-app-section="admin"] .admin-responsive-table th,
+  body[data-app-section="admin"] .admin-responsive-table td {
+    max-width: none !important;
+  }
+
+  body[data-app-section="admin"] .admin-responsive-table td {
+    display: grid !important;
+    grid-template-columns: minmax(6.5rem, 36%) minmax(0, 1fr) !important;
+    gap: 0.85rem !important;
+    align-items: start !important;
+    min-height: 2.25rem !important;
+    padding: 0.62rem 0 !important;
+    border-bottom: 1px solid #edf2ef !important;
+    background: transparent !important;
+  }
+
+  body[data-app-section="admin"] .admin-responsive-table td::before {
+    content: attr(data-label) !important;
+    color: #647386 !important;
+    font-size: 0.72rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.04em !important;
+    text-transform: uppercase !important;
+    line-height: 1.35 !important;
+  }
+
+  body[data-app-section="admin"] .admin-responsive-table td:last-child {
+    border-bottom: 0 !important;
+    text-align: left !important;
+  }
+
+  body[data-app-section="admin"] .admin-responsive-table td[colspan] {
+    grid-template-columns: 1fr !important;
+  }
+
+  body[data-app-section="admin"] .admin-responsive-table td[colspan]::before {
+    display: none !important;
+  }
+
+  body[data-app-section="admin"] .admin-responsive-table .action-buttons,
+  body[data-app-section="admin"] .admin-responsive-table td .flex {
+    justify-content: flex-start !important;
+    flex-wrap: wrap !important;
+  }
+
+  body[data-app-section="admin"] .admin-responsive-table .action-buttons .btn,
+  body[data-app-section="admin"] .admin-responsive-table td .btn,
+  body[data-app-section="admin"] .dashboard-layout .topbar-actions .btn,
+  body[data-app-section="admin"] .dashboard-layout .content-header > .btn,
+  body[data-app-section="admin"] .dashboard-layout .admin-topbar > .btn,
+  body[data-app-section="admin"] .admin-shell-user .btn,
+  body[data-app-section="admin"] .theme-ui-topbar .btn,
+  body[data-app-section="admin"] .theme-ui-user .btn {
+    width: auto !important;
+    flex: 0 0 auto !important;
+  }
+}
+
+@media (max-width: 420px) {
+  body[data-app-section="admin"] .admin-responsive-table td {
+    grid-template-columns: 1fr !important;
+    gap: 0.24rem !important;
+  }
+}

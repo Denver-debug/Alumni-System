@@ -1,0 +1,427 @@
+/* ══════════════════════════════════════════════════════════
+   ALUMNI LIST IMPROVEMENTS
+   ══════════════════════════════════════════════════════════ */
+
+/* Statistics Cards */
+.stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.3s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+.stat-icon.bg-primary {
+  background: linear-gradient(135deg, #047857, #059669);
+}
+
+.stat-icon.bg-success {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.stat-icon.bg-warning {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.stat-icon.bg-info {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+}
+
+.stat-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1f2937;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Enhanced Table Styles */
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.table thead th {
+  background: #f9fafb;
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: #6b7280;
+  border-bottom: 2px solid #e5e7eb;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.table tbody tr {
+  transition: background 0.2s;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.table tbody tr:hover {
+  background: #f9fafb;
+}
+
+.table tbody td {
+  padding: 1rem;
+  vertical-align: middle;
+}
+
+/* Alumni Photo */
+.alumni-photo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e5e7eb;
+  display: block;
+}
+
+.alumni-photo-placeholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #047857, #059669);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+/* Alumni ID Code */
+.alumni-id-code {
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #047857;
+  background: #f0fdf4;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #bbf7d0;
+}
+
+/* Points Badge */
+.points-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  color: #92400e;
+  border: 1px solid #fcd34d;
+}
+
+/* Status Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge-success {
+  background: #d1fae5;
+  color: #065f46;
+  border: 1px solid #6ee7b7;
+}
+
+.badge-warning {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fcd34d;
+}
+
+.badge-danger {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+}
+
+/* Action Buttons */
+.table .btn-sm {
+  padding: 0.375rem 0.5rem;
+}
+
+.table .btn-ghost {
+  background: transparent;
+  border: 1px solid #e5e7eb;
+  color: #6b7280;
+}
+
+.table .btn-ghost:hover {
+  background: #f9fafb;
+  border-color: #047857;
+  color: #047857;
+}
+
+.table .btn-ghost.text-error:hover {
+  background: #fee2e2;
+  border-color: #ef4444;
+  color: #dc2626;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  color: #6b7280;
+  font-size: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .grid-cols-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .grid-cols-4 {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-card {
+    padding: 1rem;
+  }
+
+  .stat-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+  }
+
+  .table {
+    font-size: 0.875rem;
+  }
+
+  .table thead th,
+  .table tbody td {
+    padding: 0.75rem 0.5rem;
+  }
+
+  .alumni-photo,
+  .alumni-photo-placeholder {
+    width: 32px;
+    height: 32px;
+    font-size: 0.875rem;
+  }
+}
+
+/* Empty State */
+.text-center.text-muted {
+  color: #9ca3af;
+  font-size: 1rem;
+}
+
+/* Pagination */
+.card-footer {
+  padding: 1rem 1.5rem;
+  background: #f9fafb;
+  border-top: 1px solid #e5e7eb;
+}
+
+.card-footer span {
+  color: #6b7280;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+/* Alumni list table guardrails: keep IDs, headers, and actions readable. */
+body[data-app-section="admin"] .dashboard-layout #alumniTable {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: visible !important;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout #alumniTable .table,
+body[data-app-section="admin"] .dashboard-layout #alumniTable .table-improved {
+  width: 100% !important;
+  min-width: 920px !important;
+  table-layout: auto !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout #alumniTable th,
+body[data-app-section="admin"] .dashboard-layout #alumniTable td {
+  max-width: 22rem !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+  line-height: 1.35;
+}
+
+body[data-app-section="admin"] .dashboard-layout #alumniTable .alumni-id-code,
+body[data-app-section="admin"] .dashboard-layout #alumniTable .points-badge,
+body[data-app-section="admin"] .dashboard-layout #alumniTable .badge {
+  display: inline-flex;
+  align-items: center;
+  max-width: none !important;
+  white-space: nowrap !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+  letter-spacing: 0 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout #alumniTable td .flex {
+  flex-wrap: wrap !important;
+}
+
+/* Final spacing for alumni list card headers and table content. */
+body[data-app-section="admin"] .dashboard-layout .card-improved > .card-header,
+body[data-app-section="admin"] .dashboard-layout .card > .card-header {
+  padding: 1.25rem 2rem !important;
+  min-height: 4.25rem !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 1rem !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .card-improved > .card-header .card-title,
+body[data-app-section="admin"] .dashboard-layout .card > .card-header .card-title,
+body[data-app-section="admin"] .dashboard-layout .card-improved > .card-header h2,
+body[data-app-section="admin"] .dashboard-layout .card-improved > .card-header h3,
+body[data-app-section="admin"] .dashboard-layout .card > .card-header h2,
+body[data-app-section="admin"] .dashboard-layout .card > .card-header h3 {
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1.45 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .card-improved > .card-header .text-muted,
+body[data-app-section="admin"] .dashboard-layout .card > .card-header .text-muted {
+  margin-left: auto !important;
+  padding-left: 1rem !important;
+  flex: 0 0 auto !important;
+}
+
+@media (max-width: 680px) {
+  body[data-app-section="admin"] .dashboard-layout #alumniTable .table,
+  body[data-app-section="admin"] .dashboard-layout #alumniTable .table-improved {
+    min-width: 0 !important;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout #alumniTable th,
+  body[data-app-section="admin"] .dashboard-layout #alumniTable td {
+    max-width: none !important;
+  }
+}
+
+/* Final alumni table spacing: this file loads after the shared admin styles. */
+body[data-app-section="admin"] .dashboard-layout #alumniTable {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding: 0 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout #alumniTable .admin-responsive-table,
+body[data-app-section="admin"] .dashboard-layout #alumniTable .table,
+body[data-app-section="admin"] .dashboard-layout #alumniTable .table-improved {
+  width: 100% !important;
+  min-width: 920px !important;
+  table-layout: auto !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout #alumniTable th,
+body[data-app-section="admin"] .dashboard-layout #alumniTable td {
+  padding: 0.95rem 1.15rem !important;
+  max-width: 26rem !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+  line-height: 1.45 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout #alumniTable th:first-child,
+body[data-app-section="admin"] .dashboard-layout #alumniTable td:first-child {
+  padding-left: clamp(1.35rem, 2.5vw, 1.9rem) !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout #alumniTable th:last-child,
+body[data-app-section="admin"] .dashboard-layout #alumniTable td:last-child {
+  padding-right: clamp(1.35rem, 2.5vw, 1.9rem) !important;
+}
+
+@media (max-width: 680px) {
+  body[data-app-section="admin"] .dashboard-layout #alumniTable {
+    overflow: visible !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout #alumniTable .admin-responsive-table,
+  body[data-app-section="admin"] .dashboard-layout #alumniTable .table,
+  body[data-app-section="admin"] .dashboard-layout #alumniTable .table-improved {
+    min-width: 0 !important;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout #alumniTable .admin-responsive-table td {
+    padding: 0.62rem 0 !important;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout #alumniTable .admin-responsive-table td:first-child,
+  body[data-app-section="admin"] .dashboard-layout #alumniTable .admin-responsive-table td:last-child {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}

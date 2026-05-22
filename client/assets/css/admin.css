@@ -1,0 +1,2681 @@
+/* =====================================================
+   ALUMNI MANAGEMENT SYSTEM - Admin Dashboard Layout
+   Shared styles for admin dashboard-layout templates
+   ===================================================== */
+
+body[data-app-section="admin"] {
+  --admin-bg: var(--color-background);
+  --admin-surface: var(--color-surface-soft);
+  --admin-surface-strong: var(--color-surface);
+  --admin-border: var(--color-border);
+  --admin-muted-border: var(--color-panel-border);
+  --admin-heading: var(--color-header-text);
+  --admin-header-bg: var(--color-header-bg);
+  --admin-header-border: var(--color-header-border);
+  --admin-header-muted: var(--color-header-muted);
+  --admin-sidebar-link: var(--color-text-secondary);
+  --admin-sidebar-link-hover: rgb(15 143 124 / 0.08);
+  --admin-sidebar-link-active: rgb(15 143 124 / 0.16);
+  --admin-sidebar-link-active-border: var(--primary-200);
+  --admin-sidebar-link-active-text: var(--primary-900);
+  --admin-content-max-width: 1400px;
+  --admin-content-gutter: clamp(12px, 2vw, 24px);
+  --z-toast: 2200;
+}
+
+body[data-app-section="admin"] .toast-container {
+  top: calc(var(--admin-modern-topbar-height, 72px) + clamp(var(--spacing-md), 2.2vw, var(--spacing-xl)));
+}
+
+body[data-app-section="admin"] .dashboard-layout {
+  --admin-sidebar-width: 284px;
+  position: relative;
+  display: flex;
+  min-height: 100vh;
+  padding-left: var(--admin-sidebar-width);
+  background: var(--admin-bg);
+  transition: padding-left var(--transition-normal);
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar {
+  width: var(--admin-sidebar-width);
+  flex-shrink: 0;
+  background: var(--admin-surface);
+  border-right: 1px solid var(--admin-border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 72px;
+  left: 0;
+  bottom: 0;
+  height: calc(100vh - 72px);
+  padding: 14px 12px;
+  margin-right: 0;
+  transform: translateX(0);
+  overflow-y: auto;
+  z-index: 130;
+  transition:
+    background-color var(--transition-normal),
+    border-color var(--transition-normal),
+    transform var(--transition-normal),
+    margin-right var(--transition-normal);
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-header {
+  display: none;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-nav {
+  flex: 1;
+  overflow: visible;
+  display: grid;
+  gap: 14px;
+  padding-right: 2px;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar::-webkit-scrollbar {
+  width: 8px;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar::-webkit-scrollbar-thumb {
+  background: #cfd7ca;
+  border-radius: 999px;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-section {
+  margin-bottom: 14px;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-section-toggle {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-section-toggle:hover {
+  background: var(--admin-sidebar-link-hover);
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-section-title {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--admin-sidebar-link);
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-section-chevron {
+  color: var(--admin-header-muted);
+  transition: transform var(--transition-fast);
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-section.collapsed .sidebar-section-chevron {
+  transform: rotate(-90deg);
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-section-links {
+  display: grid;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-section.collapsed .sidebar-section-links {
+  display: none;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-size: 0.98rem;
+  font-weight: 400;
+  color: var(--admin-sidebar-link);
+  padding: 10px 12px;
+  border: 1px solid transparent;
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-link:hover {
+  background: var(--admin-sidebar-link-hover);
+  border-color: var(--admin-muted-border);
+  color: var(--admin-heading);
+  text-decoration: none;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-link.active {
+  background: var(--admin-sidebar-link-active);
+  color: var(--admin-sidebar-link-active-text);
+  font-weight: 400;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-link-badge {
+  margin-left: auto;
+  font-size: 0.68rem;
+  line-height: 1;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #f59e0b, #f97316);
+  color: #ffffff;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  box-shadow: 0 2px 8px -2px rgb(245 158 11 / 0.6);
+  animation: pulse-admin-badge 2s ease-in-out infinite;
+}
+
+@keyframes pulse-admin-badge {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-footer {
+  display: none;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-footer .border-t {
+  border-top: 0 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .main-content {
+  flex: 1;
+  margin-left: 0;
+  min-height: 100vh;
+  padding-top: 72px;
+}
+
+body[data-app-section="admin"] .dashboard-layout .content-header,
+body[data-app-section="admin"] .dashboard-layout .admin-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  gap: var(--spacing-md);
+  height: 72px;
+  min-height: 72px;
+  padding: 0 var(--admin-content-gutter);
+  padding-left: calc(var(--admin-sidebar-width) + var(--admin-content-gutter));
+  background: var(--admin-header-bg);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--admin-header-border);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 140;
+  box-shadow: 0 10px 24px -22px rgb(15 23 42 / 0.55);
+  transition: padding-left var(--transition-normal);
+}
+
+body[data-app-section="admin"] .dashboard-layout .content-header h1,
+body[data-app-section="admin"] .dashboard-layout .admin-topbar .page-title {
+  font-size: clamp(1.6rem, 2vw, 2.2rem);
+  font-weight: 700;
+  color: var(--admin-heading);
+  margin: 0;
+  margin-right: auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+body[data-app-section="admin"] .dashboard-layout .topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-toggle {
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border-radius: 10px;
+  border: 1px solid var(--admin-muted-border);
+  background: var(--color-surface);
+  color: var(--admin-heading);
+  box-shadow: 0 10px 16px -14px rgb(15 23 42 / 0.55);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-toggle:hover {
+  background: var(--admin-sidebar-link-hover);
+  border-color: var(--admin-sidebar-link-active-border);
+  color: var(--admin-heading);
+  transform: none;
+  box-shadow: 0 12px 22px -16px rgb(15 23 42 / 0.5);
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-toggle svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.2;
+  pointer-events: none;
+}
+
+@media (min-width: 981px) {
+  body[data-app-section="admin"] .dashboard-layout.sidebar-collapsed .sidebar {
+    transform: translateX(-112%);
+    margin-right: calc(var(--admin-sidebar-width) * -1);
+  }
+
+  body[data-app-section="admin"] .dashboard-layout.sidebar-collapsed {
+    padding-left: 0;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout.sidebar-collapsed .content-header,
+  body[data-app-section="admin"] .dashboard-layout.sidebar-collapsed .admin-topbar {
+    padding-left: var(--admin-content-gutter);
+  }
+}
+
+body[data-app-section="admin"] .dashboard-layout .admin-shell-user {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+body[data-app-section="admin"] .dashboard-layout .admin-shell-user-meta {
+  text-align: right;
+  line-height: 1.2;
+}
+
+body[data-app-section="admin"] .dashboard-layout .admin-shell-user-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--admin-heading);
+}
+
+body[data-app-section="admin"] .dashboard-layout .admin-shell-user-role {
+  font-size: 0.85rem;
+  color: var(--admin-header-muted);
+}
+
+body[data-app-section="admin"] .dashboard-layout .admin-shell-logout,
+body[data-app-section="admin"] .theme-ui-topbar-right .btn.btn-danger {
+  border: 1px solid #b52c2c;
+  background: linear-gradient(180deg, #e74b4b 0%, #c83434 100%);
+  color: #ffffff;
+  box-shadow: 0 12px 22px -16px rgb(153 27 27 / 0.8);
+}
+
+body[data-app-section="admin"] .dashboard-layout .admin-shell-logout:hover,
+body[data-app-section="admin"] .theme-ui-topbar-right .btn.btn-danger:hover {
+  border-color: #9f2323;
+  background: linear-gradient(180deg, #d94343 0%, #b92727 100%);
+  color: #ffffff;
+  transform: none;
+  box-shadow: 0 14px 24px -16px rgb(127 29 29 / 0.8);
+}
+
+body[data-app-section="admin"] .dashboard-layout .admin-shell-logout:focus-visible,
+body[data-app-section="admin"] .theme-ui-topbar-right .btn.btn-danger:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 3px rgb(248 113 113 / 0.3),
+    0 14px 24px -16px rgb(127 29 29 / 0.8);
+}
+
+body[data-app-section="admin"] .dashboard-layout .content-body {
+  padding: clamp(var(--spacing-md), 2.4vw, var(--spacing-xl));
+  padding-left: var(--admin-content-gutter);
+  padding-right: var(--admin-content-gutter);
+}
+
+body[data-app-section="admin"] .dashboard-layout .content-wrapper,
+body[data-app-section="admin"] .dashboard-layout .admin-content {
+  max-width: var(--admin-content-max-width);
+  margin: 0 auto;
+  padding: clamp(1rem, 2vw, 1.5rem) var(--admin-content-gutter);
+}
+
+body[data-app-section="admin"] .dashboard-layout .main-content {
+  background:
+    radial-gradient(circle at 100% -20%, var(--primary-100), transparent 34%),
+    linear-gradient(180deg, var(--admin-bg) 0%, var(--color-surface-soft) 100%);
+}
+
+body[data-app-section="admin"] .dashboard-layout .card {
+  border: 1px solid var(--admin-muted-border);
+  border-radius: 14px;
+  background: linear-gradient(180deg, var(--admin-surface-strong), #fcfdfc);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform var(--transition-normal),
+    box-shadow var(--transition-normal),
+    border-color var(--transition-normal);
+}
+
+body[data-app-section="admin"] .dashboard-layout .card-header {
+  border-bottom: 1px solid var(--admin-muted-border);
+  background: linear-gradient(180deg, var(--color-surface), var(--color-surface-soft));
+}
+
+body[data-app-section="admin"] .dashboard-layout .form-input,
+body[data-app-section="admin"] .dashboard-layout .form-select,
+body[data-app-section="admin"] .dashboard-layout .form-textarea {
+  border-color: #d3ddd0;
+  background: #ffffff;
+}
+
+body[data-app-section="admin"] .dashboard-layout .form-input:focus,
+body[data-app-section="admin"] .dashboard-layout .form-select:focus,
+body[data-app-section="admin"] .dashboard-layout .form-textarea:focus {
+  border-color: #87b48b;
+  box-shadow: 0 0 0 3px rgb(158 198 159 / 0.28);
+}
+
+body[data-app-section="admin"] .dashboard-layout .table thead th {
+  background: #f6faf4;
+  color: #2e4b3b;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table tbody tr:hover {
+  background: #f4f8f2;
+}
+
+body[data-app-section="admin"] .dashboard-layout .card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary-200);
+}
+
+body[data-app-section="admin"] .dashboard-layout form.card {
+  width: min(840px, 100%);
+  margin-inline: auto;
+  padding: clamp(0.72rem, 1.2vw, 0.92rem) !important;
+  border-radius: 0.95rem;
+  border-color: #cddac9;
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.99), rgb(247 252 249 / 0.97)),
+    radial-gradient(circle at top right, rgb(16 185 129 / 0.12), transparent 48%);
+  box-shadow:
+    0 28px 44px -34px rgb(15 23 42 / 0.68),
+    0 18px 26px -28px rgb(5 150 105 / 0.55);
+}
+
+body[data-app-section="admin"] .dashboard-layout form.card:hover {
+  transform: none;
+  border-color: #cddac9;
+  box-shadow:
+    0 28px 44px -34px rgb(15 23 42 / 0.68),
+    0 18px 26px -28px rgb(5 150 105 / 0.55);
+}
+
+body[data-app-section="admin"] .dashboard-layout form.card .grid {
+  gap: clamp(0.58rem, 1vw, 0.78rem);
+}
+
+body[data-app-section="admin"] .dashboard-layout form.card .form-group {
+  margin-bottom: 0.2rem;
+}
+
+body[data-app-section="admin"] .dashboard-layout form.card .form-label {
+  margin-bottom: 0.22rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #2d4d3a;
+}
+
+body[data-app-section="admin"] .dashboard-layout form.card .form-input,
+body[data-app-section="admin"] .dashboard-layout form.card .form-select,
+body[data-app-section="admin"] .dashboard-layout form.card .form-textarea {
+  min-height: 2.34rem;
+  border-radius: 0.65rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+body[data-app-section="admin"] .dashboard-layout form.card textarea.form-input,
+body[data-app-section="admin"] .dashboard-layout form.card .form-textarea {
+  min-height: 78px;
+  height: 78px;
+}
+
+body[data-app-section="admin"] .dashboard-layout form.card .btn {
+  min-width: 124px;
+  min-height: 2.34rem;
+  border-radius: 0.68rem;
+}
+
+@media (max-width: 900px) {
+  body[data-app-section="admin"] .dashboard-layout form.card .grid.grid-cols-2 {
+    grid-template-columns: 1fr;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout form.card .col-span-2 {
+    grid-column: span 1 / span 1;
+  }
+}
+
+body[data-app-section="admin"] .dashboard-layout .admin-panel-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  padding: clamp(0.85rem, 1.8vw, 1.1rem) clamp(1rem, 2.2vw, 1.4rem);
+  border: 1px solid #d3ddd0;
+  border-radius: 14px;
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.96), rgb(249 252 248 / 0.98)),
+    linear-gradient(135deg, rgb(16 185 129 / 0.1), transparent 52%);
+  box-shadow: 0 16px 24px -24px rgb(15 23 42 / 0.45);
+}
+
+body[data-app-section="admin"] .dashboard-layout .admin-panel-toolbar h2 {
+  margin: 0;
+  font-size: clamp(1.08rem, 1.7vw, 1.26rem);
+  font-weight: 700;
+  color: #1f3a2f;
+}
+
+body[data-app-section="admin"] .dashboard-layout .admin-panel-toolbar p {
+  margin: 0.22rem 0 0;
+  font-size: 0.92rem;
+  color: #4b6356;
+}
+
+body[data-app-section="admin"] .dashboard-layout .admin-panel-toolbar .btn {
+  min-width: 150px;
+  font-weight: 700;
+  box-shadow: 0 14px 22px -18px rgb(5 150 105 / 0.8);
+}
+
+body[data-app-section="admin"] .dashboard-layout .content-body,
+body[data-app-section="admin"] .dashboard-layout .admin-content {
+  display: grid;
+  gap: clamp(0.9rem, 1.8vw, 1.2rem);
+}
+
+body[data-app-section="admin"] .dashboard-layout .content-body {
+  max-width: 1380px;
+  margin-inline: auto;
+  padding: clamp(0.95rem, 2vw, 1.35rem);
+}
+
+body[data-app-section="admin"] .dashboard-layout .card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.72rem;
+  flex-wrap: wrap;
+  padding: clamp(0.78rem, 1.7vw, 1rem) clamp(0.92rem, 2vw, 1.2rem);
+}
+
+body[data-app-section="admin"] .dashboard-layout .card-header h2,
+body[data-app-section="admin"] .dashboard-layout .card-header h3,
+body[data-app-section="admin"] .dashboard-layout .card-title {
+  margin: 0;
+  font-size: clamp(1rem, 1.35vw, 1.18rem);
+  font-weight: 700;
+  color: #1f3a2f;
+  letter-spacing: 0.01em;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+body[data-app-section="admin"] .dashboard-layout .card-body {
+  padding: clamp(0.85rem, 1.85vw, 1.1rem);
+}
+
+body[data-app-section="admin"] .dashboard-layout .card-footer {
+  padding: clamp(0.78rem, 1.7vw, 1rem) clamp(0.92rem, 2vw, 1.2rem);
+  border-top: 1px solid #dbe6d7;
+  background: linear-gradient(180deg, #f9fcf8, #f4faf2);
+}
+
+body[data-app-section="admin"] .dashboard-layout .table-container,
+body[data-app-section="admin"] .dashboard-layout .table-responsive {
+  overflow-x: auto;
+  border: 1px solid #dbe6d7;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+body[data-app-section="admin"] .dashboard-layout .card-body.p-0 {
+  overflow-x: auto;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table-container .table,
+body[data-app-section="admin"] .dashboard-layout .table-container .data-table,
+body[data-app-section="admin"] .dashboard-layout .table-responsive .table,
+body[data-app-section="admin"] .dashboard-layout .table-responsive .data-table,
+body[data-app-section="admin"] .dashboard-layout .card-body.p-0 > .table,
+body[data-app-section="admin"] .dashboard-layout .card-body.p-0 > .data-table {
+  min-width: 680px;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table,
+body[data-app-section="admin"] .dashboard-layout .data-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table th,
+body[data-app-section="admin"] .dashboard-layout .table td,
+body[data-app-section="admin"] .dashboard-layout .data-table th,
+body[data-app-section="admin"] .dashboard-layout .data-table td {
+  padding: 0.72rem 0.9rem;
+  border-bottom: 1px solid #dce8d8;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table th,
+body[data-app-section="admin"] .dashboard-layout .data-table th {
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: #2f4c3c;
+  background: linear-gradient(180deg, #f8fcf6, #eef7eb);
+}
+
+body[data-app-section="admin"] .dashboard-layout .table td,
+body[data-app-section="admin"] .dashboard-layout .data-table td {
+  color: #314c40;
+  background: #ffffff;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table tbody tr,
+body[data-app-section="admin"] .dashboard-layout .data-table tbody tr {
+  transition:
+    background-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+body[data-app-section="admin"] .dashboard-layout .table tbody tr:nth-child(even),
+body[data-app-section="admin"] .dashboard-layout .data-table tbody tr:nth-child(even) {
+  background: #fcfefd;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table tbody tr:hover,
+body[data-app-section="admin"] .dashboard-layout .data-table tbody tr:hover {
+  background: #f3f9f1;
+  box-shadow: inset 3px 0 0 #8cc09b;
+}
+
+body[data-app-section="admin"] .dashboard-layout .tabs {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.42rem;
+  width: fit-content;
+  border: 1px solid #d3ddd0;
+  border-radius: 0.9rem;
+  padding: 0.3rem;
+  margin: 0;
+  background: linear-gradient(180deg, #fbfdfb, #f2f8ef);
+}
+
+body[data-app-section="admin"] .dashboard-layout .tab-btn {
+  border: 1px solid transparent;
+  border-radius: 0.68rem;
+  padding: 0.44rem 0.78rem;
+  font-size: 0.86rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #4c6458;
+  background: transparent;
+}
+
+body[data-app-section="admin"] .dashboard-layout .tab-btn:hover {
+  background: #edf5ea;
+  color: #2d4d3a;
+}
+
+body[data-app-section="admin"] .dashboard-layout .tab-btn.active {
+  border-color: #c4d9c2;
+  color: #1f3a2f;
+  background: linear-gradient(180deg, #ffffff, #f4fbf1);
+  box-shadow: 0 10px 16px -16px rgb(5 150 105 / 0.85);
+}
+
+body[data-app-section="admin"] .dashboard-layout .tab-content {
+  padding-top: clamp(0.72rem, 1.4vw, 0.95rem);
+}
+
+body[data-app-section="admin"] .dashboard-layout .filters-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.64rem;
+  margin: 0;
+  padding: 0.75rem 0.9rem;
+  border-bottom: 1px solid #dbe6d7;
+  background: #f7fbf5;
+}
+
+body[data-app-section="admin"] .dashboard-layout .filters-bar > input,
+body[data-app-section="admin"] .dashboard-layout .filters-bar > select {
+  min-height: 2.3rem;
+  border: 1px solid #cfdbcc;
+  border-radius: 0.7rem;
+  padding: 0.45rem 0.68rem;
+  background: #ffffff;
+  color: #2d4d3a;
+}
+
+body[data-app-section="admin"] .dashboard-layout .stats-grid {
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: clamp(0.72rem, 1.5vw, 1rem);
+}
+
+body[data-app-section="admin"] .dashboard-layout .stat-card {
+  border: 1px solid #cfdfcb;
+  border-left: 0;
+  border-radius: 14px;
+  padding: clamp(0.78rem, 1.65vw, 1rem);
+  display: flex;
+  align-items: center;
+  gap: 0.72rem;
+  background: linear-gradient(180deg, #ffffff, #f7fbf6);
+  box-shadow: 0 18px 28px -24px rgb(15 23 42 / 0.45);
+}
+
+body[data-app-section="admin"] .dashboard-layout .stat-card:hover {
+  transform: translateY(-2px);
+  border-color: #b6d2b7;
+  box-shadow: 0 20px 30px -24px rgb(5 150 105 / 0.35);
+}
+
+body[data-app-section="admin"] .dashboard-layout .stat-icon {
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 0.72rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #eaf7ee;
+  color: #0f766e;
+  font-size: 1.15rem;
+  flex-shrink: 0;
+}
+
+body[data-app-section="admin"] .dashboard-layout .stat-info,
+body[data-app-section="admin"] .dashboard-layout .stat-content {
+  display: grid;
+  gap: 0.12rem;
+}
+
+body[data-app-section="admin"] .dashboard-layout .stat-value,
+body[data-app-section="admin"] .dashboard-layout .stat-content h3 {
+  margin: 0;
+  font-size: clamp(1.22rem, 2vw, 1.55rem);
+  font-weight: 800;
+  color: #19372b;
+}
+
+body[data-app-section="admin"] .dashboard-layout .stat-label,
+body[data-app-section="admin"] .dashboard-layout .stat-content p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #526b5d;
+}
+
+body[data-app-section="admin"] .dashboard-layout .stat-card-primary,
+body[data-app-section="admin"] .dashboard-layout .stat-card-success,
+body[data-app-section="admin"] .dashboard-layout .stat-card-warning,
+body[data-app-section="admin"] .dashboard-layout .stat-card-info {
+  border-left: 4px solid #10b981;
+}
+
+body[data-app-section="admin"] .dashboard-layout .stat-card-primary {
+  border-left-color: #0ea5e9;
+}
+
+body[data-app-section="admin"] .dashboard-layout .stat-card-success {
+  border-left-color: #10b981;
+}
+
+body[data-app-section="admin"] .dashboard-layout .stat-card-warning {
+  border-left-color: #f59e0b;
+}
+
+body[data-app-section="admin"] .dashboard-layout .stat-card-info {
+  border-left-color: #6366f1;
+}
+
+body[data-app-section="admin"] .dashboard-layout .field-type-card {
+  border: 1px solid #d2e0ce;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #ffffff, #f8fcf7);
+  box-shadow: 0 12px 22px -20px rgb(15 23 42 / 0.42);
+}
+
+body[data-app-section="admin"] .dashboard-layout .field-type-card:hover {
+  border-color: #b8cfb7;
+  transform: translateY(-1px);
+}
+
+body[data-app-section="admin"] .dashboard-layout .fields-list {
+  border: 1px solid #dbe6d7;
+  border-radius: 12px;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+body[data-app-section="admin"] .dashboard-layout .field-item {
+  padding: 0.66rem 0.9rem;
+  border-bottom: 1px solid #e2ebe0;
+}
+
+body[data-app-section="admin"] .dashboard-layout .field-item:last-child {
+  border-bottom: 0;
+}
+
+body[data-app-section="admin"] .dashboard-layout .search-results {
+  border: 1px solid #cfdbcc;
+  border-radius: 0.72rem;
+  background: #ffffff;
+  box-shadow: 0 16px 26px -24px rgb(15 23 42 / 0.72);
+}
+
+body[data-app-section="admin"] .dashboard-layout .search-item {
+  border-bottom: 1px solid #e2ebe0;
+}
+
+body[data-app-section="admin"] .dashboard-layout .selected-item {
+  border: 1px solid #d2e0ce;
+  background: #f7fbf5;
+  border-radius: 0.72rem;
+}
+
+body[data-app-section="admin"] .dashboard-layout .rank-badge {
+  box-shadow: inset 0 -2px 4px rgb(15 23 42 / 0.14);
+  border: 1px solid rgb(15 23 42 / 0.08);
+}
+
+@media (max-width: 980px) {
+  body[data-app-section="admin"] .dashboard-layout .tabs {
+    width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .tab-btn {
+    flex: 0 0 auto;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  body[data-app-section="admin"] .dashboard-layout .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .content-body {
+    padding: 0.72rem;
+  }
+}
+
+body[data-app-section="admin"] .dashboard-layout .dashboard-sidebar-backdrop {
+  display: none;
+}
+
+body[data-app-section="admin"][data-admin-sidebar-style="dark"] .dashboard-layout {
+  --admin-surface: #0f172a;
+  --admin-surface-strong: #111c31;
+  --admin-border: #26344c;
+  --admin-muted-border: #243147;
+  --admin-sidebar-link: #cbd5e1;
+  --admin-sidebar-link-hover: #172136;
+  --admin-sidebar-link-active: #1b3a2c;
+  --admin-sidebar-link-active-border: #2d5f47;
+  --admin-sidebar-link-active-text: #c7f3d9;
+}
+
+body[data-app-section="admin"][data-admin-sidebar-style="dark"] {
+  --admin-surface: #0f172a;
+  --admin-surface-strong: #111c31;
+  --admin-border: #26344c;
+  --admin-muted-border: #243147;
+  --admin-sidebar-link: #cbd5e1;
+  --admin-sidebar-link-hover: #172136;
+  --admin-sidebar-link-active: #1b3a2c;
+  --admin-sidebar-link-active-border: #2d5f47;
+  --admin-sidebar-link-active-text: #c7f3d9;
+}
+
+body[data-app-section="admin"][data-admin-sidebar-style="dark"] .dashboard-layout .sidebar-header {
+  border-color: rgb(148 163 184 / 0.25);
+}
+
+body[data-app-section="admin"][data-admin-sidebar-style="dark"] .dashboard-layout .sidebar-section {
+  background: transparent;
+}
+
+body[data-app-section="admin"][data-admin-sidebar-style="dark"] .dashboard-layout .sidebar-section-toggle:hover {
+  background: #18263c;
+}
+
+body[data-app-section="admin"][data-admin-sidebar-style="dark"] .dashboard-layout .sidebar-section-title,
+body[data-app-section="admin"][data-admin-sidebar-style="dark"] .dashboard-layout .sidebar-section-chevron {
+  color: #cbd5e1;
+}
+
+body[data-app-section="admin"][data-admin-sidebar-style="dark"] .dashboard-layout .sidebar-link:hover {
+  border-color: #304055;
+  color: #f8fafc;
+}
+
+body[data-app-section="admin"][data-admin-sidebar-style="dark"] .dashboard-layout .sidebar-toggle {
+  background: #111c31;
+  border-color: #304055;
+  color: #dbe7f5;
+}
+
+body[data-app-section="admin"][data-admin-sidebar-style="dark"] .dashboard-layout .sidebar-toggle:hover {
+  background: #1a2a42;
+  border-color: #3e536f;
+  color: #f8fafc;
+}
+
+body[data-app-section="admin"][data-admin-sidebar-style="dark"] .dashboard-layout .sidebar-footer {
+  border-color: #2b394f;
+  background: #121f34;
+}
+
+body[data-app-section="admin"][data-admin-sidebar-style="dark"] .dashboard-layout .admin-shell-user-name {
+  color: #f8fafc;
+}
+
+body[data-app-section="admin"][data-admin-sidebar-style="dark"] .dashboard-layout .admin-shell-user-role {
+  color: #cbd5e1;
+}
+
+/* Small utility classes used by admin templates */
+.opacity-75 {
+  opacity: 0.75;
+}
+
+.col-span-2 {
+  grid-column: span 2 / span 2;
+}
+
+@media (max-width: 1024px) {
+  body[data-app-section="admin"] .dashboard-layout .grid-cols-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .grid-cols-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 980px) {
+  body[data-app-section="admin"] {
+    --admin-content-gutter: 12px;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout {
+    flex-direction: column;
+    padding-left: 0;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .sidebar {
+    width: var(--admin-sidebar-width);
+    position: fixed;
+    left: 0;
+    top: 72px;
+    bottom: 0;
+    z-index: 130;
+    transform: translateX(-112%);
+    transition: transform var(--transition-normal);
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .sidebar.open {
+    transform: translateX(0);
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .dashboard-sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 72px 0 0;
+    border: 0;
+    background: rgb(15 23 42 / 0.3);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 125;
+    transition: opacity var(--transition-fast);
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .dashboard-sidebar-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .main-content {
+    margin-left: 0;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .content-header,
+  body[data-app-section="admin"] .dashboard-layout .admin-topbar {
+    min-height: 72px;
+    height: auto;
+    padding: 0 var(--admin-content-gutter);
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .grid-cols-4,
+  body[data-app-section="admin"] .dashboard-layout .grid-cols-3,
+  body[data-app-section="admin"] .dashboard-layout .grid-cols-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .col-span-2 {
+    grid-column: auto;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .admin-panel-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .admin-panel-toolbar .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 760px) {
+  body[data-app-section="admin"] .dashboard-layout .admin-shell-user-meta {
+    display: none;
+  }
+}
+
+/* =====================================================
+   SETTINGS SHELL (theme-ui-*)
+   Shared settings-route chrome for /admin/settings*
+   ===================================================== */
+
+body[data-app-section="admin"] .theme-ui-shell {
+  min-height: 100vh;
+  background: var(--admin-bg);
+}
+
+body[data-app-section="admin"] .theme-ui-topbar {
+  height: 72px;
+  min-height: 72px;
+  padding: 0 var(--admin-content-gutter);
+  padding-left: var(--admin-content-gutter);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--admin-header-bg);
+  border-bottom: 1px solid var(--admin-header-border);
+  position: sticky;
+  top: 0;
+  z-index: 120;
+  transition: padding-left var(--transition-normal);
+}
+
+body[data-app-section="admin"] .theme-ui-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+body[data-app-section="admin"] .theme-ui-topbar-left h1 {
+  margin: 0;
+  font-size: clamp(1.6rem, 2vw, 2.2rem);
+  font-weight: 700;
+  color: var(--admin-heading);
+}
+
+body[data-app-section="admin"] .theme-ui-close-btn,
+body[data-app-section="admin"] .theme-ui-menu-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--admin-heading);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+body[data-app-section="admin"] .theme-ui-close-btn svg,
+body[data-app-section="admin"] .theme-ui-menu-btn svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.2;
+}
+
+body[data-app-section="admin"] .theme-ui-close-btn:hover,
+body[data-app-section="admin"] .theme-ui-menu-btn:hover {
+  background: var(--primary-50);
+  border-color: var(--primary-200);
+  color: var(--primary-900);
+  text-decoration: none;
+}
+
+body[data-app-section="admin"] .theme-ui-menu-btn {
+  display: none;
+}
+
+body[data-app-section="admin"] .theme-ui-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+body[data-app-section="admin"] .theme-ui-user-meta {
+  text-align: right;
+  line-height: 1.2;
+}
+
+body[data-app-section="admin"] .theme-ui-user-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--admin-heading);
+}
+
+body[data-app-section="admin"] .theme-ui-user-role {
+  font-size: 0.85rem;
+  color: var(--admin-header-muted);
+}
+
+body[data-app-section="admin"] .theme-ui-page {
+  display: flex;
+  min-height: calc(100vh - 72px);
+  padding-left: var(--admin-sidebar-width);
+  transition: padding-left var(--transition-normal);
+}
+
+body[data-app-section="admin"] .theme-ui-shell {
+  --admin-sidebar-width: 284px;
+}
+
+body[data-app-section="admin"] .theme-ui-sidebar {
+  width: 284px;
+  flex-shrink: 0;
+  background: var(--admin-surface);
+  border-right: 1px solid var(--admin-border);
+  padding: 14px 12px;
+  overflow-y: auto;
+  position: fixed;
+  top: 72px;
+  left: 0;
+  bottom: 0;
+  height: calc(100vh - 72px);
+  margin-right: 0;
+  transform: translateX(0);
+  z-index: 130;
+  transition:
+    background-color var(--transition-normal),
+    border-color var(--transition-normal),
+    transform var(--transition-normal),
+    margin-right var(--transition-normal);
+}
+
+@media (min-width: 981px) {
+  body[data-app-section="admin"] .theme-ui-shell.settings-sidebar-collapsed .theme-ui-sidebar {
+    transform: translateX(-112%);
+    margin-right: -284px;
+  }
+
+  body[data-app-section="admin"] .theme-ui-shell.settings-sidebar-collapsed .theme-ui-page {
+    padding-left: 0;
+  }
+
+  body[data-app-section="admin"] .theme-ui-shell.settings-sidebar-collapsed .theme-ui-topbar {
+    padding-left: var(--admin-content-gutter);
+  }
+}
+
+body[data-app-section="admin"] .theme-ui-sidebar-section {
+  margin-bottom: 14px;
+}
+
+body[data-app-section="admin"] .theme-ui-sidebar-toggle {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--admin-sidebar-link);
+  padding: 6px 10px;
+  text-transform: uppercase;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+body[data-app-section="admin"] .theme-ui-sidebar-toggle:hover {
+  background: var(--admin-sidebar-link-hover);
+}
+
+body[data-app-section="admin"] .theme-ui-sidebar-toggle svg {
+  transition: transform var(--transition-fast);
+}
+
+body[data-app-section="admin"] .theme-ui-sidebar-section.collapsed .theme-ui-sidebar-toggle svg {
+  transform: rotate(-90deg);
+}
+
+body[data-app-section="admin"] .theme-ui-sidebar-links {
+  display: grid;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+body[data-app-section="admin"] .theme-ui-sidebar-section.collapsed .theme-ui-sidebar-links {
+  display: none;
+}
+
+body[data-app-section="admin"] .theme-ui-sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--admin-sidebar-link);
+  font-size: 0.98rem;
+  font-weight: 400;
+  border: 1px solid transparent;
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+body[data-app-section="admin"] .theme-ui-sidebar-link:hover {
+  background: var(--admin-sidebar-link-hover);
+  border-color: var(--admin-muted-border);
+  color: var(--admin-heading);
+  text-decoration: none;
+}
+
+body[data-app-section="admin"] .theme-ui-sidebar-link.active {
+  background: var(--admin-sidebar-link-active);
+  color: var(--admin-sidebar-link-active-text);
+  font-weight: 400;
+}
+
+body[data-app-section="admin"] .theme-ui-link-badge {
+  margin-left: auto;
+  font-size: 0.68rem;
+  line-height: 1;
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: #ef4444;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+body[data-app-section="admin"] .theme-ui-content {
+  flex: 1;
+  padding: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background:
+    radial-gradient(circle at 100% -10%, var(--primary-100), transparent 36%),
+    linear-gradient(180deg, var(--admin-bg) 0%, var(--color-surface-soft) 100%);
+}
+
+body[data-app-section="admin"] .theme-ui-panel {
+  width: min(1100px, 100%);
+  border: 1px solid var(--admin-muted-border);
+  border-radius: 14px;
+  background: var(--admin-surface-strong);
+  overflow: hidden;
+  box-shadow: 0 18px 36px -28px rgb(15 23 42 / 0.4);
+}
+
+body[data-app-section="admin"] .theme-ui-panel:hover {
+  transform: none;
+  box-shadow: 0 18px 36px -28px rgb(15 23 42 / 0.4);
+  border-color: var(--admin-muted-border);
+}
+
+body[data-app-section="admin"] .theme-ui-panel-body {
+  padding: 26px 30px 30px;
+}
+
+body[data-app-section="admin"] .theme-ui-heading {
+  margin: 0 0 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--admin-heading);
+  font-size: clamp(1.55rem, 2vw, 2.1rem);
+}
+
+body[data-app-section="admin"] .theme-ui-heading p {
+  margin: 0;
+}
+
+body[data-app-section="admin"] .theme-ui-info-card {
+  border: 1px solid #b9d3f5;
+  background: #e9f1fb;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 24px;
+  color: #1e40af;
+}
+
+body[data-app-section="admin"] .theme-ui-info-title {
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #1e3a8a;
+}
+
+body[data-app-section="admin"] .theme-ui-info-card p {
+  margin: 0;
+  line-height: 1.6;
+}
+
+body[data-app-section="admin"] .theme-ui-sidebar-backdrop {
+  display: none;
+}
+
+body[data-app-section="admin"][data-admin-sidebar-style="dark"] .theme-ui-sidebar {
+  background: #0f172a;
+  border-right-color: #26344c;
+}
+
+body[data-app-section="admin"][data-admin-sidebar-style="dark"] .theme-ui-sidebar-toggle {
+  color: #cbd5e1;
+}
+
+body[data-app-section="admin"][data-admin-sidebar-style="dark"] .theme-ui-sidebar-toggle:hover {
+  background: #18263c;
+}
+
+body[data-app-section="admin"][data-admin-sidebar-style="dark"] .theme-ui-sidebar-link {
+  color: #cbd5e1;
+}
+
+body[data-app-section="admin"][data-admin-sidebar-style="dark"] .theme-ui-sidebar-link:hover {
+  background: #172136;
+  border-color: #304055;
+  color: #f8fafc;
+}
+
+body[data-app-section="admin"][data-admin-sidebar-style="dark"] .theme-ui-sidebar-link.active {
+  background: #1b3a2c;
+  color: #c7f3d9;
+}
+
+body[data-app-section="admin"][data-admin-sidebar-style="dark"] .theme-ui-user-name {
+  color: #f8fafc;
+}
+
+body[data-app-section="admin"][data-admin-sidebar-style="dark"] .theme-ui-user-role {
+  color: #cbd5e1;
+}
+
+@media (max-width: 1200px) {
+  body[data-app-section="admin"] .theme-ui-content {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 980px) {
+  body[data-app-section="admin"] .theme-ui-topbar {
+    padding: 0 12px;
+  }
+
+  body[data-app-section="admin"] .theme-ui-menu-btn {
+    display: inline-flex;
+  }
+
+  body[data-app-section="admin"] .theme-ui-sidebar {
+    position: fixed;
+    left: 0;
+    top: 72px;
+    bottom: 0;
+    z-index: 130;
+    transform: translateX(-110%);
+    transition: transform var(--transition-normal);
+  }
+
+  body[data-app-section="admin"] .theme-ui-sidebar.open {
+    transform: translateX(0);
+  }
+
+  body[data-app-section="admin"] .theme-ui-sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 72px 0 0;
+    border: 0;
+    background: rgb(15 23 42 / 0.3);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 125;
+    transition: opacity var(--transition-fast);
+  }
+
+  body[data-app-section="admin"] .theme-ui-sidebar-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  body[data-app-section="admin"] .theme-ui-content {
+    padding: 16px;
+  }
+
+  body[data-app-section="admin"] .theme-ui-page {
+    padding-left: 0;
+  }
+
+  body[data-app-section="admin"] .theme-ui-panel-body {
+    padding: 18px;
+  }
+
+  body[data-app-section="admin"] .theme-ui-shell .grid-cols-4,
+  body[data-app-section="admin"] .theme-ui-shell .grid-cols-3,
+  body[data-app-section="admin"] .theme-ui-shell .grid-cols-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  body[data-app-section="admin"] .theme-ui-topbar-right {
+    gap: 8px;
+  }
+
+  body[data-app-section="admin"] .theme-ui-user-meta {
+    display: none;
+  }
+
+  body[data-app-section="admin"] .theme-ui-panel-body {
+    padding: 14px;
+  }
+}
+
+/* Admin layout corrections - keeps headers and wide data stable across routes. */
+body[data-app-section="admin"] .dashboard-layout .content-header,
+body[data-app-section="admin"] .dashboard-layout .admin-topbar {
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  padding-left: clamp(1rem, 2vw, 1.5rem) !important;
+  padding-right: clamp(1rem, 2vw, 1.5rem) !important;
+  gap: clamp(0.55rem, 1.2vw, 0.85rem) !important;
+  justify-content: flex-start !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .content-header > .flex-1,
+body[data-app-section="admin"] .dashboard-layout .admin-topbar > .flex-1 {
+  display: none !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .content-header h1,
+body[data-app-section="admin"] .dashboard-layout .admin-topbar .page-title,
+body[data-app-section="admin"] .dashboard-layout .admin-topbar h1 {
+  flex: 0 1 auto !important;
+  max-width: min(42vw, 42rem);
+  margin-right: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+  letter-spacing: 0 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .topbar-actions {
+  margin-left: auto !important;
+  flex: 0 0 auto !important;
+  flex-wrap: nowrap !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .admin-shell-user {
+  margin-left: auto !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .topbar-actions + .admin-shell-user {
+  margin-left: 0 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout #alumniTable,
+body[data-app-section="admin"] .dashboard-layout .table-container,
+body[data-app-section="admin"] .dashboard-layout .table-responsive,
+body[data-app-section="admin"] .dashboard-layout .card-body.p-0 {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto !important;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table,
+body[data-app-section="admin"] .dashboard-layout .data-table,
+body[data-app-section="admin"] .dashboard-layout .table-improved {
+  width: 100% !important;
+  min-width: 1080px !important;
+  table-layout: auto !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table th,
+body[data-app-section="admin"] .dashboard-layout .table td,
+body[data-app-section="admin"] .dashboard-layout .data-table th,
+body[data-app-section="admin"] .dashboard-layout .data-table td,
+body[data-app-section="admin"] .dashboard-layout .table-improved th,
+body[data-app-section="admin"] .dashboard-layout .table-improved td {
+  max-width: none !important;
+  white-space: nowrap !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+  line-height: 1.35;
+}
+
+body[data-app-section="admin"] .dashboard-layout .alumni-id-code,
+body[data-app-section="admin"] .dashboard-layout .points-badge,
+body[data-app-section="admin"] .dashboard-layout .badge {
+  display: inline-flex;
+  align-items: center;
+  max-width: none !important;
+  white-space: nowrap !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+  letter-spacing: 0 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table td .flex,
+body[data-app-section="admin"] .dashboard-layout .table-improved td .flex {
+  flex-wrap: nowrap !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid {
+  grid-template-columns: repeat(2, minmax(320px, 1fr)) !important;
+  align-items: stretch;
+}
+
+body[data-app-section="admin"] .dashboard-layout .chart-empty-state,
+body[data-app-section="admin"] .dashboard-layout .chart-error-state {
+  min-height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 1rem;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  background: #f8fafc;
+  color: #64748b;
+  text-align: center;
+}
+
+body[data-app-section="admin"] .dashboard-layout .chart-error-state {
+  border-color: #fecaca;
+  background: #fff7f7;
+  color: #991b1b;
+}
+
+body[data-app-section="admin"] .dashboard-layout .chart-state-title {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+body[data-app-section="admin"] .dashboard-layout .chart-error-state .chart-state-title {
+  color: #991b1b;
+}
+
+@media (max-width: 1120px) {
+  body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 760px) {
+  body[data-app-section="admin"] .dashboard-layout .content-header h1,
+  body[data-app-section="admin"] .dashboard-layout .admin-topbar .page-title,
+  body[data-app-section="admin"] .dashboard-layout .admin-topbar h1 {
+    max-width: calc(100vw - 11rem);
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .admin-shell-user-meta {
+    display: none !important;
+  }
+}
+
+body[data-app-section="admin"] .dashboard-layout .card-header,
+body[data-app-section="admin"] .dashboard-layout .card-improved .card-header,
+body[data-app-section="admin"] .dashboard-layout .admin-panel-header,
+body[data-app-section="admin"] .dashboard-layout .theme-ui-panel-header {
+  padding-left: clamp(1.35rem, 1.8vw, 1.65rem) !important;
+  padding-right: clamp(1.25rem, 1.8vw, 1.5rem) !important;
+  padding-top: clamp(1rem, 1.5vw, 1.2rem) !important;
+  padding-bottom: clamp(0.85rem, 1.3vw, 1rem) !important;
+  min-height: 3.75rem !important;
+  align-items: center !important;
+  overflow: visible !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .card-title,
+body[data-app-section="admin"] .dashboard-layout .card-header h2,
+body[data-app-section="admin"] .dashboard-layout .card-header h3,
+body[data-app-section="admin"] .dashboard-layout .card-header h4,
+body[data-app-section="admin"] .dashboard-layout .admin-panel-title,
+body[data-app-section="admin"] .dashboard-layout .theme-ui-panel-title {
+  display: block !important;
+  padding-left: 0.18rem !important;
+  margin-left: 0 !important;
+  text-indent: 0 !important;
+  transform: none !important;
+  letter-spacing: 0 !important;
+  line-height: 1.45 !important;
+  padding-top: 0.08rem !important;
+  padding-bottom: 0.08rem !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  white-space: normal !important;
+  overflow-wrap: break-word !important;
+  word-break: normal !important;
+}
+
+body[data-app-section="admin"] .modal-improved {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 3000 !important;
+  display: none !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 1rem !important;
+}
+
+body[data-app-section="admin"] .modal-improved.active {
+  display: flex !important;
+}
+
+body[data-app-section="admin"] .modal-improved .modal-backdrop {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 0 !important;
+  display: block !important;
+  padding: 0 !important;
+  background: rgb(15 23 42 / 0.58) !important;
+}
+
+body[data-app-section="admin"] .modal-improved .modal-dialog {
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout {
+  --admin-readable-x: clamp(1.45rem, 2.2vw, 2rem);
+  --admin-readable-y: clamp(1rem, 1.7vw, 1.35rem);
+}
+
+body[data-app-section="admin"] .dashboard-layout .card-header,
+body[data-app-section="admin"] .dashboard-layout .card-improved .card-header,
+body[data-app-section="admin"] .dashboard-layout .admin-panel-header,
+body[data-app-section="admin"] .dashboard-layout .theme-ui-panel-header {
+  padding-left: var(--admin-readable-x) !important;
+  padding-right: var(--admin-readable-x) !important;
+  padding-top: var(--admin-readable-y) !important;
+  padding-bottom: var(--admin-readable-y) !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .card-title,
+body[data-app-section="admin"] .dashboard-layout .card-header h2,
+body[data-app-section="admin"] .dashboard-layout .card-header h3,
+body[data-app-section="admin"] .dashboard-layout .card-header h4,
+body[data-app-section="admin"] .dashboard-layout .admin-panel-title,
+body[data-app-section="admin"] .dashboard-layout .theme-ui-panel-title {
+  padding-left: 0.28rem !important;
+  padding-right: 0.28rem !important;
+  line-height: 1.5 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .card-body:not(.p-0),
+body[data-app-section="admin"] .dashboard-layout .card-improved .card-body:not(.p-0),
+body[data-app-section="admin"] .dashboard-layout .admin-panel-body,
+body[data-app-section="admin"] .dashboard-layout .theme-ui-panel-body {
+  padding-left: var(--admin-readable-x) !important;
+  padding-right: var(--admin-readable-x) !important;
+}
+
+/* =====================================================
+   ADMIN UI REFRESH
+   Shared polish for all admin dashboard routes
+   ===================================================== */
+
+body[data-app-section="admin"] {
+  --admin-content-max-width: 1480px;
+  --admin-radius: 8px;
+  --admin-shadow-card: 0 14px 28px -24px rgb(15 23 42 / 0.36);
+  --admin-shadow-hover: 0 18px 34px -26px rgb(15 23 42 / 0.42);
+  --admin-input-height: 2.5rem;
+  --admin-text-strong: #172033;
+  --admin-text-muted: #526173;
+  --admin-line: #dbe3dc;
+  --admin-panel: #ffffff;
+  --admin-panel-soft: #f7faf8;
+}
+
+body[data-app-section="admin"] h1,
+body[data-app-section="admin"] h2,
+body[data-app-section="admin"] h3,
+body[data-app-section="admin"] h4,
+body[data-app-section="admin"] h5,
+body[data-app-section="admin"] h6,
+body[data-app-section="admin"] .page-title,
+body[data-app-section="admin"] .card-title,
+body[data-app-section="admin"] .stat-value,
+body[data-app-section="admin"] .analytics-card-value {
+  letter-spacing: 0 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout,
+body[data-app-section="admin"] .theme-ui-shell {
+  color: var(--admin-text-strong);
+  background: linear-gradient(180deg, #f8faf9 0%, #eef3f1 100%);
+}
+
+body[data-app-section="admin"] .dashboard-layout .main-content {
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+body[data-app-section="admin"] .dashboard-layout .admin-content,
+body[data-app-section="admin"] .dashboard-layout .content-body,
+body[data-app-section="admin"] .dashboard-layout .content-wrapper {
+  width: min(100%, var(--admin-content-max-width));
+  margin-inline: auto;
+  padding: clamp(0.9rem, 2vw, 1.35rem) var(--admin-content-gutter);
+  display: grid;
+  gap: clamp(0.9rem, 1.8vw, 1.2rem);
+}
+
+body[data-app-section="admin"] .dashboard-layout .admin-content.p-lg,
+body[data-app-section="admin"] .dashboard-layout .content-body.p-lg {
+  padding: clamp(0.9rem, 2vw, 1.35rem) var(--admin-content-gutter);
+}
+
+body[data-app-section="admin"] .dashboard-layout .content-header,
+body[data-app-section="admin"] .dashboard-layout .admin-topbar {
+  gap: clamp(0.55rem, 1.4vw, 0.9rem);
+  min-width: 0;
+  overflow: visible;
+  background: rgb(255 255 255 / 0.95);
+  border-bottom-color: var(--admin-line);
+  box-shadow: 0 12px 24px -24px rgb(15 23 42 / 0.48);
+}
+
+body[data-app-section="admin"] .dashboard-layout .content-header > *,
+body[data-app-section="admin"] .dashboard-layout .admin-topbar > * {
+  min-width: 0;
+}
+
+body[data-app-section="admin"] .dashboard-layout .content-header h1,
+body[data-app-section="admin"] .dashboard-layout .admin-topbar .page-title,
+body[data-app-section="admin"] .dashboard-layout .admin-topbar h1 {
+  flex: 1 1 auto;
+  margin-right: 0;
+  font-size: clamp(1.18rem, 1.8vw, 1.55rem);
+  line-height: 1.2;
+  white-space: normal;
+}
+
+body[data-app-section="admin"] .dashboard-layout .topbar-title-block {
+  flex: 1 1 auto;
+  min-width: 12rem;
+}
+
+body[data-app-section="admin"] .dashboard-layout .topbar-title-block p {
+  margin: 0.2rem 0 0;
+}
+
+body[data-app-section="admin"] .dashboard-layout .content-header > .btn:not(.sidebar-toggle),
+body[data-app-section="admin"] .dashboard-layout .admin-topbar > .btn:not(.sidebar-toggle),
+body[data-app-section="admin"] .dashboard-layout .topbar-actions,
+body[data-app-section="admin"] .dashboard-layout .header-actions,
+body[data-app-section="admin"] .dashboard-layout .action-buttons {
+  flex: 0 0 auto;
+}
+
+body[data-app-section="admin"] .dashboard-layout .topbar-actions,
+body[data-app-section="admin"] .dashboard-layout .header-actions,
+body[data-app-section="admin"] .dashboard-layout .action-buttons {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+body[data-app-section="admin"] .dashboard-layout .admin-shell-user {
+  margin-left: auto;
+  gap: 0.65rem;
+  flex: 0 0 auto;
+  min-width: fit-content;
+}
+
+body[data-app-section="admin"] .dashboard-layout .admin-shell-user-meta {
+  min-width: 0;
+}
+
+body[data-app-section="admin"] .dashboard-layout .admin-shell-user-name {
+  max-width: 14rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+body[data-app-section="admin"] .dashboard-layout .admin-shell-logout,
+body[data-app-section="admin"] .theme-ui-topbar-right .btn.btn-danger {
+  min-height: 2.1rem;
+  border-radius: var(--admin-radius);
+  box-shadow: none;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar {
+  background: #ffffff;
+  border-right-color: var(--admin-line);
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-section {
+  margin-bottom: 0.55rem;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-section-title,
+body[data-app-section="admin"] .theme-ui-sidebar-toggle {
+  letter-spacing: 0.04em;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-link,
+body[data-app-section="admin"] .theme-ui-sidebar-link {
+  min-height: 2.45rem;
+  border-radius: var(--admin-radius);
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-link.active,
+body[data-app-section="admin"] .theme-ui-sidebar-link.active {
+  border-color: #bbd7c5;
+  box-shadow: inset 3px 0 0 var(--color-primary);
+}
+
+body[data-app-section="admin"] .dashboard-layout .grid {
+  min-width: 0;
+}
+
+body[data-app-section="admin"] .dashboard-layout .grid-cols-6 {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+body[data-app-section="admin"] .dashboard-layout .grid-cols-5 {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+body[data-app-section="admin"] .dashboard-layout .grid-cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+body[data-app-section="admin"] .dashboard-layout .grid-cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+body[data-app-section="admin"] .dashboard-layout .grid-cols-2,
+body[data-app-section="admin"] .theme-ui-grid-two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+body[data-app-section="admin"] .dashboard-layout .card,
+body[data-app-section="admin"] .dashboard-layout .card-improved,
+body[data-app-section="admin"] .dashboard-layout .stat-card,
+body[data-app-section="admin"] .dashboard-layout .stat-card-improved,
+body[data-app-section="admin"] .theme-ui-panel,
+body[data-app-section="admin"] .theme-ui-info-card {
+  border-radius: var(--admin-radius) !important;
+  border-color: var(--admin-line) !important;
+  background: var(--admin-panel) !important;
+  box-shadow: var(--admin-shadow-card) !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .card:hover,
+body[data-app-section="admin"] .dashboard-layout .card-improved:hover,
+body[data-app-section="admin"] .dashboard-layout .stat-card:hover,
+body[data-app-section="admin"] .dashboard-layout .stat-card-improved:hover {
+  transform: none !important;
+  border-color: #c7d4cd !important;
+  box-shadow: var(--admin-shadow-hover) !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .card-header,
+body[data-app-section="admin"] .dashboard-layout .card-improved .card-header,
+body[data-app-section="admin"] .dashboard-layout .card-footer {
+  border-color: var(--admin-line) !important;
+  background: var(--admin-panel-soft) !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .card-header,
+body[data-app-section="admin"] .dashboard-layout .card-body,
+body[data-app-section="admin"] .dashboard-layout .card-footer {
+  min-width: 0;
+}
+
+body[data-app-section="admin"] .dashboard-layout .card-title,
+body[data-app-section="admin"] .dashboard-layout .card-header h2,
+body[data-app-section="admin"] .dashboard-layout .card-header h3 {
+  color: var(--admin-text-strong);
+  font-size: clamp(1rem, 1.15vw, 1.12rem);
+  line-height: 1.3;
+}
+
+body[data-app-section="admin"] .dashboard-layout .form-input,
+body[data-app-section="admin"] .dashboard-layout .form-select,
+body[data-app-section="admin"] .dashboard-layout .form-textarea,
+body[data-app-section="admin"] .theme-ui-form input,
+body[data-app-section="admin"] .theme-ui-form select,
+body[data-app-section="admin"] .theme-ui-form textarea {
+  min-height: var(--admin-input-height);
+  border-radius: var(--admin-radius) !important;
+  border-color: #cfd9d3 !important;
+  background: #ffffff !important;
+  color: var(--admin-text-strong);
+  box-shadow: none !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .form-input:focus,
+body[data-app-section="admin"] .dashboard-layout .form-select:focus,
+body[data-app-section="admin"] .dashboard-layout .form-textarea:focus,
+body[data-app-section="admin"] .theme-ui-form input:focus,
+body[data-app-section="admin"] .theme-ui-form select:focus,
+body[data-app-section="admin"] .theme-ui-form textarea:focus {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 3px rgb(16 185 129 / 0.16) !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .form-label {
+  color: #344255;
+  font-weight: 700;
+}
+
+body[data-app-section="admin"] .dashboard-layout .btn,
+body[data-app-section="admin"] .theme-ui-shell .btn {
+  border-radius: var(--admin-radius) !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table-container,
+body[data-app-section="admin"] .dashboard-layout .table-responsive,
+body[data-app-section="admin"] .dashboard-layout .card-body.p-0 {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table,
+body[data-app-section="admin"] .dashboard-layout .data-table,
+body[data-app-section="admin"] .dashboard-layout .table-improved {
+  min-width: 720px;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table th,
+body[data-app-section="admin"] .dashboard-layout .data-table th,
+body[data-app-section="admin"] .dashboard-layout .table-improved thead th {
+  background: #f3f6f4 !important;
+  color: #425063 !important;
+  letter-spacing: 0.04em;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table td,
+body[data-app-section="admin"] .dashboard-layout .data-table td,
+body[data-app-section="admin"] .dashboard-layout .table-improved tbody td {
+  color: #263244 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table tbody tr:hover,
+body[data-app-section="admin"] .dashboard-layout .data-table tbody tr:hover,
+body[data-app-section="admin"] .dashboard-layout .table-improved tbody tr:hover {
+  background: #f7faf8 !important;
+  box-shadow: inset 3px 0 0 var(--color-primary);
+}
+
+body[data-app-section="admin"] .dashboard-layout .stats-grid,
+body[data-app-section="admin"] .dashboard-layout .dashboard-charts-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+body[data-app-section="admin"] .dashboard-layout .stat-card,
+body[data-app-section="admin"] .dashboard-layout .stat-card-improved {
+  min-height: 104px;
+  align-items: center;
+}
+
+body[data-app-section="admin"] .dashboard-layout .stat-icon {
+  width: 2.55rem;
+  height: 2.55rem;
+  border-radius: var(--admin-radius);
+  color: #ffffff;
+  background: #2563eb;
+  box-shadow: none !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .stat-icon::after {
+  display: none !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .stat-card-primary .stat-icon,
+body[data-app-section="admin"] .dashboard-layout .stat-icon.bg-primary {
+  background: #2563eb !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .stat-card-success .stat-icon,
+body[data-app-section="admin"] .dashboard-layout .stat-icon.bg-success {
+  background: #059669 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .stat-card-warning .stat-icon,
+body[data-app-section="admin"] .dashboard-layout .stat-icon.bg-warning {
+  background: #d97706 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .stat-card-info .stat-icon,
+body[data-app-section="admin"] .dashboard-layout .stat-icon.bg-info {
+  background: #4f46e5 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .stat-icon.bg-danger {
+  background: #dc2626 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .stat-value,
+body[data-app-section="admin"] .dashboard-layout .stat-content h3,
+body[data-app-section="admin"] .dashboard-layout .analytics-card-value {
+  color: var(--admin-text-strong) !important;
+  background: none !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .stat-label,
+body[data-app-section="admin"] .dashboard-layout .stat-content p,
+body[data-app-section="admin"] .dashboard-layout .analytics-card-foot,
+body[data-app-section="admin"] .dashboard-layout .text-secondary,
+body[data-app-section="admin"] .dashboard-layout .text-muted {
+  color: var(--admin-text-muted) !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .admin-panel-toolbar {
+  border-radius: var(--admin-radius);
+  border-color: var(--admin-line);
+  background: var(--admin-panel);
+  box-shadow: var(--admin-shadow-card);
+}
+
+body[data-app-section="admin"] .dashboard-layout .tabs,
+body[data-app-section="admin"] .dashboard-layout .tabs-improved {
+  width: 100%;
+  max-width: 100%;
+  border-radius: var(--admin-radius);
+  border: 1px solid var(--admin-line);
+  background: #ffffff;
+  padding: 0.25rem;
+  overflow-x: auto;
+}
+
+body[data-app-section="admin"] .dashboard-layout .tab-btn {
+  border-radius: calc(var(--admin-radius) - 2px);
+  white-space: nowrap;
+}
+
+body[data-app-section="admin"] .dashboard-layout .tab-btn.active {
+  background: #ecfdf5 !important;
+  border-color: #bbf7d0 !important;
+  color: #065f46 !important;
+  box-shadow: none !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .modal-content,
+body[data-app-section="admin"] .dashboard-layout .modal-improved .modal-content {
+  border-radius: var(--admin-radius) !important;
+}
+
+/* Keep Settings pages centered within the available space beside the sidebar. */
+body[data-app-section="admin"] .theme-ui-page {
+  width: 100% !important;
+}
+
+body[data-app-section="admin"] .theme-ui-content {
+  width: 100% !important;
+  min-width: 0 !important;
+  display: grid !important;
+  justify-items: center !important;
+  align-items: start !important;
+  padding: clamp(1.2rem, 2.2vw, 2rem) clamp(1.35rem, 3vw, 3rem) !important;
+}
+
+body[data-app-section="admin"] .theme-ui-panel {
+  width: min(100%, 1180px) !important;
+  margin-inline: auto !important;
+}
+
+body[data-app-section="admin"] .theme-ui-panel-body {
+  width: 100% !important;
+  padding: clamp(1.35rem, 2.3vw, 2rem) !important;
+}
+
+@media (max-width: 760px) {
+  body[data-app-section="admin"] .theme-ui-content {
+    padding: 1rem !important;
+  }
+
+  body[data-app-section="admin"] .theme-ui-panel-body {
+    padding: 1rem !important;
+  }
+}
+
+@media (max-width: 1280px) {
+  body[data-app-section="admin"] .dashboard-layout .grid-cols-6,
+  body[data-app-section="admin"] .dashboard-layout .grid-cols-5,
+  body[data-app-section="admin"] .dashboard-layout .grid-cols-4 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1024px) {
+  body[data-app-section="admin"] .dashboard-layout .grid-cols-6,
+  body[data-app-section="admin"] .dashboard-layout .grid-cols-5,
+  body[data-app-section="admin"] .dashboard-layout .grid-cols-4,
+  body[data-app-section="admin"] .dashboard-layout .grid-cols-3,
+  body[data-app-section="admin"] .theme-ui-grid-three {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  body[data-app-section="admin"] .dashboard-layout .content-header,
+  body[data-app-section="admin"] .dashboard-layout .admin-topbar {
+    gap: 0.45rem;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .content-header h1,
+  body[data-app-section="admin"] .dashboard-layout .admin-topbar .page-title,
+  body[data-app-section="admin"] .dashboard-layout .admin-topbar h1 {
+    font-size: clamp(1rem, 4vw, 1.18rem);
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .topbar-actions .btn,
+  body[data-app-section="admin"] .dashboard-layout .header-actions .btn,
+  body[data-app-section="admin"] .dashboard-layout .content-header > .btn:not(.sidebar-toggle),
+  body[data-app-section="admin"] .dashboard-layout .admin-topbar > .btn:not(.sidebar-toggle) {
+    min-height: 2.05rem;
+    padding-inline: 0.65rem;
+    font-size: 0.76rem;
+  }
+}
+
+@media (max-width: 680px) {
+  body[data-app-section="admin"] .dashboard-layout .grid-cols-6,
+  body[data-app-section="admin"] .dashboard-layout .grid-cols-5,
+  body[data-app-section="admin"] .dashboard-layout .grid-cols-4,
+  body[data-app-section="admin"] .dashboard-layout .grid-cols-3,
+  body[data-app-section="admin"] .dashboard-layout .grid-cols-2,
+  body[data-app-section="admin"] .theme-ui-grid-two,
+  body[data-app-section="admin"] .theme-ui-grid-three {
+    grid-template-columns: 1fr;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .col-span-2,
+  body[data-app-section="admin"] .dashboard-layout .col-span-3,
+  body[data-app-section="admin"] .dashboard-layout .col-span-4 {
+    grid-column: auto;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .admin-shell-user {
+    gap: 0.45rem;
+  }
+}
+
+/* Final admin repair layer: keep late page styles from breaking theme, cards, and tables. */
+body[data-app-section="admin"] .dashboard-layout .sidebar,
+body[data-app-section="admin"] .theme-ui-sidebar {
+  background: var(--admin-surface) !important;
+  border-right-color: var(--admin-border) !important;
+  box-shadow: 10px 0 28px -30px rgb(15 23 42 / 0.65) !important;
+}
+
+body[data-app-section="admin"][data-admin-sidebar-style="dark"] .dashboard-layout .sidebar,
+body[data-app-section="admin"][data-admin-sidebar-style="dark"] .theme-ui-sidebar {
+  background: linear-gradient(180deg, #0f172a 0%, #111c31 100%) !important;
+  border-right-color: #26344c !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-link,
+body[data-app-section="admin"] .dashboard-layout .sidebar-section-toggle,
+body[data-app-section="admin"] .theme-ui-sidebar-link,
+body[data-app-section="admin"] .theme-ui-sidebar-toggle {
+  color: var(--admin-sidebar-link) !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-link:hover,
+body[data-app-section="admin"] .dashboard-layout .sidebar-section-toggle:hover,
+body[data-app-section="admin"] .theme-ui-sidebar-link:hover,
+body[data-app-section="admin"] .theme-ui-sidebar-toggle:hover {
+  background: var(--admin-sidebar-link-hover) !important;
+  color: var(--admin-heading) !important;
+}
+
+body[data-app-section="admin"][data-admin-sidebar-style="dark"] .dashboard-layout .sidebar-link:hover,
+body[data-app-section="admin"][data-admin-sidebar-style="dark"] .theme-ui-sidebar-link:hover {
+  color: #f8fafc !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-link.active,
+body[data-app-section="admin"] .theme-ui-sidebar-link.active {
+  background: var(--admin-sidebar-link-active) !important;
+  border-color: var(--admin-sidebar-link-active-border) !important;
+  color: var(--admin-sidebar-link-active-text) !important;
+  box-shadow: inset 3px 0 0 var(--color-primary) !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-section-title,
+body[data-app-section="admin"] .dashboard-layout .sidebar-section-chevron {
+  color: var(--admin-sidebar-link) !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .dashboard-charts-grid > .stat-card-improved,
+body[data-app-section="admin"] .dashboard-layout .stats-grid > .stat-card-improved,
+body[data-app-section="admin"] .dashboard-layout .stat-card-improved {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: clamp(0.85rem, 1.4vw, 1.1rem) !important;
+  min-height: 116px !important;
+  padding: clamp(1rem, 1.6vw, 1.25rem) !important;
+  overflow: hidden !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .stat-card-improved .stat-icon {
+  position: relative !important;
+  inset: auto !important;
+  flex: 0 0 48px !important;
+  width: 48px !important;
+  height: 48px !important;
+  min-width: 48px !important;
+  margin: 0 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .stat-card-improved .stat-info {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  display: grid !important;
+  gap: 0.18rem !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .stat-card-improved .stat-value,
+body[data-app-section="admin"] .dashboard-layout .analytics-card-value {
+  font-size: clamp(1.45rem, 2.2vw, 1.85rem) !important;
+  line-height: 1.1 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .analytics-card {
+  display: grid !important;
+  align-content: center !important;
+  justify-items: start !important;
+  min-height: 104px !important;
+  padding: clamp(1rem, 1.6vw, 1.2rem) !important;
+  text-align: left !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table-container,
+body[data-app-section="admin"] .dashboard-layout .table-responsive,
+body[data-app-section="admin"] .dashboard-layout .card-body.p-0:has(> table) {
+  border: 1px solid var(--admin-line) !important;
+  border-radius: 10px !important;
+  background: #ffffff !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table,
+body[data-app-section="admin"] .dashboard-layout .data-table,
+body[data-app-section="admin"] .dashboard-layout .table-improved {
+  width: 100% !important;
+  min-width: 720px !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  table-layout: auto !important;
+  background: #ffffff !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table th,
+body[data-app-section="admin"] .dashboard-layout .table td,
+body[data-app-section="admin"] .dashboard-layout .data-table th,
+body[data-app-section="admin"] .dashboard-layout .data-table td,
+body[data-app-section="admin"] .dashboard-layout .table-improved th,
+body[data-app-section="admin"] .dashboard-layout .table-improved td {
+  padding: 0.9rem 1rem !important;
+  max-width: 26rem !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+  border-bottom: 1px solid #e6ede8 !important;
+  line-height: 1.45 !important;
+  vertical-align: middle !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table thead th,
+body[data-app-section="admin"] .dashboard-layout .data-table thead th,
+body[data-app-section="admin"] .dashboard-layout .table-improved thead th {
+  background: linear-gradient(180deg, #f8fbf9 0%, #eef5f1 100%) !important;
+  color: #334155 !important;
+  border-bottom: 1px solid #d9e4dd !important;
+  font-size: 0.75rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+  white-space: nowrap !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table tbody tr,
+body[data-app-section="admin"] .dashboard-layout .data-table tbody tr,
+body[data-app-section="admin"] .dashboard-layout .table-improved tbody tr {
+  background: #ffffff !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table tbody tr:hover,
+body[data-app-section="admin"] .dashboard-layout .data-table tbody tr:hover,
+body[data-app-section="admin"] .dashboard-layout .table-improved tbody tr:hover {
+  background: var(--primary-50) !important;
+  box-shadow: inset 3px 0 0 var(--color-primary) !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table td .flex,
+body[data-app-section="admin"] .dashboard-layout .table-improved td .flex {
+  flex-wrap: wrap !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table .action-buttons,
+body[data-app-section="admin"] .dashboard-layout .table-improved .action-buttons {
+  flex-wrap: nowrap !important;
+}
+
+/* Admin hardening layer: sidebar parity, table breathing room, and mobile data cards. */
+body[data-app-section="admin"] {
+  --admin-shell-sidebar-width: var(--admin-sidebar-width, 304px);
+  --admin-shell-table-x: clamp(1.35rem, 2.5vw, 1.9rem);
+  --admin-shell-table-y: 0.95rem;
+}
+
+body[data-app-section="admin"] .dashboard-layout,
+body[data-app-section="admin"] .theme-ui-shell,
+body[data-app-section="admin"] .dashboard-layout .main-content,
+body[data-app-section="admin"] .theme-ui-page,
+body[data-app-section="admin"] .theme-ui-content {
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar,
+body[data-app-section="admin"] .theme-ui-sidebar {
+  width: var(--admin-shell-sidebar-width) !important;
+  max-width: 86vw !important;
+  box-sizing: border-box !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-nav,
+body[data-app-section="admin"] .theme-ui-sidebar {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-section-links,
+body[data-app-section="admin"] .theme-ui-sidebar-links {
+  display: grid !important;
+  gap: 5px !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-section.collapsed .sidebar-section-links,
+body[data-app-section="admin"] .theme-ui-sidebar-section.collapsed .theme-ui-sidebar-links {
+  display: none !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-link,
+body[data-app-section="admin"] .theme-ui-sidebar-link {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  min-height: 40px !important;
+  padding: 9px 12px !important;
+  margin: 0 !important;
+  border: 1px solid transparent !important;
+  border-radius: 8px !important;
+  font-size: 0.94rem !important;
+  font-weight: 400 !important;
+  line-height: 1.25 !important;
+  letter-spacing: 0 !important;
+  text-decoration: none !important;
+  white-space: normal !important;
+  box-shadow: none !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-link.active,
+body[data-app-section="admin"] .theme-ui-sidebar-link.active {
+  font-weight: 400 !important;
+  box-shadow: inset 4px 0 0 var(--color-primary) !important;
+}
+
+body[data-app-section="admin"] .sidebar-link-icon,
+body[data-app-section="admin"] .theme-ui-link-icon {
+  width: 18px !important;
+  height: 18px !important;
+  flex: 0 0 18px !important;
+  display: inline-grid !important;
+  place-items: center !important;
+}
+
+body[data-app-section="admin"] .sidebar-link-icon svg,
+body[data-app-section="admin"] .theme-ui-link-icon svg {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-section-toggle,
+body[data-app-section="admin"] .theme-ui-sidebar-toggle {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  min-height: 34px !important;
+  padding: 8px 12px !important;
+  border-radius: 8px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important;
+}
+
+body[data-app-section="admin"] .admin-table-scroll,
+body[data-app-section="admin"] .table-container,
+body[data-app-section="admin"] .table-responsive,
+body[data-app-section="admin"] .admin-record-table-shell,
+body[data-app-section="admin"] .id-card-results-table-wrap,
+body[data-app-section="admin"] #alumniTable {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  border: 1px solid var(--admin-modern-line, var(--admin-line, #dfe7df)) !important;
+  border-radius: 8px !important;
+  background: #ffffff !important;
+}
+
+body[data-app-section="admin"] .card-body.p-0:has(table),
+body[data-app-section="admin"] .card-body.p-0:has(.admin-table-scroll),
+body[data-app-section="admin"] .card-body.p-0:has(.table-responsive),
+body[data-app-section="admin"] .card-body.p-0:has(.id-card-results-table-wrap) {
+  padding: clamp(0.95rem, 1.6vw, 1.2rem) clamp(1.25rem, 2.4vw, 1.8rem) clamp(1.05rem, 1.8vw, 1.35rem) !important;
+}
+
+body[data-app-section="admin"] .admin-responsive-table,
+body[data-app-section="admin"] .table,
+body[data-app-section="admin"] .data-table,
+body[data-app-section="admin"] .table-improved,
+body[data-app-section="admin"] .compact-table {
+  width: 100% !important;
+  min-width: 920px !important;
+  table-layout: auto !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  background: #ffffff !important;
+}
+
+body[data-app-section="admin"] .admin-responsive-table th,
+body[data-app-section="admin"] .admin-responsive-table td,
+body[data-app-section="admin"] .table th,
+body[data-app-section="admin"] .table td,
+body[data-app-section="admin"] .data-table th,
+body[data-app-section="admin"] .data-table td,
+body[data-app-section="admin"] .table-improved th,
+body[data-app-section="admin"] .table-improved td,
+body[data-app-section="admin"] .compact-table th,
+body[data-app-section="admin"] .compact-table td {
+  padding: var(--admin-shell-table-y) 1.15rem !important;
+  max-width: 26rem !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+  line-height: 1.45 !important;
+  vertical-align: middle !important;
+}
+
+body[data-app-section="admin"] .admin-responsive-table th:first-child,
+body[data-app-section="admin"] .admin-responsive-table td:first-child,
+body[data-app-section="admin"] .table th:first-child,
+body[data-app-section="admin"] .table td:first-child,
+body[data-app-section="admin"] .data-table th:first-child,
+body[data-app-section="admin"] .data-table td:first-child,
+body[data-app-section="admin"] .table-improved th:first-child,
+body[data-app-section="admin"] .table-improved td:first-child,
+body[data-app-section="admin"] .compact-table th:first-child,
+body[data-app-section="admin"] .compact-table td:first-child {
+  padding-left: var(--admin-shell-table-x) !important;
+}
+
+body[data-app-section="admin"] .admin-responsive-table th:last-child,
+body[data-app-section="admin"] .admin-responsive-table td:last-child,
+body[data-app-section="admin"] .table th:last-child,
+body[data-app-section="admin"] .table td:last-child,
+body[data-app-section="admin"] .data-table th:last-child,
+body[data-app-section="admin"] .data-table td:last-child,
+body[data-app-section="admin"] .table-improved th:last-child,
+body[data-app-section="admin"] .table-improved td:last-child,
+body[data-app-section="admin"] .compact-table th:last-child,
+body[data-app-section="admin"] .compact-table td:last-child {
+  padding-right: var(--admin-shell-table-x) !important;
+}
+
+@media (max-width: 980px) {
+  body[data-app-section="admin"] {
+    --admin-shell-sidebar-width: min(84vw, 304px);
+  }
+
+  body[data-app-section="admin"] .dashboard-layout,
+  body[data-app-section="admin"] .theme-ui-page {
+    padding-left: 0 !important;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .sidebar,
+  body[data-app-section="admin"] .theme-ui-sidebar {
+    position: fixed !important;
+    top: var(--admin-modern-topbar-height, 72px) !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    height: calc(100vh - var(--admin-modern-topbar-height, 72px)) !important;
+    transform: translateX(-106%) !important;
+    z-index: 1400 !important;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .sidebar.open,
+  body[data-app-section="admin"] .theme-ui-sidebar.open,
+  body[data-app-section="admin"] .theme-ui-shell.settings-sidebar-open .theme-ui-sidebar {
+    transform: translateX(0) !important;
+  }
+
+  body[data-app-section="admin"] .dashboard-sidebar-backdrop.active,
+  body[data-app-section="admin"] .theme-ui-sidebar-backdrop.active {
+    display: block !important;
+    position: fixed !important;
+    inset: var(--admin-modern-topbar-height, 72px) 0 0 0 !important;
+    z-index: 1300 !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    background: rgb(15 23 42 / 0.36) !important;
+  }
+
+  body[data-app-section="admin"] .admin-shell-user-meta,
+  body[data-app-section="admin"] .theme-ui-user-meta {
+    display: none !important;
+  }
+}
+
+@media (max-width: 680px) {
+  body[data-app-section="admin"] {
+    --admin-modern-topbar-height: 64px;
+    --admin-shell-table-x: 0;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .admin-content,
+  body[data-app-section="admin"] .dashboard-layout .content-body,
+  body[data-app-section="admin"] .dashboard-layout .content-wrapper,
+  body[data-app-section="admin"] .theme-ui-content {
+    padding: 0.85rem !important;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .grid,
+  body[data-app-section="admin"] .dashboard-layout .grid-cols-6,
+  body[data-app-section="admin"] .dashboard-layout .grid-cols-5,
+  body[data-app-section="admin"] .dashboard-layout .grid-cols-4,
+  body[data-app-section="admin"] .dashboard-layout .grid-cols-3,
+  body[data-app-section="admin"] .dashboard-layout .grid-cols-2,
+  body[data-app-section="admin"] .dashboard-layout .dashboard-charts-grid,
+  body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid,
+  body[data-app-section="admin"] .dashboard-layout .dashboard-insight-grid,
+  body[data-app-section="admin"] .dashboard-layout .admin-filter-grid,
+  body[data-app-section="admin"] .dashboard-layout .field-section-grid,
+  body[data-app-section="admin"] .theme-ui-content .settings-form-grid,
+  body[data-app-section="admin"] .theme-ui-content .email-settings-grid,
+  body[data-app-section="admin"] .theme-ui-content .email-template-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  body[data-app-section="admin"] .admin-table-scroll,
+  body[data-app-section="admin"] .table-container,
+  body[data-app-section="admin"] .table-responsive,
+  body[data-app-section="admin"] .id-card-results-table-wrap,
+  body[data-app-section="admin"] #alumniTable {
+    overflow: visible !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  body[data-app-section="admin"] .admin-responsive-table {
+    display: block !important;
+    min-width: 0 !important;
+    background: transparent !important;
+  }
+
+  body[data-app-section="admin"] .admin-responsive-table thead {
+    display: none !important;
+  }
+
+  body[data-app-section="admin"] .admin-responsive-table tbody {
+    display: grid !important;
+    gap: 0.8rem !important;
+  }
+
+  body[data-app-section="admin"] .admin-responsive-table tr {
+    display: grid !important;
+    width: 100% !important;
+    padding: 0.78rem 0.9rem !important;
+    border: 1px solid var(--admin-modern-line, var(--admin-line, #dfe7df)) !important;
+    border-radius: 8px !important;
+    background: #ffffff !important;
+    box-shadow: 0 10px 26px -22px rgb(15 23 42 / 0.8), 0 2px 8px -6px rgb(15 23 42 / 0.32) !important;
+  }
+
+  body[data-app-section="admin"] .admin-responsive-table th,
+  body[data-app-section="admin"] .admin-responsive-table td {
+    max-width: none !important;
+  }
+
+  body[data-app-section="admin"] .admin-responsive-table td {
+    display: grid !important;
+    grid-template-columns: minmax(6.5rem, 36%) minmax(0, 1fr) !important;
+    gap: 0.85rem !important;
+    align-items: start !important;
+    min-height: 2.25rem !important;
+    padding: 0.62rem 0 !important;
+    border-bottom: 1px solid #edf2ef !important;
+    background: transparent !important;
+  }
+
+  body[data-app-section="admin"] .admin-responsive-table td::before {
+    content: attr(data-label) !important;
+    color: #647386 !important;
+    font-size: 0.72rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.04em !important;
+    text-transform: uppercase !important;
+    line-height: 1.35 !important;
+  }
+
+  body[data-app-section="admin"] .admin-responsive-table td:last-child {
+    border-bottom: 0 !important;
+    text-align: left !important;
+  }
+
+  body[data-app-section="admin"] .admin-responsive-table td[colspan] {
+    grid-template-columns: 1fr !important;
+  }
+
+  body[data-app-section="admin"] .admin-responsive-table td[colspan]::before {
+    display: none !important;
+  }
+
+  body[data-app-section="admin"] .admin-responsive-table .action-buttons,
+  body[data-app-section="admin"] .admin-responsive-table td .flex {
+    justify-content: flex-start !important;
+    flex-wrap: wrap !important;
+  }
+
+  body[data-app-section="admin"] .admin-responsive-table .action-buttons .btn,
+  body[data-app-section="admin"] .admin-responsive-table td .btn,
+  body[data-app-section="admin"] .dashboard-layout .topbar-actions .btn,
+  body[data-app-section="admin"] .dashboard-layout .content-header > .btn,
+  body[data-app-section="admin"] .dashboard-layout .admin-topbar > .btn,
+  body[data-app-section="admin"] .admin-shell-user .btn,
+  body[data-app-section="admin"] .theme-ui-topbar .btn,
+  body[data-app-section="admin"] .theme-ui-user .btn {
+    width: auto !important;
+    flex: 0 0 auto !important;
+  }
+}
+
+@media (max-width: 420px) {
+  body[data-app-section="admin"] .admin-responsive-table td {
+    grid-template-columns: 1fr !important;
+    gap: 0.24rem !important;
+  }
+}

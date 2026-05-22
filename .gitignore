@@ -6,7 +6,9 @@ vendor/
 .env
 .env.local
 .env.production
+.env.*.local
 server/.env
+config.local.php
 
 # Build outputs
 dist/
@@ -20,31 +22,103 @@ server/uploads/*
 # Logs
 logs/
 *.log
+*.err.log
 
-# IDE
+# IDE & Development Tools
 .vscode/
 .idea/
+.kiro/
 *.swp
 *.swo
+*.sublime-*
 
 # OS files
 .DS_Store
 Thumbs.db
+desktop.ini
+*.lnk
 
 # PM2
 .pm2/
 
 # Composer
 composer.phar
+composer.lock
 
-# Database backups (keep schema.sql for initial setup)
-# *.sql
+# Testing
+*.test.js
+*.test.php
+.phpunit.result.cache
+phpunit.xml
+test_*.php
+*_test.php
+
+# Database backups and temporary SQL files
 database/backups/
+*.backup.sql
+fix-*.sql
+check-*.sql
+reset-*.sql
+create_test_*.sql
+
+# Temporary files
+*.bak
+*.tmp
+*.temp
+*.old
+*.orig
+
+# Deployment-specific configs (should be environment-specific)
+hostinger-config.php
 
 # Temporary setup scripts
 create_directories.*
 create_dirs.*
 run-*.bat
+start-*.bat
 setup-dirs.*
 setup_dirs.*
 setup-structure.*
+scripts/
+
+# Temporary documentation files (keep only README.md and DEPLOYMENT.md)
+*_FIXES*.md
+*_FIX_*.md
+*_COMPLETE*.md
+*_FINAL*.md
+*_GUIDE*.md
+*_INSTRUCTIONS*.md
+*_CHECKLIST*.md
+*_COMMANDS*.md
+*_STEPS*.md
+*_SOLUTION*.md
+*_STATUS*.md
+*_REFERENCE*.md
+QUICK_*.md
+URGENT_*.md
+CRITICAL_*.md
+SIMPLE_*.md
+UPLOAD_*.md
+VERIFY_*.md
+WHAT_*.md
+USE_*.md
+START_*.md
+DEBUG_*.md
+TESTING_*.md
+IMPLEMENTATION_*.md
+PRODUCTION_*.md
+HOSTINGER_*.md
+DATABASE_*.md
+API_*.md
+ATTENDANCE_*.md
+HEADER_*.md
+LOGIN_*.md
+MOBILE_*.md
+QR_*.md
+STAFF_*.md
+UI_*.md
+FILES_*.md
+COPY_*.md
+GENERATE_*.md
+*.txt
+!requirements.txt

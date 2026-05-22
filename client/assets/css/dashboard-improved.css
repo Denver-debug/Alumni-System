@@ -1,0 +1,1287 @@
+/* =====================================================
+   IMPROVED ADMIN DASHBOARD STYLES
+   Compact layout optimized for single-screen viewing
+   ===================================================== */
+
+/* Dashboard Container - Optimize for viewport */
+body[data-app-section="admin"] .dashboard-layout .admin-content {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: clamp(1rem, 1.85vw, 1.25rem) !important;
+}
+
+/* Reduce vertical spacing between sections */
+body[data-app-section="admin"] .dashboard-layout .mb-lg {
+  margin-bottom: clamp(0.625rem, 1vw, 0.75rem) !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .gap-lg {
+  gap: clamp(0.625rem, 1vw, 0.75rem) !important;
+}
+
+/* Stat Cards - COMPACT */
+body[data-app-section="admin"] .stat-card {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  padding: clamp(0.75rem, 1.1vw, 0.875rem) clamp(0.875rem, 1.2vw, 1rem) !important;
+  min-height: auto !important;
+  max-height: 100px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+}
+
+body[data-app-section="admin"] .stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50px;
+  height: 50px;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  border-radius: 50%;
+  transform: translate(30%, -30%);
+}
+
+body[data-app-section="admin"] .stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px -8px rgba(15, 23, 42, 0.2);
+}
+
+body[data-app-section="admin"] .stat-card .stat-icon {
+  width: 2rem !important;
+  height: 2rem !important;
+  font-size: 0.9rem !important;
+  border-radius: 0.5rem !important;
+}
+
+body[data-app-section="admin"] .stat-card .stat-value {
+  font-size: clamp(1.25rem, 1.5vw, 1.5rem) !important;
+  margin-bottom: 0.2rem !important;
+  line-height: 1.2 !important;
+  font-weight: 800 !important;
+  color: #1e293b !important;
+}
+
+body[data-app-section="admin"] .stat-card .stat-label {
+  font-size: clamp(0.7rem, 0.85vw, 0.8rem) !important;
+  line-height: 1.3 !important;
+  color: #64748b !important;
+  font-weight: 500 !important;
+}
+
+body[data-app-section="admin"] .stat-card .stat-info {
+  gap: 0.25rem !important;
+  min-width: 0 !important;
+}
+
+/* Analytics Cards - COMPACT with minimal empty space */
+.analytics-card {
+  position: relative;
+  padding: clamp(0.75rem, 1.1vw, 0.875rem) clamp(0.875rem, 1.2vw, 1rem) !important;
+  border-radius: 10px !important;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+  border: 1px solid rgba(148, 163, 184, 0.2) !important;
+  box-shadow: 
+    0 2px 4px -1px rgba(0, 0, 0, 0.04),
+    0 1px 2px -1px rgba(0, 0, 0, 0.02) !important;
+  transition: all 0.3s ease;
+  min-height: auto !important;
+  max-height: 100px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+}
+
+.analytics-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 
+    0 4px 8px -2px rgba(0, 0, 0, 0.06),
+    0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
+}
+
+.analytics-card-label {
+  font-size: clamp(0.65rem, 0.75vw, 0.75rem) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+  color: #64748b !important;
+  margin-bottom: 0.25rem !important;
+  line-height: 1.2 !important;
+}
+
+.analytics-card-value {
+  font-size: clamp(1.25rem, 1.5vw, 1.4rem) !important;
+  font-weight: 800 !important;
+  background: linear-gradient(135deg, #1e293b 0%, #475569 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.25rem !important;
+  line-height: 1.1 !important;
+}
+
+.analytics-card-foot {
+  font-size: clamp(0.7rem, 0.8vw, 0.75rem) !important;
+  color: #64748b !important;
+  line-height: 1.2 !important;
+}
+
+/* Chart Cards - LARGER with better overflow handling */
+body[data-app-section="admin"] .dashboard-layout .card {
+  background: linear-gradient(180deg, #ffffff 0%, #fbfcfd 100%) !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(148, 163, 184, 0.15) !important;
+  box-shadow: 
+    0 10px 24px -20px rgba(15, 23, 42, 0.28),
+    0 2px 4px -1px rgba(0, 0, 0, 0.04) !important;
+  transition: all 0.3s ease;
+  overflow: hidden !important;
+  display: flex;
+  flex-direction: column;
+}
+
+body[data-app-section="admin"] .dashboard-layout .card:hover {
+  box-shadow: 
+    0 6px 12px -2px rgba(0, 0, 0, 0.06),
+    0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .card-header {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%) !important;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15) !important;
+  padding: clamp(0.85rem, 1.2vw, 1rem) clamp(1rem, 1.2vw, 1.125rem) !important;
+  flex-shrink: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 0.75rem !important;
+  min-height: auto !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .card-title {
+  font-size: clamp(0.875rem, 1vw, 0.95rem) !important;
+  font-weight: 700 !important;
+  color: #1e293b !important;
+  letter-spacing: -0.01em !important;
+  margin: 0 !important;
+  min-width: 0 !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  line-height: 1.3 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .card-body {
+  padding: clamp(0.875rem, 1.2vw, 1rem) !important;
+  overflow: hidden !important;
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+  min-width: 0 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .text-secondary,
+body[data-app-section="admin"] .dashboard-layout .text-muted {
+  color: #475569 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .content-header {
+  padding-bottom: 0.25rem;
+}
+
+body[data-app-section="admin"] .dashboard-layout .content-body {
+  padding-top: 0.5rem;
+}
+
+body[data-app-section="admin"] .dashboard-layout .chart-head {
+  align-items: center;
+  padding-bottom: 0.4rem;
+}
+
+body[data-app-section="admin"] .dashboard-layout .chart-title,
+body[data-app-section="admin"] .dashboard-layout .chart-subtitle {
+  color: #0f172a;
+}
+
+body[data-app-section="admin"] .dashboard-layout .page-title {
+  color: #0f172a;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  line-height: 1.3;
+}
+
+/* Chart containers should have reasonable fixed height */
+body[data-app-section="admin"] .dashboard-layout .card-body > div[id$="Chart"] {
+  height: clamp(260px, 28vw, 320px) !important;
+  min-height: clamp(260px, 28vw, 320px) !important;
+  max-height: clamp(260px, 28vw, 320px) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+/* Chart Shell - Better sizing with fixed height */
+.chart-shell {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.5rem, 0.75vw, 0.625rem);
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.chart-shell-bars,
+.chart-shell-line {
+  max-height: 280px;
+}
+
+.chart-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.625rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  flex-shrink: 0;
+}
+
+.chart-subtitle {
+  font-size: clamp(0.5625rem, 0.65vw, 0.625rem);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #64748b;
+  margin-bottom: 0.125rem;
+}
+
+.chart-title {
+  font-size: clamp(0.75rem, 0.85vw, 0.8125rem);
+  font-weight: 700;
+  color: #1e293b;
+  letter-spacing: -0.01em;
+}
+
+.chart-pill {
+  padding: 0.1875rem 0.5rem;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  color: #1e40af;
+  font-size: clamp(0.5625rem, 0.65vw, 0.625rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  flex-shrink: 0;
+}
+
+/* Chart List - Better scrolling with more space */
+.chart-list {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.5rem, 0.7vw, 0.625rem);
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1;
+  min-height: 0;
+  padding-right: 0.25rem;
+  max-height: 100%;
+}
+
+.chart-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.chart-list::-webkit-scrollbar-track {
+  background: rgba(148, 163, 184, 0.08);
+  border-radius: 2px;
+}
+
+.chart-list::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 2px;
+}
+
+.chart-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.5);
+}
+
+.chart-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 2fr) auto;
+  gap: 0.625rem;
+  align-items: center;
+  flex-shrink: 0;
+  --chart-accent: #3b82f6;
+  --chart-accent-strong: #2563eb;
+}
+
+.chart-row-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  font-size: clamp(0.75rem, 0.85vw, 0.8125rem);
+  font-weight: 600;
+  color: #334155;
+}
+
+.chart-row-label span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chart-index {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.375rem;
+  height: 1.375rem;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, var(--chart-accent) 0%, var(--chart-accent-strong) 100%);
+  color: #ffffff;
+  font-size: clamp(0.5625rem, 0.65vw, 0.625rem);
+  font-weight: 700;
+  flex-shrink: 0;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.chart-row-track {
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: rgba(148, 163, 184, 0.12);
+  overflow: hidden;
+  position: relative;
+}
+
+.chart-row-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--chart-accent) 0%, var(--chart-accent-strong) 100%);
+  box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chart-row-label .truncate {
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.chart-row-meta {
+  font-size: clamp(0.6875rem, 0.78vw, 0.75rem);
+  font-weight: 600;
+  color: #64748b;
+  white-space: nowrap;
+  text-align: right;
+}
+
+body[data-app-section="admin"] .dashboard-layout .main-content,
+body[data-app-section="admin"] .dashboard-layout .content-header,
+body[data-app-section="admin"] .dashboard-layout .content-body,
+body[data-app-section="admin"] .dashboard-layout .card,
+body[data-app-section="admin"] .dashboard-layout .card-header,
+body[data-app-section="admin"] .dashboard-layout .card-body,
+body[data-app-section="admin"] .dashboard-layout .card-footer {
+  min-width: 0;
+}
+
+body[data-app-section="admin"] .dashboard-layout .card-title,
+body[data-app-section="admin"] .dashboard-layout .page-title,
+body[data-app-section="admin"] .dashboard-layout .chart-title,
+body[data-app-section="admin"] .dashboard-layout .chart-subtitle {
+  min-width: 0;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-section-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Route-stable chart card header layout: prevent first-letter clipping */
+body[data-app-section="admin"] .dashboard-layout .dashboard-charts-grid .card-header {
+  padding-left: 1.1rem !important;
+  padding-right: 1.1rem !important;
+  overflow: visible !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .dashboard-charts-grid .card-title,
+body[data-app-section="admin"] .dashboard-layout .dashboard-charts-grid .chart-title,
+body[data-app-section="admin"] .dashboard-layout .dashboard-charts-grid .chart-subtitle {
+  display: block !important;
+  letter-spacing: 0 !important;
+  text-indent: 0 !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .dashboard-charts-grid .chart-head {
+  padding-left: 0.1rem !important;
+  padding-right: 0.1rem !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .content-body p,
+body[data-app-section="admin"] .dashboard-layout .content-body .form-hint,
+body[data-app-section="admin"] .dashboard-layout .content-body .alert,
+body[data-app-section="admin"] .dashboard-layout .content-body td,
+body[data-app-section="admin"] .dashboard-layout .content-body th,
+body[data-app-section="admin"] .dashboard-layout .modal-body,
+body[data-app-section="admin"] .dashboard-layout .modal-body p,
+body[data-app-section="admin"] .dashboard-layout .table th,
+body[data-app-section="admin"] .dashboard-layout .table td,
+body[data-app-section="admin"] .dashboard-layout .table-improved th,
+body[data-app-section="admin"] .dashboard-layout .table-improved td {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: normal;
+}
+
+/* Line Chart - Fixed reasonable height */
+.line-chart-wrap {
+  position: relative;
+  height: 100%;
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
+  padding: 0.5rem 0;
+  max-height: 220px;
+}
+
+.line-chart {
+  width: 100%;
+  height: 100%;
+  min-height: 160px;
+  max-height: 220px;
+}
+
+.line-chart-grid {
+  stroke: rgba(148, 163, 184, 0.1);
+  stroke-width: 1;
+  stroke-dasharray: 4 6;
+}
+
+.line-chart-area {
+  fill: url(#registrationAreaGradient);
+}
+
+.line-chart-path {
+  stroke: var(--primary-600);
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 6px 12px rgba(16, 185, 129, 0.16));
+}
+
+.line-chart-dot {
+  fill: #ffffff;
+  stroke: var(--primary-600);
+  stroke-width: 2.5;
+}
+
+.line-chart-label {
+  fill: #64748b;
+  font-size: 10px;
+  font-weight: 600;
+  dominant-baseline: hanging;
+}
+
+.line-chart-value {
+  fill: #1e293b;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* Platform Snapshot - Better sizing with overflow fix */
+.snapshot-layout {
+  display: grid;
+  grid-template-columns: 100px minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+  height: 100%;
+  max-height: 280px;
+  overflow: hidden;
+}
+
+.snapshot-ring {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: var(--snapshot-ring-gradient, conic-gradient(
+    #3b82f6 0 var(--ring-percent),
+    rgba(148, 163, 184, 0.12) var(--ring-percent) 100%
+  ));
+  display: grid;
+  place-items: center;
+  margin: 0 auto;
+  position: relative;
+  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  flex-shrink: 0;
+}
+
+.snapshot-ring::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  padding: 2px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.8), rgba(255,255,255,0.2));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+.snapshot-ring-inner {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-shadow: 
+    inset 0 1px 2px 0 rgba(0, 0, 0, 0.04),
+    0 1px 2px 0 rgba(0, 0, 0, 0.04);
+}
+
+.snapshot-ring-value {
+  font-size: clamp(1.125rem, 1.35vw, 1.375rem);
+  font-weight: 800;
+  background: linear-gradient(135deg, #1e293b 0%, #475569 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+}
+
+.snapshot-ring-label {
+  margin-top: 0.25rem;
+  font-size: clamp(0.5625rem, 0.65vw, 0.625rem);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.2;
+  max-width: 70px;
+  word-break: break-word;
+}
+
+.snapshot-legend {
+  display: grid;
+  gap: clamp(0.5rem, 0.7vw, 0.625rem);
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 100%;
+  padding-right: 0.25rem;
+}
+
+.snapshot-legend::-webkit-scrollbar {
+  width: 4px;
+}
+
+.snapshot-legend::-webkit-scrollbar-track {
+  background: rgba(148, 163, 184, 0.08);
+  border-radius: 2px;
+}
+
+.snapshot-legend::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 2px;
+}
+
+.snapshot-legend-item {
+  display: grid;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.snapshot-legend-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: clamp(0.75rem, 0.85vw, 0.8125rem);
+  font-weight: 600;
+  color: #334155;
+}
+
+.snapshot-dot {
+  width: 0.5625rem;
+  height: 0.5625rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.snapshot-legend-track {
+  height: 0.375rem;
+  border-radius: 9999px;
+  background: rgba(148, 163, 184, 0.12);
+  overflow: hidden;
+}
+
+.snapshot-legend-fill {
+  height: 100%;
+  border-radius: inherit;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.snapshot-legend-meta {
+  font-size: clamp(0.6875rem, 0.78vw, 0.75rem);
+  font-weight: 600;
+  color: #64748b;
+}
+
+/* Color Variants */
+.snapshot-dot.bg-success,
+.snapshot-legend-fill.bg-success {
+  background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+}
+
+.snapshot-dot.bg-warning,
+.snapshot-legend-fill.bg-warning {
+  background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+}
+
+.snapshot-dot.bg-primary,
+.snapshot-legend-fill.bg-primary {
+  background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.snapshot-dot.bg-info,
+.snapshot-legend-fill.bg-info {
+  background: linear-gradient(90deg, #06b6d4 0%, #0891b2 100%);
+}
+
+.snapshot-dot.bg-secondary,
+.snapshot-legend-fill.bg-secondary {
+  background: linear-gradient(90deg, #64748b 0%, #475569 100%);
+}
+
+/* Grid Layout - Different sizes for data vs charts */
+body[data-app-section="admin"] .dashboard-layout .grid-cols-4 {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* Chart row - Fixed reasonable height for charts */
+body[data-app-section="admin"] .dashboard-layout .grid-cols-4 > .card {
+  height: auto;
+  min-height: auto;
+}
+
+/* Responsive Improvements */
+@media (max-width: 1600px) {
+  body[data-app-section="admin"] .dashboard-layout .grid-cols-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1200px) {
+  body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .snapshot-layout {
+    grid-template-columns: 90px minmax(0, 1fr);
+  }
+
+  .snapshot-ring {
+    width: 90px;
+    height: 90px;
+  }
+
+  .snapshot-ring-inner {
+    width: 62px;
+    height: 62px;
+  }
+}
+
+@media (max-width: 900px) {
+  body[data-app-section="admin"] .dashboard-layout .grid-cols-4,
+  body[data-app-section="admin"] .dashboard-layout .grid-cols-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-row {
+    grid-template-columns: 1fr;
+    gap: 0.375rem;
+  }
+
+  .chart-row-meta {
+    justify-self: start;
+  }
+
+  .snapshot-layout {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+}
+
+/* Loading States */
+.loading-skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(148, 163, 184, 0.08) 0%,
+    rgba(148, 163, 184, 0.15) 50%,
+    rgba(148, 163, 184, 0.08) 100%
+  );
+  background-size: 200% 100%;
+  animation: loading-shimmer 1.5s ease-in-out infinite;
+  border-radius: 8px;
+  min-height: 1rem;
+}
+
+@keyframes loading-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Table Improvements - Compact */
+body[data-app-section="admin"] .dashboard-layout .table {
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: clamp(0.8125rem, 0.9vw, 0.875rem);
+}
+
+body[data-app-section="admin"] .dashboard-layout .table thead th {
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  color: #475569;
+  font-size: clamp(0.6875rem, 0.75vw, 0.7rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: clamp(0.625rem, 0.8vw, 0.75rem) clamp(0.75rem, 1vw, 0.875rem);
+  border-bottom: 2px solid rgba(148, 163, 184, 0.2);
+}
+
+body[data-app-section="admin"] .dashboard-layout .table tbody td {
+  padding: clamp(0.625rem, 0.8vw, 0.75rem) clamp(0.75rem, 1vw, 0.875rem);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  color: #334155;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table tbody tr:hover {
+  background: rgba(59, 130, 246, 0.03);
+}
+
+body[data-app-section="admin"] .dashboard-layout .table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Final admin stability pass for global route styles. */
+body[data-app-section="admin"] .dashboard-layout .content-header,
+body[data-app-section="admin"] .dashboard-layout .admin-topbar {
+  padding-left: clamp(1rem, 2vw, 1.5rem) !important;
+  padding-right: clamp(1rem, 2vw, 1.5rem) !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .content-header > .flex-1,
+body[data-app-section="admin"] .dashboard-layout .admin-topbar > .flex-1 {
+  display: none !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .content-header h1,
+body[data-app-section="admin"] .dashboard-layout .admin-topbar .page-title,
+body[data-app-section="admin"] .dashboard-layout .admin-topbar h1 {
+  flex: 0 1 auto !important;
+  max-width: min(42vw, 42rem);
+  margin-right: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+  letter-spacing: 0 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .topbar-actions {
+  margin-left: auto !important;
+  flex-wrap: nowrap !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout #alumniTable,
+body[data-app-section="admin"] .dashboard-layout .table-container,
+body[data-app-section="admin"] .dashboard-layout .table-responsive,
+body[data-app-section="admin"] .dashboard-layout .card-body.p-0 {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto !important;
+  overflow-y: visible;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table,
+body[data-app-section="admin"] .dashboard-layout .table-improved,
+body[data-app-section="admin"] .dashboard-layout .data-table {
+  min-width: 1080px !important;
+  table-layout: auto !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .table th,
+body[data-app-section="admin"] .dashboard-layout .table td,
+body[data-app-section="admin"] .dashboard-layout .table-improved th,
+body[data-app-section="admin"] .dashboard-layout .table-improved td,
+body[data-app-section="admin"] .dashboard-layout .data-table th,
+body[data-app-section="admin"] .dashboard-layout .data-table td {
+  max-width: none !important;
+  white-space: nowrap !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .chart-empty-state,
+body[data-app-section="admin"] .dashboard-layout .chart-error-state {
+  min-height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 1rem;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  background: #f8fafc;
+  color: #64748b;
+  text-align: center;
+}
+
+body[data-app-section="admin"] .dashboard-layout .chart-error-state {
+  border-color: #fecaca;
+  background: #fff7f7;
+  color: #991b1b;
+}
+
+body[data-app-section="admin"] .dashboard-layout .card-header,
+body[data-app-section="admin"] .dashboard-layout .card-improved .card-header,
+body[data-app-section="admin"] .dashboard-layout .admin-panel-header,
+body[data-app-section="admin"] .dashboard-layout .theme-ui-panel-header {
+  padding-left: clamp(1.35rem, 1.8vw, 1.65rem) !important;
+  padding-right: clamp(1.25rem, 1.8vw, 1.5rem) !important;
+  padding-top: clamp(1rem, 1.5vw, 1.2rem) !important;
+  padding-bottom: clamp(0.85rem, 1.3vw, 1rem) !important;
+  min-height: 3.75rem !important;
+  align-items: center !important;
+  overflow: visible !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .card-title,
+body[data-app-section="admin"] .dashboard-layout .card-header h2,
+body[data-app-section="admin"] .dashboard-layout .card-header h3,
+body[data-app-section="admin"] .dashboard-layout .card-header h4,
+body[data-app-section="admin"] .dashboard-layout .admin-panel-title,
+body[data-app-section="admin"] .dashboard-layout .theme-ui-panel-title {
+  display: block !important;
+  padding-left: 0.18rem !important;
+  margin-left: 0 !important;
+  text-indent: 0 !important;
+  transform: none !important;
+  letter-spacing: 0 !important;
+  line-height: 1.45 !important;
+  padding-top: 0.08rem !important;
+  padding-bottom: 0.08rem !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  white-space: normal !important;
+  overflow-wrap: break-word !important;
+  word-break: normal !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid > .card,
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid > .card-improved {
+  overflow: hidden !important;
+  border-radius: 14px !important;
+  background: #ffffff !important;
+  border: 1px solid #dbe5df !important;
+  box-shadow:
+    0 16px 34px -28px rgb(15 23 42 / 0.34),
+    0 4px 14px -12px rgb(5 150 105 / 0.22) !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid > .card > .card-header,
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid > .card-improved > .card-header {
+  display: none !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid > .card > .card-body,
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid > .card-improved > .card-body {
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid .chart-shell {
+  padding: clamp(1rem, 1.7vw, 1.35rem) !important;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdfc 100%) !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid .chart-head {
+  min-height: 3.1rem;
+  align-items: center !important;
+  border-bottom: 1px solid #e5eee9 !important;
+  margin-bottom: clamp(0.95rem, 1.5vw, 1.25rem) !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout {
+  --admin-readable-x: clamp(1.45rem, 2.2vw, 2rem);
+  --admin-readable-y: clamp(1rem, 1.7vw, 1.35rem);
+  --admin-chart-readable-x: clamp(1.4rem, 2.1vw, 1.9rem);
+}
+
+body[data-app-section="admin"] .dashboard-layout .card-header,
+body[data-app-section="admin"] .dashboard-layout .card-improved .card-header {
+  padding-left: var(--admin-readable-x) !important;
+  padding-right: var(--admin-readable-x) !important;
+  padding-top: var(--admin-readable-y) !important;
+  padding-bottom: var(--admin-readable-y) !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .card-title,
+body[data-app-section="admin"] .dashboard-layout .card-header h2,
+body[data-app-section="admin"] .dashboard-layout .card-header h3,
+body[data-app-section="admin"] .dashboard-layout .card-header h4 {
+  padding-left: 0.28rem !important;
+  padding-right: 0.28rem !important;
+  line-height: 1.5 !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .card-body:not(.p-0),
+body[data-app-section="admin"] .dashboard-layout .card-improved .card-body:not(.p-0) {
+  padding-left: var(--admin-readable-x) !important;
+  padding-right: var(--admin-readable-x) !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid .chart-shell {
+  padding-left: var(--admin-chart-readable-x) !important;
+  padding-right: var(--admin-chart-readable-x) !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid .chart-head,
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid .chart-list,
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid .snapshot-layout,
+body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid .line-chart-wrap {
+  padding-left: 0.28rem !important;
+  padding-right: 0.28rem !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .card-improved > .card-header,
+body[data-app-section="admin"] .dashboard-layout .card > .card-header {
+  padding: 1.15rem 1.65rem !important;
+  min-height: 4rem !important;
+  gap: 1rem !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .card-improved > .card-header .card-title,
+body[data-app-section="admin"] .dashboard-layout .card > .card-header .card-title,
+body[data-app-section="admin"] .dashboard-layout .card-improved > .card-header h2,
+body[data-app-section="admin"] .dashboard-layout .card-improved > .card-header h3,
+body[data-app-section="admin"] .dashboard-layout .card > .card-header h2,
+body[data-app-section="admin"] .dashboard-layout .card > .card-header h3 {
+  padding: 0.12rem 0 !important;
+  margin: 0 !important;
+}
+
+/* Late admin hardening: this file loads after admin.css in index.php. */
+body[data-app-section="admin"] {
+  --admin-shell-sidebar-width: var(--admin-sidebar-width, 304px);
+  --admin-shell-table-x: clamp(1.35rem, 2.5vw, 1.9rem);
+  --admin-shell-table-y: 0.95rem;
+}
+
+body[data-app-section="admin"] .dashboard-layout,
+body[data-app-section="admin"] .theme-ui-shell,
+body[data-app-section="admin"] .dashboard-layout .main-content,
+body[data-app-section="admin"] .theme-ui-page,
+body[data-app-section="admin"] .theme-ui-content {
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar,
+body[data-app-section="admin"] .theme-ui-sidebar {
+  width: var(--admin-shell-sidebar-width) !important;
+  max-width: 86vw !important;
+  box-sizing: border-box !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-link,
+body[data-app-section="admin"] .theme-ui-sidebar-link {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  min-height: 40px !important;
+  padding: 9px 12px !important;
+  margin: 0 !important;
+  border-radius: 8px !important;
+  font-size: 0.94rem !important;
+  font-weight: 400 !important;
+  line-height: 1.25 !important;
+  letter-spacing: 0 !important;
+  white-space: normal !important;
+}
+
+body[data-app-section="admin"] .dashboard-layout .sidebar-link.active,
+body[data-app-section="admin"] .theme-ui-sidebar-link.active {
+  font-weight: 400 !important;
+}
+
+body[data-app-section="admin"] .admin-table-scroll,
+body[data-app-section="admin"] .table-container,
+body[data-app-section="admin"] .table-responsive,
+body[data-app-section="admin"] .admin-record-table-shell,
+body[data-app-section="admin"] .id-card-results-table-wrap,
+body[data-app-section="admin"] #alumniTable {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+body[data-app-section="admin"] .card-body.p-0:has(table),
+body[data-app-section="admin"] .card-body.p-0:has(.admin-table-scroll),
+body[data-app-section="admin"] .card-body.p-0:has(.table-responsive),
+body[data-app-section="admin"] .card-body.p-0:has(.id-card-results-table-wrap) {
+  padding: clamp(0.95rem, 1.6vw, 1.2rem) clamp(1.25rem, 2.4vw, 1.8rem) clamp(1.05rem, 1.8vw, 1.35rem) !important;
+}
+
+body[data-app-section="admin"] .admin-responsive-table,
+body[data-app-section="admin"] .table,
+body[data-app-section="admin"] .data-table,
+body[data-app-section="admin"] .table-improved,
+body[data-app-section="admin"] .compact-table {
+  width: 100% !important;
+  min-width: 920px !important;
+  table-layout: auto !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+body[data-app-section="admin"] .admin-responsive-table th,
+body[data-app-section="admin"] .admin-responsive-table td,
+body[data-app-section="admin"] .table th,
+body[data-app-section="admin"] .table td,
+body[data-app-section="admin"] .data-table th,
+body[data-app-section="admin"] .data-table td,
+body[data-app-section="admin"] .table-improved th,
+body[data-app-section="admin"] .table-improved td,
+body[data-app-section="admin"] .compact-table th,
+body[data-app-section="admin"] .compact-table td {
+  padding: var(--admin-shell-table-y) 1.15rem !important;
+  max-width: 26rem !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+  line-height: 1.45 !important;
+}
+
+body[data-app-section="admin"] .admin-responsive-table th:first-child,
+body[data-app-section="admin"] .admin-responsive-table td:first-child,
+body[data-app-section="admin"] .table th:first-child,
+body[data-app-section="admin"] .table td:first-child,
+body[data-app-section="admin"] .data-table th:first-child,
+body[data-app-section="admin"] .data-table td:first-child,
+body[data-app-section="admin"] .table-improved th:first-child,
+body[data-app-section="admin"] .table-improved td:first-child,
+body[data-app-section="admin"] .compact-table th:first-child,
+body[data-app-section="admin"] .compact-table td:first-child {
+  padding-left: var(--admin-shell-table-x) !important;
+}
+
+body[data-app-section="admin"] .admin-responsive-table th:last-child,
+body[data-app-section="admin"] .admin-responsive-table td:last-child,
+body[data-app-section="admin"] .table th:last-child,
+body[data-app-section="admin"] .table td:last-child,
+body[data-app-section="admin"] .data-table th:last-child,
+body[data-app-section="admin"] .data-table td:last-child,
+body[data-app-section="admin"] .table-improved th:last-child,
+body[data-app-section="admin"] .table-improved td:last-child,
+body[data-app-section="admin"] .compact-table th:last-child,
+body[data-app-section="admin"] .compact-table td:last-child {
+  padding-right: var(--admin-shell-table-x) !important;
+}
+
+@media (max-width: 980px) {
+  body[data-app-section="admin"] {
+    --admin-shell-sidebar-width: min(84vw, 304px);
+  }
+
+  body[data-app-section="admin"] .dashboard-layout,
+  body[data-app-section="admin"] .theme-ui-page {
+    padding-left: 0 !important;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .sidebar,
+  body[data-app-section="admin"] .theme-ui-sidebar {
+    position: fixed !important;
+    top: var(--admin-modern-topbar-height, 72px) !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    height: calc(100vh - var(--admin-modern-topbar-height, 72px)) !important;
+    transform: translateX(-106%) !important;
+    z-index: 1400 !important;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .sidebar.open,
+  body[data-app-section="admin"] .theme-ui-sidebar.open,
+  body[data-app-section="admin"] .theme-ui-shell.settings-sidebar-open .theme-ui-sidebar {
+    transform: translateX(0) !important;
+  }
+
+  body[data-app-section="admin"] .admin-shell-user-meta,
+  body[data-app-section="admin"] .theme-ui-user-meta {
+    display: none !important;
+  }
+}
+
+@media (max-width: 680px) {
+  body[data-app-section="admin"] {
+    --admin-modern-topbar-height: 64px;
+    --admin-shell-table-x: 0;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .admin-content,
+  body[data-app-section="admin"] .dashboard-layout .content-body,
+  body[data-app-section="admin"] .dashboard-layout .content-wrapper,
+  body[data-app-section="admin"] .theme-ui-content {
+    padding: 0.85rem !important;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .grid,
+  body[data-app-section="admin"] .dashboard-layout .grid-cols-6,
+  body[data-app-section="admin"] .dashboard-layout .grid-cols-5,
+  body[data-app-section="admin"] .dashboard-layout .grid-cols-4,
+  body[data-app-section="admin"] .dashboard-layout .grid-cols-3,
+  body[data-app-section="admin"] .dashboard-layout .grid-cols-2,
+  body[data-app-section="admin"] .dashboard-layout .dashboard-charts-grid,
+  body[data-app-section="admin"] .dashboard-layout .dashboard-chart-grid,
+  body[data-app-section="admin"] .dashboard-layout .dashboard-insight-grid,
+  body[data-app-section="admin"] .dashboard-layout .admin-filter-grid,
+  body[data-app-section="admin"] .dashboard-layout .field-section-grid,
+  body[data-app-section="admin"] .theme-ui-content .settings-form-grid,
+  body[data-app-section="admin"] .theme-ui-content .email-settings-grid,
+  body[data-app-section="admin"] .theme-ui-content .email-template-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  body[data-app-section="admin"] .admin-table-scroll,
+  body[data-app-section="admin"] .table-container,
+  body[data-app-section="admin"] .table-responsive,
+  body[data-app-section="admin"] .id-card-results-table-wrap,
+  body[data-app-section="admin"] #alumniTable {
+    overflow: visible !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  body[data-app-section="admin"] .admin-responsive-table {
+    display: block !important;
+    min-width: 0 !important;
+    background: transparent !important;
+  }
+
+  body[data-app-section="admin"] .admin-responsive-table thead {
+    display: none !important;
+  }
+
+  body[data-app-section="admin"] .admin-responsive-table tbody {
+    display: grid !important;
+    gap: 0.8rem !important;
+  }
+
+  body[data-app-section="admin"] .admin-responsive-table tr {
+    display: grid !important;
+    width: 100% !important;
+    padding: 0.78rem 0.9rem !important;
+    border: 1px solid var(--admin-modern-line, var(--admin-line, #dfe7df)) !important;
+    border-radius: 8px !important;
+    background: #ffffff !important;
+  }
+
+  body[data-app-section="admin"] .admin-responsive-table td {
+    display: grid !important;
+    grid-template-columns: minmax(6.5rem, 36%) minmax(0, 1fr) !important;
+    gap: 0.85rem !important;
+    align-items: start !important;
+    min-height: 2.25rem !important;
+    padding: 0.62rem 0 !important;
+    border-bottom: 1px solid #edf2ef !important;
+    background: transparent !important;
+  }
+
+  body[data-app-section="admin"] .admin-responsive-table td::before {
+    content: attr(data-label) !important;
+    color: #647386 !important;
+    font-size: 0.72rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.04em !important;
+    text-transform: uppercase !important;
+    line-height: 1.35 !important;
+  }
+
+  body[data-app-section="admin"] .admin-responsive-table td:last-child {
+    border-bottom: 0 !important;
+    text-align: left !important;
+  }
+
+  body[data-app-section="admin"] .admin-responsive-table td[colspan] {
+    grid-template-columns: 1fr !important;
+  }
+
+  body[data-app-section="admin"] .admin-responsive-table td[colspan]::before {
+    display: none !important;
+  }
+
+  body[data-app-section="admin"] .admin-responsive-table .action-buttons,
+  body[data-app-section="admin"] .admin-responsive-table td .flex {
+    justify-content: flex-start !important;
+    flex-wrap: wrap !important;
+  }
+
+  body[data-app-section="admin"] .admin-responsive-table .action-buttons .btn,
+  body[data-app-section="admin"] .admin-responsive-table td .btn,
+  body[data-app-section="admin"] .dashboard-layout .topbar-actions .btn,
+  body[data-app-section="admin"] .dashboard-layout .content-header > .btn,
+  body[data-app-section="admin"] .dashboard-layout .admin-topbar > .btn,
+  body[data-app-section="admin"] .admin-shell-user .btn,
+  body[data-app-section="admin"] .theme-ui-topbar .btn,
+  body[data-app-section="admin"] .theme-ui-user .btn {
+    width: auto !important;
+    flex: 0 0 auto !important;
+  }
+}
+
+@media (max-width: 420px) {
+  body[data-app-section="admin"] .admin-responsive-table td {
+    grid-template-columns: 1fr !important;
+    gap: 0.24rem !important;
+  }
+}

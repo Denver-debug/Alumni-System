@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" role="img" aria-labelledby="title desc">
+  <title id="title">Event image placeholder</title>
+  <desc id="desc">A neutral calendar placeholder for events without an available image.</desc>
+  <rect width="960" height="540" fill="#f0fdf4"/>
+  <rect x="250" y="110" width="460" height="320" rx="28" fill="#ffffff" stroke="#10b981" stroke-width="10"/>
+  <rect x="250" y="110" width="460" height="78" rx="28" fill="#10b981"/>
+  <rect x="310" y="80" width="42" height="82" rx="18" fill="#047857"/>
+  <rect x="608" y="80" width="42" height="82" rx="18" fill="#047857"/>
+  <g fill="#d1fae5">
+    <rect x="312" y="230" width="74" height="54" rx="10"/>
+    <rect x="443" y="230" width="74" height="54" rx="10"/>
+    <rect x="574" y="230" width="74" height="54" rx="10"/>
+    <rect x="312" y="326" width="74" height="54" rx="10"/>
+    <rect x="443" y="326" width="74" height="54" rx="10"/>
+    <rect x="574" y="326" width="74" height="54" rx="10"/>
+  </g>
+  <text x="480" y="488" text-anchor="middle" fill="#047857" font-family="Arial, sans-serif" font-size="32" font-weight="700">Event Image</text>
+</svg>

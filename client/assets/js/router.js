@@ -119,7 +119,7 @@ const Router = {
    */
   pathToRegex(pattern) {
     const escaped = pattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const withParams = escaped.replace(/\\:([^/]+)/g, "([^/]+)");
+    const withParams = escaped.replace(/:([^/]+)/g, "([^/]+)");
     return new RegExp(`^${withParams}$`);
   },
 
@@ -127,8 +127,18 @@ const Router = {
    * Handle route change
    */
   async handleRouteChange() {
+    // Call cleanup function from previous page if it exists
+    if (typeof window.__pageCleanup === 'function') {
+      try {
+        await window.__pageCleanup();
+      } catch (error) {
+        console.warn('Page cleanup error:', error);
+      }
+      window.__pageCleanup = null;
+    }
+    
     const { path, query } = this.parseHash();
-    const matched = this.matchRoute(path);
+    let matched = this.matchRoute(path);
 
     if (!matched) {
       // 404
@@ -203,24 +213,53 @@ const Router = {
   getCurrent() {
     return this.currentRoute;
   },
+
+  /**
+   * Get a route param from current route context.
+   */
+  getParam(name, defaultValue = null) {
+    if (this.currentRoute?.params && name in this.currentRoute.params) {
+      return this.currentRoute.params[name];
+    }
+
+    const { path } = this.parseHash();
+    const matched = this.matchRoute(path);
+    if (matched?.params && name in matched.params) {
+      return matched.params[name];
+    }
+
+    return defaultValue;
+  },
 };
 
 /**
  * Auth Guard - Check if user is logged in
  */
-function authGuard(context) {
+async function authGuard(context) {
   const token = API.getToken();
   const publicRoutes = [
+    "/",
     "/login",
     "/register",
     "/verify-email",
     "/forgot-password",
     "/reset-password",
-    "/",
+    "/admin/login",
   ];
 
   if (!token && !publicRoutes.includes(context.path)) {
     return "/login";
+  }
+
+  if (token && !publicRoutes.includes(context.path)) {
+    const isValidSession =
+      typeof Auth !== "undefined" && typeof Auth.verifyToken === "function"
+        ? await Auth.verifyToken()
+        : Boolean(API.getUser());
+
+    if (!isValidSession) {
+      return "/login";
+    }
   }
 
   return true;
@@ -229,10 +268,18 @@ function authGuard(context) {
 /**
  * Admin Guard - Check if user is admin
  */
-function adminGuard(context) {
-  const user = API.getUser();
+async function adminGuard(context) {
+  const isValidSession =
+    typeof Auth !== "undefined" && typeof Auth.verifyToken === "function"
+      ? await Auth.verifyToken()
+      : Boolean(API.getToken() && API.getUser());
+  const user = (typeof Auth !== "undefined" && Auth.user) || API.getUser();
 
-  if (!user || !["admin", "system_admin"].includes(user.role)) {
+  if (
+    !isValidSession ||
+    !user ||
+    !["admin", "system_admin", "campus_admin", "staff"].includes(user.role)
+  ) {
     return "/login";
   }
 
@@ -242,12 +289,21 @@ function adminGuard(context) {
 /**
  * Guest Guard - Redirect logged in users
  */
-function guestGuard(context) {
+async function guestGuard(context) {
   const token = API.getToken();
-  const user = API.getUser();
 
-  if (token && user) {
-    if (["admin", "system_admin"].includes(user.role)) {
+  if (token) {
+    const isValidSession =
+      typeof Auth !== "undefined" && typeof Auth.verifyToken === "function"
+        ? await Auth.verifyToken()
+        : Boolean(API.getUser());
+    const user = (typeof Auth !== "undefined" && Auth.user) || API.getUser();
+
+    if (!isValidSession || !user) {
+      return true;
+    }
+
+    if (["admin", "system_admin", "campus_admin", "staff"].includes(user.role)) {
       return "/admin/dashboard";
     }
     return "/dashboard";

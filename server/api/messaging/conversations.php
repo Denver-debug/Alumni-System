@@ -47,14 +47,22 @@ try {
                 WHERE cp.conversation_id = ? AND cp.left_at IS NULL
             ");
             $stmt->execute([$conv['id']]);
-            $conv['participants'] = $stmt->fetchAll();
+            $participants = $stmt->fetchAll();
+            
+            // Process profile images for participants
+            foreach ($participants as &$participant) {
+                if (isset($participant['profile_image'])) {
+                    $participant['profile_image'] = resolveProfileImageUrl($participant['profile_image']);
+                }
+            }
+            $conv['participants'] = $participants;
             
             // For personal chats, get the other person's name
             if ($conv['type'] === 'personal') {
                 foreach ($conv['participants'] as $p) {
                     if ($p['id'] != $user['id']) {
                         $conv['display_name'] = $p['name'];
-                        $conv['display_image'] = $p['profile_image'];
+                        $conv['display_image'] = resolveProfileImageUrl($p['profile_image']);
                         break;
                     }
                 }

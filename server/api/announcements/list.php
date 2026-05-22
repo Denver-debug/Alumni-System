@@ -14,7 +14,7 @@ try {
     $user = getCurrentUser();
     if ($user) {
         $db = Database::getInstance()->getConnection();
-        $stmt = $db->prepare("SELECT college_id, program_id, section_id FROM alumni_profiles WHERE user_id = :user_id");
+        $stmt = $db->prepare("SELECT college_id, program_id, section_id, batch_year FROM alumni_profiles WHERE user_id = :user_id");
         $stmt->execute(['user_id' => $user['id']]);
         $userProfile = $stmt->fetch();
     }
@@ -45,6 +45,7 @@ try {
             OR (a.target_type = 'college' AND a.target_id = :college_id)
             OR (a.target_type = 'program' AND a.target_id = :program_id)
             OR (a.target_type = 'section' AND a.target_id = :section_id)
+            OR (a.target_type = 'batch_year' AND a.target_batch_year = :batch_year)
         )";
     } else {
         $sql .= " AND a.target_type = 'all'";
@@ -58,6 +59,7 @@ try {
         $stmt->bindValue('college_id', $userProfile['college_id']);
         $stmt->bindValue('program_id', $userProfile['program_id']);
         $stmt->bindValue('section_id', $userProfile['section_id']);
+        $stmt->bindValue('batch_year', $userProfile['batch_year']);
     }
     
     $stmt->bindValue('limit', $limit, PDO::PARAM_INT);

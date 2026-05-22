@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Alumni ID Card</title>
+  <meta name="description" content="Your official alumni ID card for event check-ins and alumni status verification." />
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f0fdf4 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .redirect-box {
+      background: white;
+      border-radius: 16px;
+      padding: 3rem;
+      text-align: center;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+      max-width: 480px;
+      width: 90%;
+    }
+    .redirect-box h1 {
+      color: #047857;
+      font-size: 1.5rem;
+      margin: 0 0 1rem;
+    }
+    .redirect-box p {
+      color: #6b7280;
+      margin: 0 0 1.5rem;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #d1fae5;
+      border-top: 4px solid #047857;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 1.5rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .btn {
+      display: inline-block;
+      background: #047857;
+      color: white;
+      padding: 0.75rem 2rem;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="redirect-box">
+    <div class="spinner"></div>
+    <h1>Alumni ID Card</h1>
+    <p>Loading your ID card viewer&hellip;</p>
+    <a class="btn" href="../../../index.php#/id-card">Open ID Card</a>
+  </div>
+
+  <script>
+    // Auto-redirect to the SPA route
+    (function () {
+      // Try to find the SPA index from common paths
+      var candidates = [
+        '/alumni-system/client/index.php#/id-card',
+        '/index.php#/id-card',
+        '../../../index.php#/id-card',
+        '../../index.php#/id-card',
+      ];
+
+      // If we're running on a dev server where this page is served,
+      // redirect to the hash-based SPA route on the same server root.
+      var href = window.location.href;
+
+      // Detect Laragon / Apache style paths
+      var match = href.match(/^(https?:\/\/[^/]+)(\/[^?#]*\/client\/pages\/alumni\/)/);
+      if (match) {
+        // Navigate to SPA root with the id-card hash
+        var spaRoot = match[1] + match[2].replace(/\/pages\/alumni\/$/, '/') + 'index.php';
+        window.location.replace(spaRoot + '#/id-card');
+        return;
+      }
+
+      // Fallback: just set hash and try – works when opened alongside index.php
+      if (window.location.pathname.endsWith('id-card.html')) {
+        var base = window.location.pathname.replace('pages/alumni/id-card.html', '');
+        window.location.replace(window.location.origin + base + '#/id-card');
+      }
+    })();
+  </script>
+</body>
+</html>

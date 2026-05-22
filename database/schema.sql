@@ -1,9 +1,8 @@
 -- Alumni Management System Database Schema
 -- MySQL 8.x Compatible
 
--- Create database
-CREATE DATABASE IF NOT EXISTS alumni_system CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE alumni_system;
+-- Use Hostinger database
+USE u263745868_alumni_system;
 
 -- =====================================================
 -- CORE USER TABLES
@@ -12,11 +11,12 @@ USE alumni_system;
 -- Users table (authentication)
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    alumni_id VARCHAR(20) UNIQUE,
+    alumni_id VARCHAR(30) UNIQUE,
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255),
     name VARCHAR(255) NOT NULL,
-    role ENUM('alumni', 'admin', 'system_admin') DEFAULT 'alumni',
+    role ENUM('alumni', 'admin', 'campus_admin', 'staff', 'system_admin') DEFAULT 'alumni',
+    campus_id INT,
     google_id VARCHAR(255) UNIQUE,
     auth_provider ENUM('email', 'google') DEFAULT 'email',
     profile_image VARCHAR(500),
@@ -26,6 +26,11 @@ CREATE TABLE users (
     reset_code VARCHAR(10),
     reset_expires DATETIME,
     status ENUM('active', 'inactive', 'blocked') DEFAULT 'active',
+    verification_status ENUM('pending', 'verified', 'rejected') DEFAULT 'pending',
+    verified_by INT NULL,
+    verified_at DATETIME,
+    rejection_reason TEXT,
+    verification_notes TEXT,
     login_attempts INT DEFAULT 0,
     locked_until DATETIME,
     last_login DATETIME,
@@ -34,7 +39,9 @@ CREATE TABLE users (
     INDEX idx_email (email),
     INDEX idx_alumni_id (alumni_id),
     INDEX idx_google_id (google_id),
-    INDEX idx_status (status)
+    INDEX idx_campus (campus_id),
+    INDEX idx_status (status),
+    INDEX idx_verification_status (verification_status)
 ) ENGINE=InnoDB;
 
 -- Pending registrations (before email verification)
@@ -50,9 +57,38 @@ CREATE TABLE pending_registrations (
     INDEX idx_code (verification_code)
 ) ENGINE=InnoDB;
 
+-- Verification notifications
+CREATE TABLE verification_notifications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    status ENUM('pending', 'verified', 'rejected') NOT NULL,
+    message TEXT,
+    sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    read_at TIMESTAMP NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_user_read (user_id, read_at),
+    INDEX idx_status (status)
+) ENGINE=InnoDB;
+
 -- =====================================================
 -- ORGANIZATION TABLES
 -- =====================================================
+
+-- Campuses (new - multi-campus support)
+CREATE TABLE campuses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    code VARCHAR(20) NOT NULL UNIQUE,
+    description TEXT,
+    location VARCHAR(255),
+    status ENUM('active', 'inactive') DEFAULT 'active',
+    assigned_admin_id INT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_code (code),
+    INDEX idx_status (status),
+    FOREIGN KEY (assigned_admin_id) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB;
 
 -- Colleges
 CREATE TABLE colleges (
@@ -84,19 +120,36 @@ CREATE TABLE programs (
     INDEX idx_status (status)
 ) ENGINE=InnoDB;
 
+-- Program Campus (many-to-many: programs available at multiple campuses)
+CREATE TABLE program_campus (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    program_id INT NOT NULL,
+    campus_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (program_id) REFERENCES programs(id) ON DELETE CASCADE,
+    FOREIGN KEY (campus_id) REFERENCES campuses(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_program_campus (program_id, campus_id),
+    INDEX idx_program (program_id),
+    INDEX idx_campus (campus_id)
+) ENGINE=InnoDB;
+
 -- Sections (linked to programs)
 CREATE TABLE sections (
     id INT AUTO_INCREMENT PRIMARY KEY,
     program_id INT NOT NULL,
+    campus_id INT NOT NULL,
     name VARCHAR(100) NOT NULL,
     batch_year INT NOT NULL,
     status ENUM('active', 'inactive') DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (program_id) REFERENCES programs(id) ON DELETE CASCADE,
+    FOREIGN KEY (campus_id) REFERENCES campuses(id) ON DELETE CASCADE,
     INDEX idx_program (program_id),
+    INDEX idx_campus (campus_id),
     INDEX idx_batch (batch_year),
-    UNIQUE KEY unique_section (program_id, name, batch_year)
+    UNIQUE KEY unique_section (program_id, campus_id, name, batch_year)
 ) ENGINE=InnoDB;
 
 -- =====================================================
@@ -107,6 +160,7 @@ CREATE TABLE sections (
 CREATE TABLE alumni_profiles (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL UNIQUE,
+    campus_id INT,
     college_id INT,
     program_id INT,
     section_id INT,
@@ -163,11 +217,13 @@ CREATE TABLE alumni_profiles (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (campus_id) REFERENCES campuses(id) ON DELETE SET NULL,
     FOREIGN KEY (college_id) REFERENCES colleges(id) ON DELETE SET NULL,
     FOREIGN KEY (program_id) REFERENCES programs(id) ON DELETE SET NULL,
     FOREIGN KEY (section_id) REFERENCES sections(id) ON DELETE SET NULL,
     
     INDEX idx_user (user_id),
+    INDEX idx_campus (campus_id),
     INDEX idx_college (college_id),
     INDEX idx_program (program_id),
     INDEX idx_section (section_id),
@@ -497,6 +553,33 @@ CREATE TABLE form_fields (
 -- SETTINGS TABLES
 -- =====================================================
 
+-- System settings (security and general configuration)
+CREATE TABLE system_settings (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    setting_key VARCHAR(100) NOT NULL UNIQUE,
+    setting_value TEXT NOT NULL,
+    setting_type ENUM('string', 'number', 'boolean', 'json') DEFAULT 'string',
+    description TEXT,
+    updated_by INT,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_setting_key (setting_key)
+) ENGINE=InnoDB;
+
+-- Login attempts tracking
+CREATE TABLE login_attempts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL,
+    ip_address VARCHAR(45),
+    user_agent TEXT,
+    attempt_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    success BOOLEAN DEFAULT FALSE,
+    failure_reason VARCHAR(255),
+    INDEX idx_email_time (email, attempt_time),
+    INDEX idx_ip_time (ip_address, attempt_time),
+    INDEX idx_success (success, attempt_time)
+) ENGINE=InnoDB;
+
 -- Site content (CMS)
 CREATE TABLE site_content (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -639,6 +722,14 @@ INSERT INTO theme_settings (setting_key, setting_value, setting_type, descriptio
 ('footer_text', '© 2024 Alumni Management System. All rights reserved.', 'text', 'Footer copyright text'),
 ('font_family', 'Inter, sans-serif', 'font', 'Primary font family');
 
+-- Insert default system settings
+INSERT INTO system_settings (setting_key, setting_value, setting_type, description) VALUES
+('max_login_attempts', '5', 'number', 'Maximum failed login attempts before lockout'),
+('lockout_duration_minutes', '30', 'number', 'Account lockout duration in minutes'),
+('enable_login_lockout', 'true', 'boolean', 'Enable/disable login lockout feature'),
+('session_timeout_minutes', '120', 'number', 'Session timeout in minutes'),
+('require_email_verification', 'true', 'boolean', 'Require email verification for new accounts');
+
 -- Insert default email templates
 INSERT INTO email_templates (template_key, template_name, subject, body, available_variables, is_active) VALUES
 ('verification', 'Email Verification', 'Verify Your Email Address', '<h2>Welcome to Alumni System!</h2><p>Hi {{name}},</p><p>Your verification code is: <strong>{{code}}</strong></p><p>This code expires in {{expiration_minutes}} minutes.</p>', '["name", "code", "expiration_minutes"]', TRUE),
@@ -667,6 +758,7 @@ INSERT INTO site_content (section, content_key, title, content_value, content_ty
 
 -- Insert point configuration
 INSERT INTO site_content (section, content_key, title, content_value, content_type, is_active) VALUES
+('settings', 'alumni_id_prefix', 'Alumni ID Prefix', 'ALM', 'text', TRUE),
 ('settings', 'points_profile_completion', 'Profile Completion Points', '50', 'text', TRUE),
 ('settings', 'points_first_login', 'First Login Points', '10', 'text', TRUE),
 ('settings', 'points_referral', 'Referral Points', '25', 'text', TRUE),
@@ -681,13 +773,19 @@ INSERT INTO site_content (section, content_key, title, content_value, content_ty
 ('settings', 'badge_diamond_min', 'Diamond Badge Min Points', '5000', 'text', TRUE);
 
 -- =====================================================
--- DEFAULT ADMIN USER
+-- DEFAULT DATA
 -- =====================================================
+
 -- Password: password (for testing - change immediately after first login!)
 -- Hash is for 'password' using bcrypt
 -- Note: Admins do NOT get alumni_id (NULL) - only alumni get IDs
 INSERT INTO users (email, password, name, role, auth_provider, email_verified, status) VALUES
 ('admin@minsu.edu.ph', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'System Administrator', 'system_admin', 'email', TRUE, 'active');
+
+-- Insert sample campuses
+INSERT INTO campuses (name, code, description, location, status) VALUES
+('Bongabong Campus', 'BBC', 'Main campus in Bongabong', 'Labasan, Bongabong, Oriental Mindoro', 'active'),
+('Calapan Campus', 'CPC', 'Calapan City campus', 'Calapan City, Oriental Mindoro', 'active');
 
 -- Insert a sample college, program, section for testing
 INSERT INTO colleges (name, code, description, status) VALUES
@@ -697,7 +795,15 @@ INSERT INTO programs (college_id, name, code, description, degree_type, status) 
 (1, 'Bachelor of Science in Information Technology', 'BSIT', 'Information Technology degree program', 'Bachelor', 'active'),
 (1, 'Bachelor of Science in Computer Science', 'BSCS', 'Computer Science degree program', 'Bachelor', 'active');
 
-INSERT INTO sections (program_id, name, batch_year, status) VALUES
-(1, 'Section A', 2024, 'active'),
-(1, 'Section B', 2024, 'active'),
-(2, 'Section A', 2024, 'active');
+-- Link programs to campuses
+INSERT INTO program_campus (program_id, campus_id) VALUES
+(1, 1), -- BSIT at Bongabong
+(2, 1), -- BSCS at Bongabong
+(1, 2), -- BSIT at Calapan
+(2, 2); -- BSCS at Calapan
+
+-- Insert sections with campus_id
+INSERT INTO sections (program_id, campus_id, name, batch_year, status) VALUES
+(1, 1, 'Section A', 2024, 'active'),
+(1, 1, 'Section B', 2024, 'active'),
+(2, 1, 'Section A', 2024, 'active');

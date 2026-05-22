@@ -25,10 +25,12 @@ try {
             if ($sectionId) {
                 $stmt = $db->prepare("
                     SELECT s.*, p.name as program_name, p.code as program_code,
-                        c.name as college_name, c.code as college_code
+                        c.name as college_name, c.code as college_code,
+                        camp.name as campus_name, camp.code as campus_code
                     FROM sections s
                     JOIN programs p ON s.program_id = p.id
                     JOIN colleges c ON p.college_id = c.id
+                    LEFT JOIN campuses camp ON s.campus_id = camp.id
                     WHERE s.id = ?
                 ");
                 $stmt->execute([$sectionId]);
@@ -54,6 +56,7 @@ try {
                 echo json_encode(['success' => true, 'data' => $section]);
             } else {
                 $programId = $_GET['program_id'] ?? null;
+                $campusId = $_GET['campus_id'] ?? null;
                 $batchYear = $_GET['batch_year'] ?? null;
                 
                 $where = ['1=1'];
@@ -63,6 +66,10 @@ try {
                     $where[] = "s.program_id = ?";
                     $params[] = $programId;
                 }
+                if ($campusId) {
+                    $where[] = "s.campus_id = ?";
+                    $params[] = $campusId;
+                }
                 if ($batchYear) {
                     $where[] = "s.batch_year = ?";
                     $params[] = $batchYear;
@@ -71,12 +78,14 @@ try {
                 $sql = "
                     SELECT s.*, p.name as program_name, p.code as program_code,
                         c.name as college_name,
+                        camp.name as campus_name, camp.code as campus_code,
                         (SELECT COUNT(*) FROM alumni_profiles WHERE section_id = s.id) as alumni_count
                     FROM sections s
                     JOIN programs p ON s.program_id = p.id
                     JOIN colleges c ON p.college_id = c.id
+                    LEFT JOIN campuses camp ON s.campus_id = camp.id
                     WHERE " . implode(' AND ', $where) . "
-                    ORDER BY s.batch_year DESC, c.name, p.name, s.name
+                    ORDER BY s.batch_year DESC, camp.name, c.name, p.name, s.name
                 ";
                 
                 $stmt = $db->prepare($sql);
@@ -90,15 +99,25 @@ try {
         case 'POST':
             $data = json_decode(file_get_contents('php://input'), true);
             
-            if (empty($data['name']) || empty($data['program_id']) || empty($data['batch_year'])) {
+            if (empty($data['name']) || empty($data['program_id']) || empty($data['batch_year']) || empty($data['campus_id'])) {
                 http_response_code(400);
-                echo json_encode(['success' => false, 'message' => 'Name, program_id, and batch_year are required']);
+                echo json_encode(['success' => false, 'message' => 'Name, program_id, campus_id, and batch_year are required']);
                 exit;
             }
             
-            $stmt = $db->prepare("INSERT INTO sections (program_id, name, batch_year, status, created_at) VALUES (?, ?, ?, 'active', NOW())");
+            // Verify campus exists
+            $campusCheck = $db->prepare('SELECT id FROM campuses WHERE id = ? LIMIT 1');
+            $campusCheck->execute([$data['campus_id']]);
+            if (!$campusCheck->fetch()) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'message' => 'Invalid campus ID']);
+                exit;
+            }
+            
+            $stmt = $db->prepare("INSERT INTO sections (program_id, campus_id, name, batch_year, status, created_at) VALUES (?, ?, ?, ?, 'active', NOW())");
             $stmt->execute([
                 $data['program_id'],
+                $data['campus_id'],
                 trim($data['name']),
                 $data['batch_year']
             ]);
@@ -122,8 +141,18 @@ try {
             $updates = [];
             $params = [];
             
-            foreach (['program_id', 'name', 'batch_year', 'status'] as $field) {
+            foreach (['program_id', 'campus_id', 'name', 'batch_year', 'status'] as $field) {
                 if (isset($data[$field])) {
+                    // Verify campus exists if updating campus_id
+                    if ($field === 'campus_id') {
+                        $campusCheck = $db->prepare('SELECT id FROM campuses WHERE id = ? LIMIT 1');
+                        $campusCheck->execute([$data[$field]]);
+                        if (!$campusCheck->fetch()) {
+                            http_response_code(400);
+                            echo json_encode(['success' => false, 'message' => 'Invalid campus ID']);
+                            exit;
+                        }
+                    }
                     $updates[] = "$field = ?";
                     $params[] = $data[$field];
                 }

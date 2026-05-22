@@ -1,0 +1,1527 @@
+/* =====================================================
+   ALUMNI MANAGEMENT SYSTEM - Mobile Responsiveness
+   Comprehensive responsive design for all screen sizes
+   ===================================================== */
+
+/* =====================================================
+   MOBILE FIRST - BASE STYLES
+   ===================================================== */
+
+/* Ensure all containers are responsive */
+* {
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Prevent horizontal scroll */
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* =====================================================
+   DASHBOARD LAYOUT - RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 1024px) {
+  .dashboard-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: fixed;
+    left: -280px;
+    top: 0;
+    bottom: 0;
+    width: 280px;
+    z-index: 100;
+    transition: left 0.3s ease;
+  }
+
+  .sidebar.active {
+    left: 0;
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+
+  /* Sidebar overlay */
+  .sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 99;
+    display: none;
+  }
+
+  .sidebar-overlay.active {
+    display: block;
+  }
+}
+
+/* =====================================================
+   HEADER / TOPBAR - RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 768px) {
+  .content-header,
+  .topbar,
+  .admin-topbar {
+    padding: 0.75rem 1rem;
+    flex-wrap: wrap;
+  }
+
+  .page-title {
+    font-size: 1.25rem !important;
+  }
+
+  .content-header .btn,
+  .topbar .btn,
+  .admin-topbar .btn {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 1.125rem !important;
+  }
+
+  .sidebar-toggle {
+    padding: 0.5rem !important;
+  }
+}
+
+/* =====================================================
+   CARDS - RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 768px) {
+  .card {
+    border-radius: 0.75rem;
+  }
+
+  .card-header,
+  .card-body,
+  .card-footer {
+    padding: 1rem;
+  }
+
+  .card-title {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-header,
+  .card-body,
+  .card-footer {
+    padding: 0.875rem;
+  }
+}
+
+/* =====================================================
+   GRID LAYOUTS - RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 1024px) {
+  .grid-cols-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .grid-cols-6 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .grid-cols-2,
+  .grid-cols-3,
+  .grid-cols-4 {
+    grid-template-columns: 1fr;
+  }
+
+  .grid-cols-6 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .grid-cols-6 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =====================================================
+   FORMS - RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+}
+
+/* =====================================================
+   TABLES - RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 1024px) {
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table,
+  .data-table {
+    min-width: 600px;
+  }
+}
+
+@media (max-width: 768px) {
+  .table th,
+  .table td,
+  .data-table th,
+  .data-table td {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.8125rem;
+  }
+
+  /* Stack table on very small screens */
+  .table-responsive-stack {
+    display: block;
+  }
+
+  .table-responsive-stack thead {
+    display: none;
+  }
+
+  .table-responsive-stack tbody,
+  .table-responsive-stack tr,
+  .table-responsive-stack td {
+    display: block;
+    width: 100%;
+  }
+
+  .table-responsive-stack tr {
+    margin-bottom: 1rem;
+    border: 1px solid var(--gray-200);
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+  }
+
+  .table-responsive-stack td {
+    text-align: right;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--gray-100);
+  }
+
+  .table-responsive-stack td:last-child {
+    border-bottom: none;
+  }
+
+  .table-responsive-stack td::before {
+    content: attr(data-label);
+    float: left;
+    font-weight: 600;
+    color: var(--gray-700);
+  }
+}
+
+/* =====================================================
+   MODALS - RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 768px) {
+  .modal[id],
+  .modal-improved,
+  .modal-overlay {
+    padding: 0.5rem;
+  }
+
+  .modal[id] .modal-dialog,
+  .modal-improved .modal-dialog,
+  .modal-overlay > .modal {
+    width: calc(100vw - 1rem) !important;
+    max-width: calc(100vw - 1rem) !important;
+    max-height: calc(100vh - 1rem) !important;
+    margin: 0.5rem auto !important;
+  }
+
+  .modal[id] .modal-content,
+  .modal-improved .modal-content {
+    border-radius: 1rem;
+    max-height: calc(100vh - 1rem);
+    overflow: hidden;
+  }
+
+  .modal-header,
+  .modal-improved .modal-header {
+    padding: 1rem;
+  }
+
+  .modal-title {
+    font-size: 1.25rem;
+  }
+
+  .modal-body,
+  .modal-improved .modal-body {
+    padding: 1rem;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .modal-footer,
+  .modal-improved .modal-footer {
+    padding: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .modal-footer .btn,
+  .modal-improved .modal-footer .btn {
+    flex: 1 1 45%;
+    min-width: 0;
+  }
+
+  .table-responsive,
+  .table-container,
+  .card-body.p-0 {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table-improved,
+  .table-responsive .table,
+  .table-responsive .table-improved {
+    min-width: 640px;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-footer .btn {
+    flex: 1 1 100%;
+  }
+}
+
+/* =====================================================
+   BUTTONS - RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 768px) {
+  .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  .btn-sm {
+    padding: 0.375rem 0.625rem;
+    font-size: 0.8125rem;
+  }
+
+  .btn-lg {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.9375rem;
+  }
+
+  .btn-group {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .btn-block-mobile {
+    width: 100%;
+    display: block;
+  }
+}
+
+/* =====================================================
+   NAVIGATION - RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 768px) {
+  .tabs-list {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .tabs-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab,
+  .tab-btn {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+}
+
+/* =====================================================
+   PROFILE PAGE - RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 1024px) {
+  .profile-hero-grid {
+    flex-direction: column;
+  }
+
+  .profile-points-card {
+    width: 100%;
+  }
+
+  .profile-meta-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .profile-page {
+    padding: 0.5rem;
+  }
+
+  .profile-meta-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-tabs {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .profile-tabs .tab {
+    flex: 1;
+    min-width: 80px;
+    font-size: 0.8125rem;
+  }
+}
+
+/* =====================================================
+   QR SCANNER - RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 768px) {
+  .scanner-container {
+    max-width: 100%;
+  }
+
+  #qrReader {
+    min-height: 300px;
+  }
+
+  .scanner-frame {
+    width: 200px;
+    height: 200px;
+  }
+
+  .scanner-instruction {
+    font-size: 0.8125rem;
+    padding: 0.375rem 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  #qrReader {
+    min-height: 250px;
+  }
+
+  .scanner-frame {
+    width: 180px;
+    height: 180px;
+  }
+}
+
+/* =====================================================
+   DASHBOARD STATS - RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 1024px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-card {
+    padding: 1rem;
+  }
+}
+
+/* =====================================================
+   FILTERS BAR - RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 768px) {
+  .filters-bar {
+    flex-direction: column;
+  }
+
+  .filters-bar > * {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+/* =====================================================
+   TOAST NOTIFICATIONS - RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 768px) {
+  .toast-container {
+    top: 0.5rem;
+    right: 0.5rem;
+    left: 0.5rem;
+    width: auto;
+  }
+
+  .toast {
+    padding: 0.75rem;
+  }
+
+  .toast-message {
+    font-size: 0.8125rem;
+  }
+}
+
+/* =====================================================
+   LANDING PAGE - RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 1024px) {
+  .hero-section {
+    padding: 3rem 1rem;
+  }
+
+  .hero-title {
+    font-size: 2.5rem;
+  }
+
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 2rem 1rem;
+  }
+
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+
+  .features-grid,
+  .steps-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .landing-nav {
+    padding: 1rem;
+  }
+}
+
+/* =====================================================
+   AUTH PAGES - RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 768px) {
+  .auth-card {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+
+  .auth-title {
+    font-size: 1.5rem;
+  }
+
+  .auth-logo {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 1.25rem;
+    margin: 0.5rem;
+  }
+
+  .auth-title {
+    font-size: 1.25rem;
+  }
+}
+
+/* =====================================================
+   COMPLETE PROFILE WIZARD - RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 768px) {
+  .profile-wizard {
+    margin: 0.5rem auto;
+    border-radius: 0.75rem;
+  }
+
+  .wizard-header {
+    padding: 1rem;
+  }
+
+  .wizard-header h1 {
+    font-size: 1.25rem !important;
+  }
+
+  .wizard-header p {
+    font-size: 0.8125rem !important;
+  }
+
+  .wizard-progress {
+    padding: 0.75rem 1rem;
+  }
+
+  .progress-step {
+    font-size: 0.6875rem;
+  }
+
+  .progress-step span {
+    display: none;
+  }
+
+  .wizard-step {
+    padding: 1rem;
+  }
+
+  .step-title {
+    font-size: 1.125rem;
+  }
+
+  .step-description {
+    font-size: 0.8125rem;
+  }
+
+  .wizard-nav {
+    padding: 1rem;
+    gap: 0.5rem;
+  }
+
+  .wizard-nav .btn {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .wizard-header .auth-logo {
+    width: 50px !important;
+    height: 50px !important;
+  }
+
+  .points-badge {
+    font-size: 0.75rem !important;
+    padding: 6px 12px !important;
+  }
+
+  .wizard-nav {
+    flex-wrap: wrap;
+  }
+
+  .wizard-nav button {
+    flex: 1;
+    min-width: 100px;
+  }
+}
+
+/* =====================================================
+   CONTENT WRAPPER - RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 768px) {
+  .content-wrapper {
+    padding: 1rem;
+  }
+
+  .content-body {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .content-wrapper {
+    padding: 0.75rem;
+  }
+
+  .content-body {
+    padding: 0.75rem;
+  }
+}
+
+/* =====================================================
+   UTILITY CLASSES - RESPONSIVE
+   ===================================================== */
+
+/* Hide on mobile */
+@media (max-width: 768px) {
+  .hide-mobile {
+    display: none !important;
+  }
+}
+
+/* Show only on mobile */
+.show-mobile {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .show-mobile {
+    display: block !important;
+  }
+
+  .show-mobile-flex {
+    display: flex !important;
+  }
+
+  .show-mobile-inline {
+    display: inline !important;
+  }
+}
+
+/* Text alignment responsive */
+@media (max-width: 768px) {
+  .text-center-mobile {
+    text-align: center !important;
+  }
+
+  .text-left-mobile {
+    text-align: left !important;
+  }
+}
+
+/* Spacing responsive */
+@media (max-width: 768px) {
+  .p-lg {
+    padding: 1rem !important;
+  }
+
+  .p-xl {
+    padding: 1.25rem !important;
+  }
+
+  .mt-lg {
+    margin-top: 1rem !important;
+  }
+
+  .mb-lg {
+    margin-bottom: 1rem !important;
+  }
+}
+
+/* =====================================================
+   TOUCH IMPROVEMENTS
+   ===================================================== */
+
+/* Larger touch targets on mobile */
+@media (max-width: 768px) {
+  .btn,
+  .form-input,
+  .form-select,
+  .tab,
+  .dropdown-item {
+    min-height: 44px; /* iOS recommended touch target */
+  }
+
+  /* Prevent text selection on buttons */
+  .btn,
+  .tab,
+  .dropdown-item {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    user-select: none;
+  }
+}
+
+/* =====================================================
+   SAFE AREA INSETS (for notched devices)
+   ===================================================== */
+
+@supports (padding: max(0px)) {
+  .content-header,
+  .topbar,
+  .admin-topbar {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+
+  .sidebar {
+    padding-left: max(1rem, env(safe-area-inset-left));
+  }
+
+  .modal[id],
+  .modal-overlay {
+    padding-left: max(0.5rem, env(safe-area-inset-left));
+    padding-right: max(0.5rem, env(safe-area-inset-right));
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+  }
+}
+
+/* =====================================================
+   GLOBAL MOBILE HARDENING
+   Applies to dynamically loaded public, alumni, and admin pages.
+   ===================================================== */
+
+@media (max-width: 1024px) {
+  body[data-app-section="alumni"] .dashboard-layout,
+  body[data-app-section="admin"] .dashboard-layout {
+    display: block !important;
+    min-height: 100dvh !important;
+  }
+
+  body[data-app-section="alumni"] .dashboard-layout .sidebar,
+  body[data-app-section="admin"] .dashboard-layout .sidebar {
+    position: fixed !important;
+    inset: 0 auto 0 0 !important;
+    width: min(286px, 84vw) !important;
+    max-width: 84vw !important;
+    transform: translateX(-105%) !important;
+    transition: transform 0.24s ease !important;
+    z-index: 1200 !important;
+  }
+
+  body[data-app-section="alumni"] .dashboard-layout .sidebar.active,
+  body[data-app-section="alumni"] .dashboard-layout .sidebar.open,
+  body[data-app-section="admin"] .dashboard-layout .sidebar.active,
+  body[data-app-section="admin"] .dashboard-layout .sidebar.open {
+    transform: translateX(0) !important;
+  }
+
+  body[data-app-section="alumni"] .dashboard-layout .main-content,
+  body[data-app-section="admin"] .dashboard-layout .main-content {
+    margin-left: 0 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .admin-content,
+  .content-wrapper,
+  .theme-ui-content,
+  .settings-content {
+    width: 100% !important;
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+  }
+
+  .admin-content > .flex,
+  .content-wrapper > .flex,
+  #idCardSection > .flex {
+    flex-wrap: wrap !important;
+  }
+
+  #idCardSection > .flex > div,
+  .id-card-container + div,
+  .id-card-container ~ div {
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    font-size: 15px;
+  }
+
+  .admin-content,
+  .content-wrapper,
+  .theme-ui-content,
+  .settings-content {
+    padding: 1rem !important;
+  }
+
+  .admin-topbar,
+  .topbar,
+  .content-header,
+  .theme-ui-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 80;
+    min-height: 56px;
+    gap: 0.75rem;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(12px);
+  }
+
+  .admin-topbar .page-title,
+  .topbar .page-title,
+  .content-header .page-title {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .topbar-actions,
+  .admin-actions,
+  .content-actions,
+  .page-actions,
+  .scanner-controls {
+    width: 100%;
+    flex-wrap: wrap !important;
+    justify-content: stretch !important;
+  }
+
+  .topbar-actions > *,
+  .admin-actions > *,
+  .content-actions > *,
+  .page-actions > *,
+  .scanner-controls > * {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .card,
+  .card-improved,
+  .premium-card,
+  .dashboard-card {
+    max-width: 100% !important;
+    border-radius: 12px !important;
+  }
+
+  .card-body,
+  .card-improved .card-body,
+  .premium-card-body {
+    min-width: 0 !important;
+  }
+
+  .grid,
+  .form-grid,
+  .stats-grid,
+  .profile-meta-grid,
+  .quick-actions-grid,
+  .admin-dashboard-grid,
+  .analytics-grid,
+  .features-grid,
+  .steps-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .form-group,
+  .form-row,
+  .filter-group,
+  .filters-bar {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea,
+  input,
+  select,
+  textarea {
+    max-width: 100% !important;
+  }
+
+  .table-container,
+  .table-responsive,
+  .admin-table-scroll,
+  .admin-record-table-shell,
+  .card-body.p-0,
+  .id-card-results-table-wrap {
+    width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .table,
+  .table-improved,
+  .data-table,
+  .admin-record-table {
+    min-width: 640px !important;
+  }
+
+  .modal,
+  .modal-improved,
+  .modal-overlay {
+    align-items: flex-start !important;
+  }
+
+  .modal-dialog,
+  .modal-content,
+  .compact-modal {
+    width: min(100%, calc(100vw - 1rem)) !important;
+    max-width: calc(100vw - 1rem) !important;
+  }
+
+  .auth-page,
+  .auth-shell,
+  .auth-layout,
+  .login-page,
+  .login-shell {
+    min-height: 100dvh !important;
+    padding: 1rem !important;
+    display: grid !important;
+    place-items: center !important;
+  }
+
+  .auth-card,
+  .login-card,
+  .register-card {
+    width: min(100%, 440px) !important;
+    max-width: calc(100vw - 2rem) !important;
+    margin: 0 auto !important;
+    padding: clamp(1rem, 5vw, 1.5rem) !important;
+  }
+
+  .landing-nav,
+  .site-header,
+  .hero-actions {
+    flex-wrap: wrap !important;
+    gap: 0.75rem !important;
+  }
+
+  .hero-section,
+  .landing-section,
+  .section {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  .hero-title,
+  .landing-title {
+    font-size: clamp(1.8rem, 9vw, 2.4rem) !important;
+    line-height: 1.08 !important;
+  }
+
+  .messenger-shell,
+  .messages-dashboard-shell,
+  .messenger-surface {
+    width: 100% !important;
+    max-width: 100vw !important;
+    min-height: calc(100dvh - 64px) !important;
+  }
+
+  .messenger-layout,
+  .messages-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  .call-card {
+    width: min(100%, calc(100vw - 1rem)) !important;
+    max-height: calc(100dvh - 1rem) !important;
+  }
+
+  .id-card-container {
+    padding: 1rem 0 !important;
+    overflow-x: auto !important;
+  }
+
+  .id-card-wrapper {
+    width: min(100%, 500px) !important;
+    max-width: calc(100vw - 2rem) !important;
+  }
+
+  #idCardSection > .flex {
+    flex-direction: column !important;
+  }
+
+  #idCardSection > .flex > div:last-child {
+    width: 100% !important;
+    flex-shrink: 1 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-content,
+  .content-wrapper,
+  .theme-ui-content,
+  .settings-content {
+    padding: 0.75rem !important;
+  }
+
+  .admin-topbar,
+  .topbar,
+  .content-header,
+  .theme-ui-topbar {
+    padding: 0.7rem 0.75rem !important;
+  }
+
+  .btn,
+  .form-input,
+  .form-select,
+  .form-textarea {
+    width: 100%;
+  }
+
+  .btn.btn-ghost,
+  .sidebar-toggle,
+  .icon-btn {
+    width: auto;
+  }
+
+  .toast-container {
+    top: auto !important;
+    bottom: max(0.75rem, env(safe-area-inset-bottom)) !important;
+  }
+}
+
+/* =====================================================
+   TARGETED MOBILE FINISHING
+   ===================================================== */
+
+@media (max-width: 768px) {
+  .page-wrapper {
+    min-height: 100dvh !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: max(0.75rem, env(safe-area-inset-top)) 0.75rem
+      max(0.75rem, env(safe-area-inset-bottom)) !important;
+    overflow-y: auto !important;
+  }
+
+  .page-wrapper .auth-card,
+  .auth-card,
+  .login-card,
+  .register-card {
+    width: min(100%, 440px) !important;
+    max-width: calc(100vw - 1.5rem) !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    border-radius: 18px !important;
+  }
+
+  .auth-card[style*="600px"] {
+    width: min(100%, 520px) !important;
+    max-width: calc(100vw - 1.5rem) !important;
+  }
+
+  .auth-header {
+    padding: clamp(0.85rem, 4vw, 1.1rem) clamp(0.9rem, 4vw, 1.2rem) !important;
+  }
+
+  .auth-logo {
+    width: 52px !important;
+    height: 52px !important;
+    margin-bottom: 0.35rem !important;
+  }
+
+  .auth-title {
+    font-size: clamp(1.18rem, 6vw, 1.45rem) !important;
+    line-height: 1.15 !important;
+  }
+
+  .auth-subtitle,
+  .auth-form-title {
+    overflow-wrap: anywhere !important;
+  }
+
+  .auth-body {
+    padding: clamp(0.95rem, 4.5vw, 1.25rem) !important;
+    overflow-y: visible !important;
+  }
+
+  .auth-input,
+  .btn-auth,
+  .btn-google {
+    min-height: 46px !important;
+    font-size: 16px !important;
+  }
+
+  .input-password-wrapper .auth-input {
+    padding-right: 2.75rem !important;
+  }
+
+  .password-toggle {
+    min-width: 42px !important;
+    min-height: 42px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .auth-links {
+    gap: 0.55rem !important;
+    flex-wrap: wrap !important;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout,
+  body[data-app-section="alumni"] .dashboard-layout {
+    overflow-x: hidden !important;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .admin-content,
+  body[data-app-section="admin"] .dashboard-layout .content-wrapper,
+  body[data-app-section="admin"] .dashboard-layout .content-body,
+  body[data-app-section="admin"] .theme-ui-content,
+  body[data-app-section="admin"] .settings-content,
+  body[data-app-section="alumni"] .dashboard-layout .content-wrapper,
+  body[data-app-section="alumni"] .dashboard-layout .content-body {
+    width: 100% !important;
+    max-width: 100vw !important;
+    padding: 0.9rem !important;
+    box-sizing: border-box !important;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .card-header,
+  body[data-app-section="admin"] .dashboard-layout .card-improved > .card-header,
+  body[data-app-section="admin"] .dashboard-layout .admin-panel-header,
+  body[data-app-section="alumni"] .dashboard-layout .card-header {
+    min-height: 0 !important;
+    padding: 0.95rem !important;
+    gap: 0.65rem !important;
+    flex-wrap: wrap !important;
+    align-items: flex-start !important;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .card-body,
+  body[data-app-section="admin"] .dashboard-layout .card-improved > .card-body,
+  body[data-app-section="admin"] .dashboard-layout .admin-panel-body,
+  body[data-app-section="alumni"] .dashboard-layout .card-body {
+    padding: 0.95rem !important;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .card-title,
+  body[data-app-section="admin"] .dashboard-layout .admin-panel-title,
+  body[data-app-section="alumni"] .dashboard-layout .card-title {
+    width: 100% !important;
+    min-width: 0 !important;
+    line-height: 1.25 !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .admin-toolbar,
+  body[data-app-section="admin"] .dashboard-layout .admin-actions,
+  body[data-app-section="admin"] .dashboard-layout .topbar-actions,
+  body[data-app-section="admin"] .dashboard-layout .filters-bar,
+  body[data-app-section="admin"] .dashboard-layout .filter-row,
+  body[data-app-section="admin"] .dashboard-layout .form-actions,
+  body[data-app-section="alumni"] .dashboard-layout .filters-bar,
+  body[data-app-section="alumni"] .dashboard-layout .form-actions {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    width: 100% !important;
+    gap: 0.65rem !important;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout .admin-toolbar > *,
+  body[data-app-section="admin"] .dashboard-layout .admin-actions > *,
+  body[data-app-section="admin"] .dashboard-layout .topbar-actions > *,
+  body[data-app-section="admin"] .dashboard-layout .filters-bar > *,
+  body[data-app-section="admin"] .dashboard-layout .filter-row > *,
+  body[data-app-section="admin"] .dashboard-layout .form-actions > *,
+  body[data-app-section="alumni"] .dashboard-layout .filters-bar > *,
+  body[data-app-section="alumni"] .dashboard-layout .form-actions > * {
+    flex: 1 1 100% !important;
+    min-width: 0 !important;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout [style*="grid-template-columns"],
+  body[data-app-section="alumni"] .dashboard-layout [style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  body[data-app-section="admin"] .dashboard-layout [style*="width: 200px"],
+  body[data-app-section="admin"] .dashboard-layout [style*="width:200px"],
+  body[data-app-section="admin"] .dashboard-layout [style*="width: 240px"],
+  body[data-app-section="admin"] .dashboard-layout [style*="width:240px"],
+  body[data-app-section="alumni"] .dashboard-layout [style*="width: 200px"],
+  body[data-app-section="alumni"] .dashboard-layout [style*="width:200px"],
+  body[data-app-section="alumni"] .dashboard-layout [style*="width: 240px"],
+  body[data-app-section="alumni"] .dashboard-layout [style*="width:240px"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 1 1 auto !important;
+  }
+
+  body[data-app-section="admin"] .theme-ui-panel,
+  body[data-app-section="admin"] .settings-panel,
+  body[data-app-section="admin"] .admin-panel {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 12px !important;
+  }
+
+  body[data-app-section="admin"] .theme-ui-panel-body,
+  body[data-app-section="admin"] .settings-panel-body {
+    padding: 1rem !important;
+  }
+
+  body[data-app-section="admin"] .admin-topbar,
+  body[data-app-section="admin"] .theme-ui-topbar,
+  body[data-app-section="alumni"] .topbar,
+  body[data-app-section="alumni"] .content-header {
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow: hidden !important;
+  }
+
+  body[data-app-section="admin"] .admin-topbar .page-title,
+  body[data-app-section="admin"] .theme-ui-topbar h1,
+  body[data-app-section="alumni"] .topbar .page-title,
+  body[data-app-section="alumni"] .content-header .page-title {
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+    white-space: normal !important;
+  }
+
+  body[data-app-section="alumni"] .messages-dashboard-shell .messages-main {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-height: 100dvh !important;
+    overflow: hidden !important;
+  }
+
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-surface {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    max-height: 100dvh !important;
+    border-radius: 0 !important;
+    overflow: hidden !important;
+  }
+
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-list-panel,
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-chat-panel {
+    width: 100% !important;
+    max-width: 100vw !important;
+    height: 100dvh !important;
+    min-height: 0 !important;
+    max-height: 100dvh !important;
+  }
+
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-chat-content {
+    height: 100% !important;
+    min-height: 0 !important;
+  }
+
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-title-row,
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-chat-header {
+    gap: 0.55rem !important;
+  }
+
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-title-row h1 {
+    min-width: 0 !important;
+    font-size: clamp(1.45rem, 8vw, 1.8rem) !important;
+  }
+
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-title-actions,
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-chat-actions {
+    flex: 0 0 auto !important;
+    gap: 0.3rem !important;
+  }
+
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-chat-person,
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-chat-copy {
+    min-width: 0 !important;
+  }
+
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-chat-name,
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-chat-status,
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-thread-name,
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-thread-preview {
+    max-width: 100% !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-thread {
+    grid-template-columns: 62px minmax(0, 1fr) auto !important;
+    min-width: 0 !important;
+  }
+
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-messages-area {
+    min-height: 0 !important;
+    padding-bottom: max(0.85rem, env(safe-area-inset-bottom)) !important;
+  }
+
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-message {
+    max-width: min(88%, 34rem) !important;
+  }
+
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-composer {
+    flex: 0 0 auto !important;
+    align-items: flex-end !important;
+    padding: 0.65rem max(0.6rem, env(safe-area-inset-right))
+      max(0.65rem, env(safe-area-inset-bottom)) max(0.6rem, env(safe-area-inset-left)) !important;
+  }
+
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-composer textarea {
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+    max-height: 120px !important;
+    font-size: 16px !important;
+  }
+
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-icon-btn,
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-chat-action,
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-compose-tool,
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-emoji-btn,
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-send-btn {
+    flex: 0 0 38px !important;
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    min-height: 38px !important;
+  }
+
+  .call-overlay {
+    padding: 0.5rem !important;
+  }
+
+  .call-card {
+    width: min(100%, calc(100vw - 1rem)) !important;
+    max-width: 460px !important;
+    max-height: calc(100dvh - 1rem) !important;
+    border-radius: 14px !important;
+  }
+}
+
+@media (max-width: 520px) {
+  .page-wrapper {
+    align-items: stretch !important;
+    justify-content: center !important;
+  }
+
+  .page-wrapper .auth-card,
+  .auth-card,
+  .login-card,
+  .register-card {
+    max-width: 100% !important;
+    border-radius: 16px !important;
+  }
+
+  .auth-links {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .auth-link,
+  .auth-toggle,
+  .auth-toggle-link {
+    text-align: center !important;
+  }
+
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-desktop-only {
+    display: none !important;
+  }
+
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-list-header {
+    padding: 1rem 0.75rem 0.6rem !important;
+  }
+
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-tabs {
+    gap: 0.45rem !important;
+    padding-bottom: 0.15rem !important;
+  }
+
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-tab {
+    min-height: 36px !important;
+    font-size: 0.88rem !important;
+    padding-inline: 0.72rem !important;
+  }
+
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-thread {
+    grid-template-columns: 56px minmax(0, 1fr) 22px !important;
+    min-height: 76px !important;
+    padding: 0.45rem 0.55rem !important;
+  }
+
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-avatar {
+    width: 48px !important;
+    height: 48px !important;
+  }
+
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-chat-header {
+    min-height: 60px !important;
+    padding: 0.55rem !important;
+  }
+
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-chat-action,
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-compose-tool,
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-emoji-btn,
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-send-btn {
+    flex-basis: 34px !important;
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    min-height: 34px !important;
+  }
+
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-compose-extra {
+    display: none !important;
+  }
+
+  body[data-app-section="alumni"] .messages-dashboard-shell .messenger-message {
+    max-width: 92% !important;
+  }
+}
+
+/* =====================================================
+   PRINT STYLES
+   ===================================================== */
+
+@media print {
+  .sidebar,
+  .sidebar-toggle,
+  .btn,
+  .filters-bar,
+  .pagination,
+  .no-print {
+    display: none !important;
+  }
+
+  .main-content {
+    margin-left: 0 !important;
+  }
+
+  .card {
+    break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid #ddd;
+  }
+
+  .table {
+    font-size: 10pt;
+  }
+}
+
+/* =====================================================
+   ACCESSIBILITY IMPROVEMENTS
+   ===================================================== */
+
+/* Focus visible improvements for keyboard navigation */
+@media (max-width: 768px) {
+  *:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

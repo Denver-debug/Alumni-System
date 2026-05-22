@@ -51,6 +51,10 @@ try {
                 
                 $sql = "
                     SELECT p.*, c.name as college_name, c.code as college_code,
+                        (SELECT GROUP_CONCAT(CONCAT(cam.name, ' (', cam.code, ')') ORDER BY cam.name SEPARATOR ', ')
+                         FROM program_campus pc
+                         JOIN campuses cam ON cam.id = pc.campus_id
+                         WHERE pc.program_id = p.id) as campus_names,
                         (SELECT COUNT(*) FROM sections WHERE program_id = p.id) as section_count,
                         (SELECT COUNT(*) FROM alumni_profiles WHERE program_id = p.id) as alumni_count
                     FROM programs p
@@ -85,14 +89,13 @@ try {
                 exit;
             }
             
-            $stmt = $db->prepare("INSERT INTO programs (college_id, name, code, description, degree_type, duration_years, status, created_at) VALUES (?, ?, ?, ?, ?, ?, 'active', NOW())");
+            $stmt = $db->prepare("INSERT INTO programs (college_id, name, code, description, degree_type, status, created_at) VALUES (?, ?, ?, ?, ?, 'active', NOW())");
             $stmt->execute([
-                $data['college_id'],
+                (int) $data['college_id'],
                 trim($data['name']),
                 strtoupper(trim($data['code'])),
                 $data['description'] ?? null,
-                $data['degree_type'] ?? 'bachelor',
-                $data['duration_years'] ?? 4
+                $data['degree_type'] ?? 'bachelor'
             ]);
             
             echo json_encode([
@@ -114,7 +117,7 @@ try {
             $updates = [];
             $params = [];
             
-            $fields = ['college_id', 'name', 'code', 'description', 'degree_type', 'duration_years', 'status'];
+            $fields = ['college_id', 'name', 'code', 'description', 'degree_type', 'status'];
             foreach ($fields as $field) {
                 if (isset($data[$field])) {
                     $updates[] = "$field = ?";

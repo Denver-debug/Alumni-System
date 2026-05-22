@@ -1,7 +1,7 @@
 <?php
 /**
  * Update Profile API
- * PUT /api/v1/auth/profile
+ * POST|PUT /api/v1/auth/profile
  */
 
 require_once __DIR__ . '/../../config/database.php';
@@ -15,23 +15,27 @@ require_once __DIR__ . '/../../middleware/auth.php';
 $currentUser = requireAuth();
 
 $db = Database::getInstance();
+$existingUser = $db->fetchOne('SELECT profile_image FROM users WHERE id = ?', [$currentUser['id']]) ?: [];
+$previousProfileImage = $existingUser['profile_image'] ?? null;
 
 // Handle file upload for profile image
 $profileImage = null;
-if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
-    $uploader = new FileUploader('profiles', ALLOWED_IMAGE_TYPES);
+if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] !== UPLOAD_ERR_NO_FILE) {
+    $uploader = new FileUploader(PROFILE_UPLOAD_SUBDIR, ALLOWED_IMAGE_TYPES);
     $filename = $uploader->upload($_FILES['profile_image']);
-    
+
     if (!$filename) {
         error('Failed to upload profile image: ' . implode(', ', $uploader->getErrors()));
     }
-    
+
     $profileImage = $uploader->getUrl($filename);
-    
+
     // Create thumbnail
-    $sourcePath = UPLOAD_DIR . '/profiles/' . $filename;
-    $thumbPath = UPLOAD_DIR . '/profiles/thumb_' . $filename;
-    ImageProcessor::thumbnail($sourcePath, $thumbPath, 150);
+    $sourcePath = UPLOAD_DIR . '/' . PROFILE_UPLOAD_SUBDIR . '/' . $filename;
+    $thumbPath = UPLOAD_DIR . '/' . PROFILE_UPLOAD_SUBDIR . '/thumb_' . $filename;
+    if (is_file($sourcePath) && !ImageProcessor::thumbnail($sourcePath, $thumbPath, 150)) {
+        error_log('Profile update: thumbnail generation skipped (GD extension may be unavailable).');
+    }
 }
 
 // Get request data (from POST data if file upload, otherwise JSON body)
@@ -39,7 +43,7 @@ $data = !empty($_POST) ? $_POST : getRequestBody();
 
 // Validate user data
 $userErrors = validate($data, [
-    'name' => 'required|min:2|max:255'
+    'name' => 'min:2|max:255'
 ]);
 
 if (!empty($userErrors)) {
@@ -50,15 +54,35 @@ try {
     $db->beginTransaction();
     
     // Update user table
-    $userData = ['name' => $data['name']];
+    $userData = [];
+    if (isset($data['name']) && trim((string)$data['name']) !== '') {
+        $userData['name'] = trim((string)$data['name']);
+    }
+
     if ($profileImage) {
         $userData['profile_image'] = $profileImage;
     }
-    
-    $db->update('users', $userData, 'id = ?', [$currentUser['id']]);
+
+    if (array_key_exists('campus_id', $data)) {
+        $userData['campus_id'] = ($data['campus_id'] === '' || $data['campus_id'] === null) ? null : (int)$data['campus_id'];
+    }
+
+    if (!empty($userData)) {
+        $db->update('users', $userData, 'id = ?', [$currentUser['id']]);
+    }
     
     // Check if alumni profile exists
     $profile = $db->fetchOne("SELECT id FROM alumni_profiles WHERE user_id = ?", [$currentUser['id']]);
+
+    if (!$profile) {
+        $profileId = $db->insert('alumni_profiles', [
+            'user_id' => $currentUser['id']
+        ]);
+
+        $profile = [
+            'id' => $profileId
+        ];
+    }
     
     // Prepare profile data
     $profileFields = [
@@ -70,7 +94,7 @@ try {
         'employment_status', 'current_employer', 'job_title', 'company_address',
         'industry', 'monthly_salary_range',
         'linkedin_url', 'facebook_url', 'twitter_url', 'instagram_url',
-        'college_id', 'program_id', 'section_id', 'batch_year', 'graduation_year', 'student_id'
+        'campus_id', 'college_id', 'program_id', 'section_id', 'batch_year', 'graduation_year', 'student_id'
     ];
     
     $profileData = [];
@@ -83,33 +107,70 @@ try {
     }
     
     if (!empty($profileData)) {
-        if ($profile) {
-            $db->update('alumni_profiles', $profileData, 'user_id = ?', [$currentUser['id']]);
-        } else {
-            $profileData['user_id'] = $currentUser['id'];
-            $db->insert('alumni_profiles', $profileData);
-        }
-    }
-    
-    // Update alumni ID if college changed
-    if (isset($data['college_id']) && $data['college_id']) {
-        $college = $db->fetchOne("SELECT code FROM colleges WHERE id = ?", [$data['college_id']]);
-        
-        if ($college) {
-            $currentUserData = $db->fetchOne("SELECT alumni_id FROM users WHERE id = ?", [$currentUser['id']]);
-            
-            // Check if alumni ID has default code
-            if (strpos($currentUserData['alumni_id'], 'ALM-' . date('Y') . '-GEN') === 0) {
-                $newAlumniId = generateAlumniId($college['code']);
-                $db->update('users', ['alumni_id' => $newAlumniId], 'id = ?', [$currentUser['id']]);
-            }
-        }
+        $db->update('alumni_profiles', $profileData, 'user_id = ?', [$currentUser['id']]);
     }
     
     // Check profile completion
     $updatedProfile = $db->fetchOne("SELECT * FROM alumni_profiles WHERE user_id = ?", [$currentUser['id']]);
+
+    if (
+        !empty($updatedProfile['campus_id']) &&
+        !empty($updatedProfile['college_id']) &&
+        !empty($updatedProfile['graduation_year'])
+    ) {
+        $alumniIdPrefix = getAlumniIdProfilePrefix(
+            $db,
+            (int)$updatedProfile['campus_id'],
+            (int)$updatedProfile['college_id'],
+            (int)$updatedProfile['graduation_year']
+        );
+
+        if ($alumniIdPrefix) {
+            $currentUserData = $db->fetchOne("SELECT alumni_id FROM users WHERE id = ?", [$currentUser['id']]);
+            $currentAlumniId = strtoupper((string)($currentUserData['alumni_id'] ?? ''));
+            $sequenceLength = 5;
+            $expectedPattern = '/^' . preg_quote(strtoupper($alumniIdPrefix), '/') . '-\d{' . $sequenceLength . '}$/';
+
+            if (!preg_match($expectedPattern, $currentAlumniId)) {
+                $newAlumniId = generateAlumniId(
+                    $db,
+                    (int)$updatedProfile['campus_id'],
+                    (int)$updatedProfile['college_id'],
+                    (int)$updatedProfile['graduation_year']
+                );
+
+                if ($newAlumniId) {
+                    $db->update('users', ['alumni_id' => $newAlumniId], 'id = ?', [$currentUser['id']]);
+                }
+            }
+        }
+    }
     
-    $requiredFields = ['first_name', 'last_name', 'gender', 'birthdate', 'phone', 'college_id', 'program_id', 'batch_year'];
+    $completionRequiredFields = [
+        'campus_id', 'college_id', 'program_id', 'section_id', 'batch_year', 'graduation_year', 'student_id',
+        'first_name', 'middle_name', 'last_name', 'suffix',
+        'gender', 'birthdate', 'civil_status', 'mobile',
+        'address_street', 'address_city', 'address_province',
+        'employment_status', 'current_employer', 'job_title', 'company_address',
+        'industry', 'monthly_salary_range',
+        'linkedin_url', 'facebook_url', 'instagram_url',
+    ];
+
+    if (!empty($data['complete_profile'])) {
+        $missing = [];
+        foreach ($completionRequiredFields as $field) {
+            if (empty($updatedProfile[$field])) {
+                $missing[$field] = ucwords(str_replace('_', ' ', $field)) . ' is required';
+            }
+        }
+
+        if (!empty($missing)) {
+            $db->rollback();
+            validationError($missing);
+        }
+    }
+
+    $requiredFields = ['campus_id', 'college_id', 'program_id', 'section_id', 'batch_year', 'graduation_year', 'first_name', 'last_name', 'gender', 'birthdate', 'mobile'];
     $isComplete = true;
     
     foreach ($requiredFields as $field) {
@@ -146,13 +207,37 @@ try {
     }
     
     $db->commit();
+
+    try {
+        logAdminActivity($currentUser['id'], 'profile_updated', 'User updated their profile');
+    } catch (Throwable $logError) {
+        error_log('Profile update activity log failed: ' . $logError->getMessage());
+    }
     
-    logAdminActivity($currentUser['id'], 'profile_updated', 'User updated their profile');
-    
-    success([], 'Profile updated successfully');
+    $updatedUser = $db->fetchOne(
+        "SELECT id, alumni_id, email, name, role, profile_image, status, verification_status, email_verified
+         FROM users
+         WHERE id = ?",
+        [$currentUser['id']]
+    );
+
+    if ($profileImage && $previousProfileImage && $previousProfileImage !== $profileImage) {
+        deleteProfileUploadFile($previousProfileImage);
+    }
+
+    success([
+        'user' => $updatedUser ?: [],
+        'profile_image' => $updatedUser['profile_image'] ?? $profileImage,
+    ], 'Profile updated successfully');
     
 } catch (Exception $e) {
-    $db->rollback();
+    try {
+        if ($db->getConnection()->inTransaction()) {
+            $db->rollback();
+        }
+    } catch (Throwable $rollbackError) {
+        error_log('Profile update rollback failed: ' . $rollbackError->getMessage());
+    }
     error_log("Profile update error: " . $e->getMessage());
     serverError('Failed to update profile');
 }

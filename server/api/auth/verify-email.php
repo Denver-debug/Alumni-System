@@ -53,60 +53,58 @@ try {
         'role' => 'alumni',
         'auth_provider' => 'email',
         'email_verified' => true,
+        'verification_status' => 'pending',
         'status' => 'active'
     ]);
     
-    // Generate alumni ID (default college code until profile is completed)
-    $alumniId = generateAlumniId('GEN');
-    $db->update('users', ['alumni_id' => $alumniId], 'id = ?', [$userId]);
+    // Final Alumni ID is generated after campus, graduation year, and college are known.
+    $alumniId = null;
     
-    // Create alumni profile
+    // Parse name into first and last name
+    $nameParts = explode(' ', trim($pending['name']));
+    $firstName = $nameParts[0];
+    $lastName = count($nameParts) > 1 ? implode(' ', array_slice($nameParts, 1)) : null;
+    
+    // Create alumni profile with basic name parsing
     $db->insert('alumni_profiles', [
         'user_id' => $userId,
-        'first_name' => explode(' ', $pending['name'])[0],
-        'last_name' => implode(' ', array_slice(explode(' ', $pending['name']), 1)) ?: null
+        'first_name' => $firstName,
+        'last_name' => $lastName
     ]);
     
     // Delete pending registration
     $db->delete('pending_registrations', 'email = ?', [$pending['email']]);
     
-    // Award first login points
-    $db->insert('point_transactions', [
-        'user_id' => $userId,
-        'points' => POINTS_FIRST_LOGIN,
-        'type' => 'earned',
-        'source' => 'first_login',
-        'description' => 'Welcome bonus for joining the alumni network',
-        'balance_after' => POINTS_FIRST_LOGIN
-    ]);
-    
-    // Update total points
-    $db->update('alumni_profiles', ['total_points' => POINTS_FIRST_LOGIN], 'user_id = ?', [$userId]);
-    
     $db->commit();
-    
-    // Generate JWT token
-    $token = JWT::generate([
-        'user_id' => $userId,
-        'email' => $pending['email'],
-        'role' => 'alumni'
-    ]);
-    
-    // Get user data
-    $user = $db->fetchOne("SELECT id, alumni_id, email, name, role, profile_image, status FROM users WHERE id = ?", [$userId]);
     
     // Log security event
     logSecurityEvent('email_verified', 'Email verified successfully', $userId, $pending['email']);
-    
-    // Send welcome email
-    $emailService = new EmailService();
-    $emailService->sendWelcomeEmail($pending['email'], $pending['name'], $alumniId);
+
+    $token = JWT::generate([
+        'user_id' => $userId,
+        'email' => $pending['email'],
+        'role' => 'alumni',
+    ]);
+
+    $userData = [
+        'id' => $userId,
+        'alumni_id' => $alumniId,
+        'email' => $pending['email'],
+        'name' => $pending['name'],
+        'role' => 'alumni',
+        'profile_image' => null,
+        'status' => 'active',
+        'verification_status' => 'pending',
+        'profile_completed' => false,
+    ];
     
     success([
-        'user' => $user,
+        'requiresProfileCompletion' => true,
+        'email' => $pending['email'],
+        'alumniId' => $alumniId,
         'token' => $token,
-        'alumniId' => $alumniId
-    ], 'Email verified successfully. Welcome to the alumni network!');
+        'user' => $userData,
+    ], 'Email verified successfully. Please complete your profile.');
     
 } catch (Exception $e) {
     $db->rollback();

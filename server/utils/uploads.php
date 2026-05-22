@@ -31,37 +31,62 @@ class FileUploader {
      */
     public function upload(array $file, string $customName = null): ?string {
         $this->errors = [];
-        
+
         // Check for upload errors
-        if ($file['error'] !== UPLOAD_ERR_OK) {
-            $this->errors[] = $this->getUploadErrorMessage($file['error']);
+        if (($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
+            $this->errors[] = $this->getUploadErrorMessage((int) ($file['error'] ?? UPLOAD_ERR_NO_FILE));
             return null;
         }
-        
+
+        if (empty($file['tmp_name']) || !is_file($file['tmp_name'])) {
+            $this->errors[] = 'Uploaded file is missing';
+            return null;
+        }
+
         // Validate file type
-        $mimeType = mime_content_type($file['tmp_name']);
-        if (!in_array($mimeType, $this->allowedTypes)) {
-            $this->errors[] = 'File type not allowed';
+        $mimeType = $this->detectMimeType($file['tmp_name']);
+        if ($mimeType === null || $mimeType === 'application/octet-stream') {
+            $mimeType = $this->normalizeClientMimeType((string) ($file['type'] ?? ''));
+        }
+        $extension = strtolower(pathinfo((string) ($file['name'] ?? ''), PATHINFO_EXTENSION));
+
+        if ($mimeType === null || !in_array($mimeType, $this->allowedTypes, true)) {
+            $this->errors[] = 'File type not allowed. Allowed image types are JPEG, PNG, GIF, and WebP.';
             return null;
         }
-        
+
+        if (!$this->extensionMatchesMimeType($extension, $mimeType)) {
+            $this->errors[] = 'File MIME type does not match extension';
+            return null;
+        }
+
         // Validate file size
-        if ($file['size'] > $this->maxSize) {
+        if ((int) ($file['size'] ?? 0) > $this->maxSize) {
             $this->errors[] = 'File size exceeds limit of ' . ($this->maxSize / 1024 / 1024) . 'MB';
             return null;
         }
-        
+
+        if (strpos($mimeType, 'image/') === 0 && !$this->hasValidImageDimensions($file['tmp_name'])) {
+            $this->errors[] = 'Image has invalid dimensions';
+            return null;
+        }
+
         // Generate filename
-        $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
         $filename = $customName ? $customName . '.' . $extension : $this->generateFilename($extension);
         $filepath = $this->uploadDir . '/' . $filename;
-        
+
         // Move uploaded file
-        if (!move_uploaded_file($file['tmp_name'], $filepath)) {
+        $moved = move_uploaded_file($file['tmp_name'], $filepath);
+
+        if (!$moved && PHP_SAPI === 'cli') {
+            $moved = rename($file['tmp_name'], $filepath);
+        }
+
+        if (!$moved) {
             $this->errors[] = 'Failed to move uploaded file';
             return null;
         }
-        
+
         return $filename;
     }
     
@@ -116,6 +141,79 @@ class FileUploader {
     private function generateFilename(string $extension): string {
         return uniqid() . '_' . time() . '.' . strtolower($extension);
     }
+
+    /**
+     * Detect MIME type from file contents.
+     */
+    private function detectMimeType(string $path): ?string {
+        if (function_exists('mime_content_type')) {
+            $mimeType = mime_content_type($path);
+            if (is_string($mimeType) && $mimeType !== '') {
+                return $mimeType;
+            }
+        }
+
+        if (class_exists('finfo')) {
+            $finfo = new finfo(FILEINFO_MIME_TYPE);
+            $mimeType = $finfo->file($path);
+            if (is_string($mimeType) && $mimeType !== '') {
+                return $mimeType;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Normalize client-provided MIME types into canonical values.
+     */
+    private function normalizeClientMimeType(string $mimeType): ?string {
+        $normalized = strtolower(trim($mimeType));
+        if ($normalized === '') {
+            return null;
+        }
+
+        $map = [
+            'image/jpg' => 'image/jpeg',
+            'image/pjpeg' => 'image/jpeg',
+            'image/x-png' => 'image/png',
+        ];
+
+        return $map[$normalized] ?? $normalized;
+    }
+
+    /**
+     * Ensure file extensions line up with detected MIME type.
+     */
+    private function extensionMatchesMimeType(string $extension, string $mimeType): bool {
+        $extensionMap = [
+            'image/jpeg' => ['jpg', 'jpeg', 'jpe'],
+            'image/png' => ['png'],
+            'image/gif' => ['gif'],
+            'image/webp' => ['webp'],
+            'application/pdf' => ['pdf'],
+            'application/msword' => ['doc'],
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => ['docx'],
+        ];
+
+        if (!isset($extensionMap[$mimeType])) {
+            return true;
+        }
+
+        return in_array(strtolower($extension), $extensionMap[$mimeType], true);
+    }
+
+    /**
+     * Verify uploaded images have readable, positive dimensions.
+     */
+    private function hasValidImageDimensions(string $path): bool {
+        if (!function_exists('getimagesize')) {
+            return true;
+        }
+
+        $dimensions = getimagesize($path);
+        return is_array($dimensions) && ($dimensions[0] ?? 0) > 0 && ($dimensions[1] ?? 0) > 0;
+    }
     
     /**
      * Get upload error message
@@ -156,6 +254,42 @@ class FileUploader {
 }
 
 /**
+ * Delete an existing profile upload and its thumbnail if it lives in the local uploads tree.
+ */
+function deleteProfileUploadFile(?string $imageUrl): void {
+    $rawPath = trim((string) $imageUrl);
+    if ($rawPath === '') {
+        return;
+    }
+
+    $path = parse_url($rawPath, PHP_URL_PATH);
+    if (!is_string($path) || $path === '') {
+        $path = $rawPath;
+    }
+
+    $prefix = '/uploads/' . PROFILE_UPLOAD_SUBDIR . '/';
+    if (strpos($path, $prefix) === false) {
+        return;
+    }
+
+    $filename = basename($path);
+    if ($filename === '' || $filename === '.' || $filename === '..') {
+        return;
+    }
+
+    $pathsToDelete = [
+        UPLOAD_DIR . '/' . PROFILE_UPLOAD_SUBDIR . '/' . $filename,
+        UPLOAD_DIR . '/' . PROFILE_UPLOAD_SUBDIR . '/thumb_' . $filename,
+    ];
+
+    foreach ($pathsToDelete as $filePath) {
+        if (is_file($filePath)) {
+            @unlink($filePath);
+        }
+    }
+}
+
+/**
  * Image processor
  */
 class ImageProcessor {
@@ -164,29 +298,54 @@ class ImageProcessor {
      * Resize image
      */
     public static function resize(string $sourcePath, string $destPath, int $maxWidth, int $maxHeight): bool {
+        if (!function_exists('getimagesize')) {
+            return false;
+        }
+
         $info = getimagesize($sourcePath);
         if (!$info) return false;
         
         list($width, $height) = $info;
         $mime = $info['mime'];
         
-        // Calculate new dimensions
-        $ratio = min($maxWidth / $width, $maxHeight / $height);
+        if ($width <= 0 || $height <= 0) {
+            return false;
+        }
+
+        if ($width <= $maxWidth && $height <= $maxHeight) {
+            return true;
+        }
+
+        // Gracefully skip processing when GD extension is not available.
+        if (
+            !function_exists('imagecreatetruecolor') ||
+            !function_exists('imagecopyresampled') ||
+            !function_exists('imagedestroy')
+        ) {
+            return false;
+        }
+
+        // Calculate new dimensions without upscaling images that are already within limits.
+        $ratio = min(1, $maxWidth / $width, $maxHeight / $height);
         $newWidth = (int) ($width * $ratio);
         $newHeight = (int) ($height * $ratio);
         
         // Create image resource
         switch ($mime) {
             case 'image/jpeg':
+                if (!function_exists('imagecreatefromjpeg')) return false;
                 $source = imagecreatefromjpeg($sourcePath);
                 break;
             case 'image/png':
+                if (!function_exists('imagecreatefrompng')) return false;
                 $source = imagecreatefrompng($sourcePath);
                 break;
             case 'image/gif':
+                if (!function_exists('imagecreatefromgif')) return false;
                 $source = imagecreatefromgif($sourcePath);
                 break;
             case 'image/webp':
+                if (!function_exists('imagecreatefromwebp')) return false;
                 $source = imagecreatefromwebp($sourcePath);
                 break;
             default:
@@ -200,8 +359,12 @@ class ImageProcessor {
         
         // Preserve transparency for PNG and GIF
         if ($mime === 'image/png' || $mime === 'image/gif') {
-            imagealphablending($dest, false);
-            imagesavealpha($dest, true);
+            if (function_exists('imagealphablending')) {
+                imagealphablending($dest, false);
+            }
+            if (function_exists('imagesavealpha')) {
+                imagesavealpha($dest, true);
+            }
             $transparent = imagecolorallocatealpha($dest, 255, 255, 255, 127);
             imagefilledrectangle($dest, 0, 0, $newWidth, $newHeight, $transparent);
         }
@@ -212,15 +375,19 @@ class ImageProcessor {
         $result = false;
         switch ($mime) {
             case 'image/jpeg':
+                if (!function_exists('imagejpeg')) return false;
                 $result = imagejpeg($dest, $destPath, 85);
                 break;
             case 'image/png':
+                if (!function_exists('imagepng')) return false;
                 $result = imagepng($dest, $destPath, 8);
                 break;
             case 'image/gif':
+                if (!function_exists('imagegif')) return false;
                 $result = imagegif($dest, $destPath);
                 break;
             case 'image/webp':
+                if (!function_exists('imagewebp')) return false;
                 $result = imagewebp($dest, $destPath, 85);
                 break;
         }

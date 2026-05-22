@@ -9,11 +9,22 @@ $envFile = __DIR__ . '/../.env';
 if (file_exists($envFile)) {
     $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     foreach ($lines as $line) {
-        if (strpos($line, '#') === 0) continue;
+        $line = trim($line);
+        if ($line === '' || strpos($line, '#') === 0) continue;
         if (strpos($line, '=') !== false) {
             list($key, $value) = explode('=', $line, 2);
-            $_ENV[trim($key)] = trim($value);
-            putenv(trim($key) . '=' . trim($value));
+            $key = trim($key);
+            $value = trim($value);
+
+            // Support inline comments in unquoted env values.
+            if (strpos($value, ' #') !== false) {
+                $value = explode(' #', $value, 2)[0];
+            }
+
+            $value = trim($value, " \t\n\r\0\x0B\"'");
+
+            $_ENV[$key] = $value;
+            putenv($key . '=' . $value);
         }
     }
 }
@@ -21,9 +32,9 @@ if (file_exists($envFile)) {
 // Database configuration
 define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
 define('DB_PORT', getenv('DB_PORT') ?: '3306');
-define('DB_NAME', getenv('DB_NAME') ?: 'alumni_system');
-define('DB_USER', getenv('DB_USER') ?: 'root');
-define('DB_PASS', getenv('DB_PASS') ?: '');
+define('DB_NAME', getenv('DB_NAME') ?: (getenv('DB_DATABASE') ?: 'alumni_system'));
+define('DB_USER', getenv('DB_USER') ?: (getenv('DB_USERNAME') ?: 'root'));
+define('DB_PASS', getenv('DB_PASS') ?: (getenv('DB_PASSWORD') ?: ''));
 define('DB_CHARSET', 'utf8mb4');
 
 /**

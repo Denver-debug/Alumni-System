@@ -8,7 +8,42 @@ require_once __DIR__ . '/../../config/auth.php';
 require_once __DIR__ . '/../../utils/helpers.php';
 require_once __DIR__ . '/../../middleware/auth.php';
 
-requireAdmin();
+requireTopAdmin();
+
+function normalizeFormSectionInput(?string $section): string {
+    $value = strtolower(trim((string)$section));
+
+    $map = [
+        'general' => 'personal',
+        'other' => 'additional',
+        'personal' => 'personal',
+        'contact' => 'contact',
+        'education' => 'education',
+        'employment' => 'employment',
+        'social' => 'social',
+        'additional' => 'additional',
+    ];
+
+    return $map[$value] ?? 'additional';
+}
+
+function normalizeColumnWidthInput($width): string {
+    $value = strtolower(trim((string)$width));
+
+    if (in_array($value, ['100%', '100', '1', 'full', 'col-12', '12'], true)) {
+        return 'full';
+    }
+
+    if (in_array($value, ['50%', '50', '1/2', 'half', 'col-6', '6'], true)) {
+        return 'half';
+    }
+
+    if (in_array($value, ['33%', '33.33%', '33.333%', '33', '1/3', 'third', 'col-4', '4'], true)) {
+        return 'third';
+    }
+
+    return 'full';
+}
 
 try {
     $db = Database::getInstance()->getConnection();
@@ -42,15 +77,19 @@ try {
             // Get max display order
             $stmt = $db->query("SELECT MAX(display_order) FROM form_fields");
             $maxOrder = $stmt->fetchColumn() ?: 0;
+
+            $normalizedSection = normalizeFormSectionInput($data['form_section'] ?? 'additional');
+            $normalizedWidth = normalizeColumnWidthInput($data['column_width'] ?? 'full');
             
             $stmt = $db->prepare("
                 INSERT INTO form_fields (
                     field_name, field_label, field_type, field_options, validation_rules,
                     form_section, display_order, is_required, is_builtin, is_active, column_width,
-                    created_at, updated_at
+                        created_by, created_at, updated_at
                 ) VALUES (
                     :field_name, :field_label, :field_type, :field_options, :validation_rules,
-                    :form_section, :display_order, :is_required, 0, :is_active, :column_width,
+                        :form_section, :display_order, :is_required, 0, :is_active, :column_width,
+                        :created_by,
                     NOW(), NOW()
                 )
             ");
@@ -61,24 +100,25 @@ try {
                 'field_type' => $fieldType,
                 'field_options' => json_encode($data['field_options'] ?? []),
                 'validation_rules' => json_encode($data['validation_rules'] ?? []),
-                'form_section' => $data['form_section'] ?? 'general',
+                'form_section' => $normalizedSection,
                 'display_order' => $maxOrder + 1,
-                'is_required' => $data['is_required'] ?? false,
-                'is_active' => $data['is_active'] ?? true,
-                'column_width' => $data['column_width'] ?? '100%'
+                'is_required' => !empty($data['is_required']) ? 1 : 0,
+                'is_active' => isset($data['is_active']) ? (!empty($data['is_active']) ? 1 : 0) : 1,
+                'column_width' => $normalizedWidth,
+                'created_by' => $user['id']
             ]);
             
             $fieldId = $db->lastInsertId();
             
             // Log action
-            logAdminActivity($user['id'], 'create', 'form_fields', $fieldId, "Created form field: $fieldLabel");
+            logFormFieldActivity($user['id'], 'create', 'form_fields', $fieldId, "Created form field: $fieldLabel");
             
             respondSuccess(['id' => $fieldId, 'message' => 'Field created successfully'], 201);
             break;
             
         case 'PUT':
             // Update field
-            $fieldId = $data['id'] ?? $_GET['id'] ?? null;
+            $fieldId = $GLOBALS['url_params']['id'] ?? ($data['id'] ?? ($_GET['id'] ?? null));
             
             if (!$fieldId) {
                 respondError('Field ID required', 400);
@@ -131,11 +171,11 @@ try {
             }
             if (isset($data['column_width'])) {
                 $updates[] = 'column_width = :column_width';
-                $params['column_width'] = $data['column_width'];
+                $params['column_width'] = normalizeColumnWidthInput($data['column_width']);
             }
             if (isset($data['form_section'])) {
                 $updates[] = 'form_section = :form_section';
-                $params['form_section'] = $data['form_section'];
+                $params['form_section'] = normalizeFormSectionInput($data['form_section']);
             }
             
             if (empty($updates)) {
@@ -147,13 +187,13 @@ try {
             $stmt = $db->prepare($sql);
             $stmt->execute($params);
             
-            logAdminActivity($user['id'], 'update', 'form_fields', $fieldId, "Updated form field");
+            logFormFieldActivity($user['id'], 'update', 'form_fields', $fieldId, "Updated form field");
             
             respondSuccess(['message' => 'Field updated successfully']);
             break;
             
         case 'DELETE':
-            $fieldId = $_GET['id'] ?? null;
+            $fieldId = $GLOBALS['url_params']['id'] ?? ($_GET['id'] ?? null);
             
             if (!$fieldId) {
                 respondError('Field ID required', 400);
@@ -175,7 +215,7 @@ try {
             $stmt = $db->prepare("DELETE FROM form_fields WHERE id = :id");
             $stmt->execute(['id' => $fieldId]);
             
-            logAdminActivity($user['id'], 'delete', 'form_fields', $fieldId, "Deleted form field: " . $field['field_label']);
+            logFormFieldActivity($user['id'], 'delete', 'form_fields', $fieldId, "Deleted form field: " . $field['field_label']);
             
             respondSuccess(['message' => 'Field deleted successfully']);
             break;
@@ -188,10 +228,10 @@ try {
     respondError('Operation failed: ' . $e->getMessage(), 500);
 }
 
-function logAdminActivity($adminId, $action, $targetType, $targetId, $description) {
+function logFormFieldActivity($adminId, $action, $targetType, $targetId, $description) {
     $db = Database::getInstance()->getConnection();
     $stmt = $db->prepare("
-        INSERT INTO admin_activities (admin_id, action, target_type, target_id, description, created_at)
+        INSERT INTO admin_activities (user_id, activity_type, target_type, target_id, description, created_at)
         VALUES (:admin_id, :action, :target_type, :target_id, :description, NOW())
     ");
     $stmt->execute([

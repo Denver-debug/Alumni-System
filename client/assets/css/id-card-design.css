@@ -1,0 +1,1588 @@
+/* ══════════════════════════════════════════════════════════
+   ID CARD DESIGN - Shared styles for admin and alumni pages
+   ══════════════════════════════════════════════════════════ */
+
+.id-card-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 1rem;
+  background: transparent;
+}
+
+.id-card-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  aspect-ratio: 1.586 / 1;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+.id-card-front,
+.id-card-back {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+
+/* FLIP STATES */
+.id-card-front {
+  transform: rotateY(0deg);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+.id-card-back {
+  transform: rotateY(180deg);
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.id-card-wrapper.flipped .id-card-front {
+  transform: rotateY(180deg);
+}
+
+.id-card-wrapper.flipped .id-card-back {
+  transform: rotateY(360deg);
+  z-index: 3;
+}
+
+/* ══════════════════════════════════════════════════════════
+   FRONT CARD NEW DESIGN
+   ══════════════════════════════════════════════════════════ */
+/* Alumni page refresh overrides: keep the dedicated ID card layout and flip
+   behavior above older high-specificity rules in alumni.css. */
+body[data-app-section="alumni"] .id-card-container {
+  align-items: center !important;
+  padding: 2rem 1rem !important;
+  min-height: auto !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  overflow: visible !important;
+}
+
+body[data-app-section="alumni"] .id-card-wrapper {
+  position: relative !important;
+  width: 100% !important;
+  max-width: 500px !important;
+  aspect-ratio: 1.586 / 1 !important;
+  perspective: 1200px !important;
+  transform-style: preserve-3d !important;
+}
+
+body[data-app-section="alumni"] .id-card-front,
+body[data-app-section="alumni"] .id-card-back,
+body[data-app-section="alumni"] .id-card-front.new-design {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  backface-visibility: hidden !important;
+  -webkit-backface-visibility: hidden !important;
+  transform-style: preserve-3d !important;
+  transition: transform 0.62s cubic-bezier(0.4, 0.2, 0.2, 1) !important;
+}
+
+body[data-app-section="alumni"] .id-card-front,
+body[data-app-section="alumni"] .id-card-front.new-design {
+  transform: rotateY(0deg) !important;
+  z-index: 2 !important;
+}
+
+body[data-app-section="alumni"] .id-card-back {
+  transform: rotateY(180deg) !important;
+  z-index: 1 !important;
+}
+
+body[data-app-section="alumni"] .id-card-wrapper.flipped .id-card-front,
+body[data-app-section="alumni"] .id-card-wrapper.flipped .id-card-front.new-design {
+  display: flex !important;
+  transform: rotateY(180deg) !important;
+}
+
+body[data-app-section="alumni"] .id-card-wrapper.flipped .id-card-back {
+  display: flex !important;
+  transform: rotateY(360deg) !important;
+  z-index: 3 !important;
+}
+
+@media screen {
+  body[data-app-section="alumni"] .dashboard-layout .id-card-container {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 2rem 1rem !important;
+    min-height: auto !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    overflow: visible !important;
+  }
+
+  body[data-app-section="alumni"] .dashboard-layout .id-card-wrapper {
+    position: relative !important;
+    width: 100% !important;
+    max-width: 500px !important;
+    aspect-ratio: 1.586 / 1 !important;
+    perspective: 1200px !important;
+    transform-style: preserve-3d !important;
+  }
+
+  body[data-app-section="alumni"] .dashboard-layout .id-card-front,
+  body[data-app-section="alumni"] .dashboard-layout .id-card-back,
+  body[data-app-section="alumni"] .dashboard-layout .id-card-front.new-design {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    opacity: 1 !important;
+    backface-visibility: hidden !important;
+    -webkit-backface-visibility: hidden !important;
+    transform-style: preserve-3d !important;
+    transition: transform 0.62s cubic-bezier(0.4, 0.2, 0.2, 1) !important;
+  }
+
+  body[data-app-section="alumni"] .dashboard-layout .id-card-front,
+  body[data-app-section="alumni"] .dashboard-layout .id-card-front.new-design {
+    transform: rotateY(0deg) !important;
+    z-index: 2 !important;
+  }
+
+  body[data-app-section="alumni"] .dashboard-layout .id-card-back {
+    transform: rotateY(180deg) !important;
+    z-index: 1 !important;
+  }
+
+  body[data-app-section="alumni"] .dashboard-layout .id-card-wrapper.flipped .id-card-front,
+  body[data-app-section="alumni"] .dashboard-layout .id-card-wrapper.flipped .id-card-front.new-design {
+    display: flex !important;
+    transform: rotateY(180deg) !important;
+  }
+
+  body[data-app-section="alumni"] .dashboard-layout .id-card-wrapper.flipped .id-card-back {
+    display: flex !important;
+    transform: rotateY(360deg) !important;
+    z-index: 3 !important;
+  }
+}
+
+.id-card-front.new-design {
+  background: #f8fafc;
+  font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif;
+}
+
+.front-green-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  background: #115332;
+  clip-path: polygon(0 0, 58% 0, 49% 45%, 54% 100%, 0 100%);
+  z-index: 1;
+  overflow: hidden;
+}
+
+.front-green-dots {
+  position: absolute;
+  left: 8px;
+  top: 0;
+  bottom: 0;
+  width: 15px;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.2) 1px, transparent 1px);
+  background-size: 8px 8px;
+}
+
+.front-green-lines {
+  position: absolute;
+  left: 10%;
+  top: 15%;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.04) 2px, transparent 2px, transparent 14px);
+}
+
+.front-header-new {
+  position: absolute;
+  top: 1.2rem;
+  left: 1.5rem;
+  z-index: 2;
+}
+
+.front-header-new h2 {
+  color: #f8fffb !important;
+  font-size: 1.05rem;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: 0;
+  text-transform: none;
+  text-shadow: 0 1px 2px rgba(2, 6, 23, 0.35);
+}
+
+.front-header-new p {
+  color: #c7f9df !important;
+  font-size: 0.55rem;
+  margin: 0.1rem 0 0.2rem 0;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.front-header-new .line {
+  width: 40px;
+  height: 1.5px;
+  background: #ffffff;
+  opacity: 0.9;
+  margin-top: 0.2rem;
+}
+
+.front-photo-container {
+  position: absolute;
+  top: 5.5rem;
+  left: 0;
+  width: 50%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
+
+.front-photo {
+  width: 110px;
+  height: 145px;
+  border-radius: 6px;
+  border: 1px solid #d4af37;
+  background: #115332;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
+}
+
+.front-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 4rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+}
+
+.front-name-under {
+  margin-top: 0.5rem;
+  text-align: center;
+  width: 100%;
+  max-height: 1.8rem;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.field-name-label-under {
+  font-size: 0.45rem;
+  color: #c7f9df !important;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 0.1rem;
+}
+
+.field-name-value-under {
+  font-size: 0.95rem;
+  color: #ffffff !important;
+  font-weight: 900;
+  line-height: 1.1;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(167, 243, 208, 0.4);
+  padding-bottom: 0.2rem;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  max-width: 100%;
+}
+
+.front-right-new {
+  position: absolute;
+  top: 0;
+  left: 54.5%;
+  bottom: 0;
+  right: 0;
+  padding: 0.75rem 1.2rem 0.75rem 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.front-seal-new {
+  position: absolute;
+  top: 1rem;
+  right: 1.2rem;
+  width: 55px;
+  height: 55px;
+  object-fit: contain;
+}
+
+.front-info-new {
+  margin-top: 4.8rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.front-watermark {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.05;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.front-watermark img {
+  width: 85%;
+  height: 85%;
+  object-fit: contain;
+}
+
+.field-alumni-id-label {
+  font-size: 0.45rem;
+  color: #166534;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 0.05rem;
+  text-align: right;
+  width: 100%;
+}
+
+.field-alumni-id-value {
+  font-size: 1.15rem;
+  color: #111827;
+  font-weight: 900;
+  margin-bottom: 0.45rem;
+  text-transform: uppercase;
+  text-align: right;
+  width: 100%;
+  letter-spacing: -0.02em;
+}
+
+.field-row {
+  margin-bottom: 0.45rem;
+  line-height: 1.25;
+  text-align: right;
+  width: 100%;
+}
+
+.field-row.class-year {
+  font-size: 0.65rem;
+  color: #4b5563;
+  font-style: italic;
+  font-weight: 700;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 0.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.field-row span.label {
+  font-size: 0.5rem;
+  color: #166534;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: block;
+  margin-bottom: 0.1rem;
+}
+
+.field-row span.value {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #000000;
+  display: block;
+  letter-spacing: -0.01em;
+}
+
+/* ══════════════════════════════════════════════════════════
+   BACK CARD
+   ══════════════════════════════════════════════════════════ */
+.back-header {
+  background-color: #0f5f39 !important;
+  padding: 0.6rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.back-title {
+  color: #f8fffb !important;
+  font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: 0.05em;
+  text-shadow: 0 1px 2px rgba(2, 6, 23, 0.35);
+}
+
+.valid-badge {
+  background: #0f5f39 !important;
+  border: 2px solid #fbbf24 !important;
+  color: #fff7cc !important;
+  border-radius: 20px;
+  padding: 0.15rem 0.75rem;
+  font-size: 0.65rem;
+  font-weight: 800;
+}
+
+.back-body {
+  display: flex;
+  flex: 1;
+  position: relative;
+  z-index: 2;
+}
+
+.back-watermark {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.back-watermark img {
+  width: 60%;
+  opacity: 0.05;
+  object-fit: contain;
+}
+
+.back-left {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.35rem;
+  position: relative;
+  z-index: 1;
+}
+
+.back-left .info-field {
+  margin-bottom: 0.25rem;
+}
+
+.back-left .info-label {
+  color: #475569;
+  font-size: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.back-left .info-value {
+  font-size: 0.7rem;
+  color: #111827;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.back-right {
+  width: 160px;
+  padding: 1rem 1rem 1rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.qr-container {
+  background: white;
+  padding: 0.35rem;
+  border: 2px solid #155e3a;
+  border-radius: 8px;
+}
+
+.qr-label {
+  font-size: 0.55rem;
+  color: #1f2937;
+  font-weight: 700;
+  text-align: center;
+  margin-top: 0.15rem;
+}
+
+.important-box {
+  border: 1px solid #d4af37;
+  border-radius: 6px;
+  padding: 0.4rem;
+  background: #fffdf5;
+  width: 100%;
+  text-align: center;
+}
+
+.important-title {
+  font-size: 0.45rem;
+  font-weight: 800;
+  margin: 0 0 0.1rem;
+  color: #111827;
+}
+
+.important-text {
+  font-size: 0.38rem;
+  color: #1f2937;
+  margin: 0;
+  line-height: 1.3;
+}
+
+/* High-specificity card contrast guards for dynamically injected pages. */
+.id-card-front.new-design .front-header-new h2,
+body[data-app-section="alumni"] .dashboard-layout .id-card-front.new-design .front-header-new h2 {
+  color: #f8fffb !important;
+}
+
+.id-card-front.new-design .front-header-new p,
+.id-card-front.new-design .field-name-label-under,
+body[data-app-section="alumni"] .dashboard-layout .id-card-front.new-design .front-header-new p,
+body[data-app-section="alumni"] .dashboard-layout .id-card-front.new-design .field-name-label-under {
+  color: #c7f9df !important;
+}
+
+.id-card-back .back-title,
+body[data-app-section="alumni"] .dashboard-layout .id-card-back .back-title {
+  color: #f8fffb !important;
+}
+
+.id-card-back .valid-badge,
+body[data-app-section="alumni"] .dashboard-layout .id-card-back .valid-badge {
+  color: #fff7cc !important;
+  border-color: #fbbf24 !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE DESIGN
+   ══════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .id-card-wrapper {
+    max-width: 420px;
+  }
+
+  .back-right {
+    width: 130px;
+  }
+
+  .qr-container {
+    padding: 0.25rem;
+  }
+
+  .qr-container canvas {
+    width: 80px !important;
+    height: 80px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .id-card-wrapper {
+    max-width: 100%;
+  }
+
+  .front-green-bg {
+    clip-path: polygon(0 0, 58% 0, 49% 45%, 54% 100%, 0 100%);
+  }
+
+  .front-watermark img {
+    width: 100%;
+    height: 100%;
+  }
+
+  .front-header-new {
+    top: 0.8rem;
+    left: 1rem;
+  }
+
+  .front-header-new h2 {
+    font-size: 0.8rem;
+  }
+
+  .front-header-new p {
+    font-size: 0.4rem;
+    margin-bottom: 0.15rem;
+  }
+
+  .front-header-new .line {
+    width: 30px;
+  }
+
+  .front-photo-container {
+    top: 4rem;
+  }
+
+  .front-photo {
+    width: 80px;
+    height: 105px;
+    border-width: 1px;
+  }
+
+  .photo-placeholder {
+    font-size: 2.5rem;
+  }
+
+  .front-name-under {
+    margin-top: 0.4rem;
+    width: 95%;
+  }
+
+  .field-name-label-under {
+    font-size: 0.35rem;
+  }
+
+  .field-name-value-under {
+    font-size: 0.75rem;
+    border-bottom-width: 1px;
+  }
+
+  .front-right-new {
+    left: 54.5%;
+    padding: 0.5rem 0.5rem 0.5rem 0;
+  }
+
+  .front-seal-new {
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 40px;
+    height: 40px;
+  }
+
+  .front-info-new {
+    margin-top: 3.8rem;
+  }
+
+  .field-alumni-id-label {
+    font-size: 0.35rem;
+  }
+
+  .field-alumni-id-value {
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .field-row.class-year {
+    font-size: 0.55rem;
+    padding-bottom: 0.15rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .field-row {
+    margin-bottom: 0.35rem;
+  }
+
+  .field-row span.label {
+    font-size: 0.4rem;
+    margin-bottom: 0.05rem;
+  }
+
+  .field-row span.value {
+    font-size: 0.65rem;
+  }
+
+  .back-header {
+    padding: 0.5rem 1rem;
+  }
+
+  .back-title {
+    font-size: 0.7rem;
+  }
+
+  .valid-badge {
+    font-size: 0.5rem;
+  }
+
+  .back-left {
+    padding: 0.75rem 1rem;
+    gap: 0.2rem;
+  }
+
+  .back-right {
+    width: 100px;
+    padding: 0.75rem 0.75rem 0.75rem 0;
+    gap: 0.5rem;
+  }
+
+  .qr-container canvas {
+    width: 60px !important;
+    height: 60px !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   PRINT STYLES
+   ══════════════════════════════════════════════════════════ */
+@media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 1cm;
+  }
+
+  .topbar,
+  .sidebar,
+  .admin-topbar,
+  .content-header,
+  .topbar-actions,
+  .content-wrapper > .card:first-child,
+  .content-wrapper > .card-improved:first-child,
+  .admin-content > .card:first-child,
+  .admin-content > .card-improved:first-child,
+  #searchResultsCard,
+  button:not(.id-card-front button):not(.id-card-back button),
+  .btn {
+    display: none !important;
+  }
+
+  html,
+  body {
+    width: auto !important;
+    min-width: 0 !important;
+    height: auto !important;
+    background: white !important;
+  }
+
+  .dashboard-layout {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .main-content {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+  }
+
+  .content-wrapper,
+  .admin-content {
+    padding: 0 !important;
+    max-width: none !important;
+  }
+
+  #idCardSection {
+    display: block !important;
+  }
+
+  #idCardSection > .flex {
+    display: block !important;
+  }
+
+  #idCardSection > .flex > div:last-child {
+    display: none !important;
+  }
+
+  .id-card-container {
+    display: block !important;
+    padding: 0 !important;
+    background: white !important;
+    overflow: visible !important;
+    break-inside: auto !important;
+    page-break-inside: auto !important;
+  }
+
+  .id-card-wrapper {
+    position: relative !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: auto !important;
+    perspective: none !important;
+    display: block !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    transform: none !important;
+    break-inside: auto !important;
+    page-break-inside: auto !important;
+  }
+
+  .id-card-wrapper.flipped .id-card-front,
+  .id-card-wrapper.flipped .id-card-back {
+    transform: rotateY(0deg) !important;
+    backface-visibility: visible !important;
+  }
+
+  .id-card-front,
+  .id-card-front.new-design {
+    display: flex !important;
+    flex-direction: column !important;
+    position: relative !important;
+    width: 18cm !important;
+    height: 11.35cm !important;
+    margin: 0 auto 2cm auto !important;
+    background: #f8fafc !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    break-after: page !important;
+    break-inside: avoid !important;
+    page-break-after: always !important;
+    page-break-inside: avoid !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    border: 1px solid #d1d5db !important;
+    transform: none !important;
+    backface-visibility: visible !important;
+    flex-shrink: 0 !important;
+  }
+
+  .id-card-back {
+    display: flex !important;
+    flex-direction: column !important;
+    position: relative !important;
+    width: 18cm !important;
+    height: 11.35cm !important;
+    margin: 0 auto !important;
+    background: white !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    break-before: page !important;
+    break-inside: avoid !important;
+    page-break-before: always !important;
+    page-break-inside: avoid !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    border: 1px solid #d1d5db !important;
+    transform: none !important;
+    backface-visibility: visible !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Scale up all front card elements */
+  .front-green-bg {
+    display: block !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: #115332 !important;
+    clip-path: polygon(0 0, 58% 0, 49% 45%, 54% 100%, 0 100%) !important;
+    z-index: 1 !important;
+  }
+
+  .front-green-dots,
+  .front-green-lines {
+    display: block !important;
+    visibility: visible !important;
+  }
+
+  .front-watermark,
+  .front-header-new,
+  .front-photo-container,
+  .front-right-new,
+  .front-seal-new,
+  .front-info-new {
+    display: block !important;
+    visibility: visible !important;
+    position: absolute !important;
+    z-index: 2 !important;
+  }
+
+  .front-header-new {
+    top: 2rem !important;
+    left: 2.5rem !important;
+  }
+
+  .front-header-new h2 {
+    font-size: 1.8rem !important;
+    color: #ffffff !important;
+    font-weight: 800 !important;
+    margin: 0 !important;
+    letter-spacing: 0 !important;
+  }
+
+  .front-header-new p {
+    font-size: 0.9rem !important;
+    color: #a7f3d0 !important;
+    margin: 0.2rem 0 0.3rem 0 !important;
+    letter-spacing: 0.05em !important;
+    text-transform: uppercase !important;
+    font-weight: 600 !important;
+  }
+
+  .front-header-new .line {
+    width: 70px !important;
+    height: 2.5px !important;
+    background: #ffffff !important;
+    opacity: 0.9 !important;
+    margin-top: 0.3rem !important;
+  }
+
+  .front-seal-new {
+    top: 1.8rem !important;
+    right: 2rem !important;
+    width: 95px !important;
+    height: 95px !important;
+  }
+
+  .front-photo-container {
+    top: 9.5rem !important;
+    left: 0 !important;
+    width: 50% !important;
+    z-index: 2 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    pointer-events: none !important;
+  }
+
+  .front-photo {
+    width: 190px !important;
+    height: 250px !important;
+    border-radius: 10px !important;
+    border: 2px solid #d4af37 !important;
+    background: #115332 !important;
+    overflow: hidden !important;
+    position: relative !important;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3) !important;
+    flex-shrink: 0 !important;
+  }
+
+  .front-photo img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+  }
+
+  .photo-placeholder {
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #ffffff !important;
+    font-size: 7rem !important;
+    font-weight: 600 !important;
+  }
+
+  .front-name-under {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-top: 1rem !important;
+    width: 100% !important;
+    text-align: center !important;
+    max-height: 3rem !important;
+    overflow: hidden !important;
+    flex-shrink: 0 !important;
+  }
+
+  .field-name-label-under {
+    font-size: 0.75rem !important;
+    color: #a7f3d0 !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.05em !important;
+    text-transform: uppercase !important;
+    margin-bottom: 0.2rem !important;
+  }
+
+  .field-name-value-under {
+    font-size: 1.6rem !important;
+    color: #ffffff !important;
+    font-weight: 900 !important;
+    line-height: 1.1 !important;
+    text-transform: uppercase !important;
+    border-bottom: 2px solid rgba(167, 243, 208, 0.4) !important;
+    padding-bottom: 0.3rem !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    hyphens: auto !important;
+    max-width: 100% !important;
+  }
+
+  .front-right-new {
+    top: 0 !important;
+    left: 54.5% !important;
+    bottom: 0 !important;
+    right: 0 !important;
+    padding: 1.5rem 2rem 1.5rem 0 !important;
+    z-index: 2 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-end !important;
+  }
+
+  .front-info-new {
+    margin-top: 8.5rem !important;
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-end !important;
+    text-align: right !important;
+  }
+
+  .field-alumni-id-label {
+    font-size: 0.75rem !important;
+    color: #166534 !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.05em !important;
+    text-transform: uppercase !important;
+    margin-bottom: 0.1rem !important;
+    text-align: right !important;
+    width: 100% !important;
+  }
+
+  .field-alumni-id-value {
+    font-size: 2rem !important;
+    color: #111827 !important;
+    font-weight: 900 !important;
+    margin-bottom: 0.8rem !important;
+    text-transform: uppercase !important;
+    text-align: right !important;
+    width: 100% !important;
+    letter-spacing: -0.02em !important;
+  }
+
+  .field-row {
+    margin-bottom: 0.75rem !important;
+    line-height: 1.25 !important;
+    text-align: right !important;
+    width: 100% !important;
+  }
+
+  .field-row.class-year {
+    font-size: 1.1rem !important;
+    color: #4b5563 !important;
+    font-style: italic !important;
+    font-weight: 700 !important;
+    border-bottom: 2px solid #e5e7eb !important;
+    padding-bottom: 0.3rem !important;
+    margin-bottom: 0.9rem !important;
+  }
+
+  .field-row span.label {
+    font-size: 0.85rem !important;
+    color: #166534 !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    display: block !important;
+    margin-bottom: 0.15rem !important;
+  }
+
+  .field-row span.value {
+    font-size: 1.45rem !important;
+    font-weight: 600 !important;
+    color: #000000 !important;
+    display: block !important;
+    letter-spacing: -0.01em !important;
+  }
+
+  /* Back card scaling */
+  .back-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    background-color: #155e3a !important;
+    padding: 1rem 2.5rem !important;
+    border-bottom: 3px solid #e5e7eb !important;
+  }
+
+  .back-title {
+    font-size: 1.6rem !important;
+    color: #d4af37 !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.05em !important;
+  }
+
+  .valid-badge {
+    font-size: 1rem !important;
+    padding: 0.25rem 1.2rem !important;
+    background: #155e3a !important;
+    border: 3px solid #d4af37 !important;
+    color: #d4af37 !important;
+    border-radius: 30px !important;
+    font-weight: 800 !important;
+  }
+
+  .back-body {
+    display: flex !important;
+    flex: 1 !important;
+    position: relative !important;
+    padding: 0 !important;
+  }
+
+  .back-left {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.6rem !important;
+    flex: 1 !important;
+    position: relative !important;
+    z-index: 1 !important;
+    padding: 1.5rem 2rem !important;
+    justify-content: center !important;
+  }
+
+  .back-left .info-field {
+    margin-bottom: 0.4rem !important;
+  }
+
+  .back-left .info-label {
+    font-size: 0.8rem !important;
+    color: #6b7280 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.02em !important;
+  }
+
+  .back-left .info-value {
+    font-size: 1.15rem !important;
+    color: #1f2937 !important;
+    font-weight: 600 !important;
+  }
+
+  .back-right {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 1rem !important;
+    width: 240px !important;
+    position: relative !important;
+    z-index: 1 !important;
+    padding: 1.5rem 1.5rem 1.5rem 0 !important;
+  }
+
+  .qr-container {
+    padding: 0.4rem !important;
+    border: 3px solid #155e3a !important;
+    border-radius: 8px !important;
+    background: white !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 110px !important;
+    height: 110px !important;
+    box-sizing: border-box !important;
+    flex-shrink: 0 !important;
+  }
+
+  .qr-container canvas,
+  #qrCodeCanvas canvas,
+  #qrCodeCanvas img {
+    width: 100px !important;
+    height: 100px !important;
+    display: block !important;
+    max-width: 100px !important;
+    max-height: 100px !important;
+  }
+
+  .qr-label {
+    font-size: 0.75rem !important;
+    margin-top: 0.2rem !important;
+    color: #1f2937 !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+  }
+
+  .important-box {
+    padding: 0.6rem !important;
+    border: 2px solid #d4af37 !important;
+    border-radius: 8px !important;
+    background: #fffdf5 !important;
+    width: 100% !important;
+    text-align: center !important;
+    margin-top: 0.5rem !important;
+  }
+
+  .important-title {
+    font-size: 0.7rem !important;
+    font-weight: 800 !important;
+    color: #1f2937 !important;
+    margin: 0 0 0.15rem 0 !important;
+  }
+
+  .important-text {
+    font-size: 0.55rem !important;
+    color: #374151 !important;
+    line-height: 1.3 !important;
+    margin: 0 !important;
+  }
+
+  .back-watermark {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 0 !important;
+    opacity: 0.05 !important;
+  }
+
+  .back-watermark img {
+    width: 60% !important;
+    opacity: 0.05 !important;
+  }
+
+  .front-watermark {
+    position: absolute !important;
+    inset: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    opacity: 0.05 !important;
+    z-index: 0 !important;
+    pointer-events: none !important;
+  }
+
+  .front-watermark img {
+    width: 85% !important;
+    height: 85% !important;
+    object-fit: contain !important;
+  }
+
+  .qr-container,
+  #qrCodeCanvas,
+  #qrCodeCanvas canvas,
+  .qr-container canvas {
+    display: block !important;
+    visibility: visible !important;
+  }
+}
+
+/* Final print reset: print preview should match the on-screen ID card, not a
+   separately scaled redesign. Keep this block after the legacy print styles. */
+@media print {
+  .id-card-wrapper {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 12px !important;
+    position: relative !important;
+    width: 100% !important;
+    height: auto !important;
+    max-width: none !important;
+    min-height: 0 !important;
+    aspect-ratio: auto !important;
+    perspective: none !important;
+    transform: none !important;
+    transform-style: flat !important;
+    overflow: visible !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  .id-card-front,
+  .id-card-front.new-design,
+  .id-card-back {
+    display: flex !important;
+    flex-direction: column !important;
+    position: relative !important;
+    inset: auto !important;
+    width: 500px !important;
+    height: 315px !important;
+    min-width: 500px !important;
+    min-height: 315px !important;
+    max-width: 500px !important;
+    max-height: 315px !important;
+    border-radius: 12px !important;
+    transform: none !important;
+    backface-visibility: visible !important;
+    -webkit-backface-visibility: visible !important;
+    flex: 0 0 315px !important;
+    overflow: hidden !important;
+    break-before: auto !important;
+    break-after: auto !important;
+    break-inside: avoid !important;
+    page-break-before: auto !important;
+    page-break-after: auto !important;
+    page-break-inside: avoid !important;
+  }
+
+  .id-card-front,
+  .id-card-front.new-design {
+    margin: 0 auto 12px auto !important;
+  }
+
+  .id-card-back {
+    margin: 0 auto !important;
+  }
+
+  .front-header-new {
+    top: 1.2rem !important;
+    left: 1.5rem !important;
+  }
+
+  .front-header-new h2 {
+    font-size: 1.05rem !important;
+    color: #f8fffb !important;
+    -webkit-text-fill-color: #f8fffb !important;
+  }
+
+  .front-header-new p {
+    font-size: 0.55rem !important;
+    color: #c7f9df !important;
+  }
+
+  .front-header-new .line {
+    width: 40px !important;
+    height: 1.5px !important;
+    margin-top: 0.2rem !important;
+  }
+
+  .front-seal-new {
+    top: 1rem !important;
+    right: 1.2rem !important;
+    width: 55px !important;
+    height: 55px !important;
+  }
+
+  .front-photo-container {
+    top: 5.5rem !important;
+    width: 50% !important;
+  }
+
+  .front-photo {
+    width: 110px !important;
+    height: 145px !important;
+    border-radius: 6px !important;
+  }
+
+  .photo-placeholder {
+    font-size: 4rem !important;
+  }
+
+  .front-name-under {
+    margin-top: 0.5rem !important;
+    max-height: 1.8rem !important;
+  }
+
+  .field-name-label-under {
+    font-size: 0.45rem !important;
+    color: #c7f9df !important;
+  }
+
+  .field-name-value-under {
+    font-size: 0.95rem !important;
+    color: #ffffff !important;
+    border-bottom-width: 1px !important;
+  }
+
+  .front-right-new {
+    left: 54.5% !important;
+    padding: 0.75rem 1.2rem 0.75rem 0 !important;
+  }
+
+  .front-info-new {
+    margin-top: 4.8rem !important;
+  }
+
+  .field-alumni-id-label {
+    font-size: 0.45rem !important;
+  }
+
+  .field-alumni-id-value {
+    font-size: 1.15rem !important;
+    margin-bottom: 0.45rem !important;
+  }
+
+  .field-row {
+    margin-bottom: 0.45rem !important;
+  }
+
+  .field-row.class-year {
+    font-size: 0.65rem !important;
+    padding-bottom: 0.2rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .field-row span.label {
+    font-size: 0.5rem !important;
+  }
+
+  .field-row span.value {
+    font-size: 0.85rem !important;
+  }
+
+  .back-header {
+    padding: 0.6rem 1.5rem !important;
+  }
+
+  .back-title {
+    font-size: 0.95rem !important;
+    color: #f8fffb !important;
+    -webkit-text-fill-color: #f8fffb !important;
+  }
+
+  .valid-badge {
+    font-size: 0.65rem !important;
+    padding: 0.15rem 0.75rem !important;
+    color: #fff7cc !important;
+    -webkit-text-fill-color: #fff7cc !important;
+  }
+
+  .back-left {
+    padding: 1rem 1.5rem !important;
+    gap: 0.35rem !important;
+  }
+
+  .back-left .info-field {
+    margin-bottom: 0.25rem !important;
+  }
+
+  .back-left .info-label {
+    font-size: 0.5rem !important;
+  }
+
+  .back-left .info-value {
+    font-size: 0.7rem !important;
+  }
+
+  .back-right {
+    width: 160px !important;
+    padding: 1rem 1rem 1rem 0 !important;
+    gap: 0.5rem !important;
+  }
+
+  .qr-container {
+    width: 122px !important;
+    height: 122px !important;
+    min-width: 122px !important;
+    min-height: 122px !important;
+    max-width: 122px !important;
+    max-height: 122px !important;
+    aspect-ratio: 1 / 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0.35rem !important;
+    border-width: 2px !important;
+    overflow: hidden !important;
+    line-height: 0 !important;
+    flex: 0 0 122px !important;
+  }
+
+  .qr-container canvas,
+  .qr-container img,
+  #qrCodeCanvas canvas,
+  #qrCodeCanvas img {
+    display: block !important;
+    width: 108px !important;
+    height: 108px !important;
+    min-width: 108px !important;
+    min-height: 108px !important;
+    max-width: 108px !important;
+    max-height: 108px !important;
+    object-fit: contain !important;
+    flex: 0 0 108px !important;
+  }
+
+  .qr-container table,
+  #qrCodeCanvas table {
+    display: table !important;
+    width: 108px !important;
+    height: 108px !important;
+    min-width: 108px !important;
+    min-height: 108px !important;
+    max-width: 108px !important;
+    max-height: 108px !important;
+    border-collapse: collapse !important;
+    table-layout: fixed !important;
+  }
+
+  .qr-container table td,
+  #qrCodeCanvas table td {
+    padding: 0 !important;
+    line-height: 0 !important;
+  }
+
+  .qr-label {
+    font-size: 0.55rem !important;
+  }
+
+  .important-box {
+    padding: 0.4rem !important;
+    border-width: 1px !important;
+    margin-top: 0 !important;
+  }
+
+  .important-title {
+    font-size: 0.45rem !important;
+  }
+
+  .important-text {
+    font-size: 0.38rem !important;
+  }
+}
+
+/* Last-word contrast overrides for the ID card. These sit after the legacy
+   print block so broad dashboard heading styles cannot repaint card text. */
+html body[data-app-section="alumni"] .dashboard-layout .id-card-wrapper .id-card-front.new-design .front-header-new h2,
+html body[data-app-section="alumni"] .dashboard-layout .id-card-wrapper .id-card-front.new-design .front-header-new h2#institutionName,
+html body[data-app-section="admin"] .dashboard-layout .id-card-wrapper .id-card-front.new-design .front-header-new h2,
+html body[data-app-section="admin"] .dashboard-layout .id-card-wrapper .id-card-front.new-design .front-header-new h2#institutionName,
+html body .dashboard-layout .id-card-wrapper .id-card-front.new-design .front-header-new h2,
+html body .dashboard-layout .id-card-wrapper .id-card-front.new-design .front-header-new h2#institutionName,
+.id-card-print-document .id-card-front.new-design .front-header-new h2,
+.id-card-print-document .id-card-front.new-design .front-header-new h2#institutionName {
+  color: #f8fffb !important;
+  -webkit-text-fill-color: #f8fffb !important;
+  text-shadow: 0 1px 2px rgba(2, 6, 23, 0.35) !important;
+}
+
+html body[data-app-section="alumni"] .dashboard-layout .id-card-wrapper .id-card-front.new-design .front-header-new p,
+html body[data-app-section="admin"] .dashboard-layout .id-card-wrapper .id-card-front.new-design .front-header-new p,
+html body .dashboard-layout .id-card-wrapper .id-card-front.new-design .front-header-new p,
+.id-card-print-document .id-card-front.new-design .front-header-new p {
+  color: #c7f9df !important;
+  -webkit-text-fill-color: #c7f9df !important;
+}
+
+html body[data-app-section="alumni"] .dashboard-layout .id-card-wrapper .id-card-back .back-title,
+html body[data-app-section="admin"] .dashboard-layout .id-card-wrapper .id-card-back .back-title,
+html body .dashboard-layout .id-card-wrapper .id-card-back .back-title,
+.id-card-print-document .id-card-back .back-title {
+  color: #f8fffb !important;
+  -webkit-text-fill-color: #f8fffb !important;
+  text-shadow: 0 1px 2px rgba(2, 6, 23, 0.35) !important;
+}
+
+html body[data-app-section="alumni"] .dashboard-layout .id-card-wrapper .id-card-back .valid-badge,
+html body[data-app-section="admin"] .dashboard-layout .id-card-wrapper .id-card-back .valid-badge,
+html body .dashboard-layout .id-card-wrapper .id-card-back .valid-badge,
+.id-card-print-document .id-card-back .valid-badge {
+  color: #fff7cc !important;
+  -webkit-text-fill-color: #fff7cc !important;
+  border-color: #fbbf24 !important;
+}

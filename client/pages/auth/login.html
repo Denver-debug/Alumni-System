@@ -5,7 +5,7 @@
     <div class="auth-header">
       <div class="auth-logo">
         <img
-          src="/assets/images/logo.png"
+          src="/assets/images/logo.svg"
           alt="Alumni Logo"
           onerror="
             this.style.display = 'none';
@@ -15,7 +15,7 @@
         <span class="auth-logo-text" style="display: none">AMS</span>
       </div>
       <h1 class="auth-title">Alumni Network</h1>
-      <p class="auth-subtitle">Alumni Management System</p>
+      <p class="auth-subtitle" data-branding="institution"></p>
     </div>
 
     <!-- Form Section -->
@@ -131,6 +131,9 @@
     const errorDiv = Utils.$("#loginError");
     const errorText = Utils.$("#loginErrorText");
 
+    // Setup real-time validation
+    Validation.setupRealtimeValidation(loginForm, Validation.schemas.login);
+
     // Password visibility toggle
     togglePassword.addEventListener("click", () => {
       const type = passwordInput.type === "password" ? "text" : "password";
@@ -152,51 +155,82 @@
       errorDiv.style.display = "none";
     }
 
-    // Handle form submission
+    function isFirebaseReady() {
+      return (
+        typeof firebase !== "undefined" &&
+        firebase.apps &&
+        firebase.apps.length > 0 &&
+        typeof firebase.auth === "function"
+      );
+    }
+
+    function getApprovalMessage(status) {
+      const normalized = String(status || "pending").toLowerCase();
+      if (normalized === "rejected") {
+        return "Your account was not approved. Please contact support if you believe this is a mistake.";
+      }
+      return "Your account is pending admin approval. You will be able to log in once it is approved.";
+    }
+
+    // Handle form submission with validation
     loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       hideError();
 
-      const email = Utils.$("#email").value.trim();
-      const password = passwordInput.value;
+      const loginBtn = Utils.$("#loginBtn");
 
-      if (!email || !password) {
-        showError("Please fill in all fields");
-        return;
-      }
+      // Validate and submit
+      const success = await Validation.validateAndSubmit(
+        loginForm,
+        Validation.schemas.login,
+        async (formData) => {
+          Utils.setButtonLoading(loginBtn, true);
 
-      Utils.setButtonLoading("#loginBtn", true);
+          try {
+            const response = await Auth.login(
+              formData.email,
+              formData.password,
+            );
 
-      try {
-        const response = await Auth.login(email, password);
+            Utils.success("Login successful!");
 
-        Utils.success("Login successful!");
+            // Redirect based on role
+            const user = response.data.user;
+            if (["admin", "system_admin"].includes(user.role)) {
+              Router.navigate("/admin/dashboard");
+            } else {
+              Router.navigate("/dashboard");
+            }
+          } catch (error) {
+            // Check for verification required
+            if (error.errors?.requiresVerification) {
+              sessionStorage.setItem("verify_email", formData.email);
+              Router.navigate("/verify-email");
+              return;
+            }
 
-        // Redirect based on role
-        const user = response.data.user;
-        if (["admin", "system_admin"].includes(user.role)) {
-          Router.navigate("/admin/dashboard");
-        } else {
-          Router.navigate("/dashboard");
-        }
-      } catch (error) {
-        // Check for verification required
-        if (error.errors?.requiresVerification) {
-          sessionStorage.setItem("verify_email", email);
-          Router.navigate("/verify-email");
-          return;
-        }
+            if (error.errors?.requiresApproval) {
+              showError(getApprovalMessage(error.errors?.status));
+              throw error;
+            }
 
-        showError(error.message || "Invalid credentials. Please try again.");
-      } finally {
-        Utils.setButtonLoading("#loginBtn", false);
-      }
+            showError(
+              error.message || "Invalid credentials. Please try again.",
+            );
+            throw error; // Re-throw to prevent success
+          } finally {
+            Utils.setButtonLoading(loginBtn, false);
+          }
+        },
+      );
     });
 
     // Handle Google Sign In
     googleBtn.addEventListener("click", async () => {
-      if (typeof firebase === "undefined") {
-        showError("Google Sign-In is not configured");
+      if (!isFirebaseReady()) {
+        showError(
+          "Google Sign-In is not configured. Please ask the administrator to complete Firebase settings.",
+        );
         return;
       }
 
@@ -205,6 +239,7 @@
 
       try {
         const provider = new firebase.auth.GoogleAuthProvider();
+        provider.setCustomParameters({ prompt: "select_account" });
         const result = await firebase.auth().signInWithPopup(provider);
         const idToken = await result.user.getIdToken();
 
@@ -223,6 +258,11 @@
           Router.navigate("/dashboard");
         }
       } catch (error) {
+        if (error.errors?.requiresApproval) {
+          showError(getApprovalMessage(error.errors?.status));
+          return;
+        }
+
         console.error("Google login error:", error);
         showError(error.message || "Google sign-in failed");
       } finally {

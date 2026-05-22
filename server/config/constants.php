@@ -16,6 +16,7 @@ define('API_PREFIX', '/api/' . API_VERSION);
 // File Upload Settings
 define('UPLOAD_MAX_SIZE', 5 * 1024 * 1024); // 5MB
 define('UPLOAD_DIR', __DIR__ . '/../uploads');
+define('PROFILE_UPLOAD_SUBDIR', 'profiles');
 define('ALLOWED_IMAGE_TYPES', ['image/jpeg', 'image/png', 'image/gif', 'image/webp']);
 define('ALLOWED_DOC_TYPES', ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']);
 
@@ -52,9 +53,14 @@ define('GOOGLE_CLIENT_SECRET', getenv('GOOGLE_CLIENT_SECRET') ?: '');
 define('FIREBASE_PROJECT_ID', getenv('FIREBASE_PROJECT_ID') ?: '');
 
 // CORS Settings
-define('CORS_ALLOWED_ORIGINS', getenv('CORS_ORIGINS') ?: '*');
+$corsAllowedOrigins = getenv('CORS_ALLOWED_ORIGINS');
+if ($corsAllowedOrigins === false || $corsAllowedOrigins === '') {
+    $corsAllowedOrigins = getenv('CORS_ORIGINS');
+}
+
+define('CORS_ALLOWED_ORIGINS', $corsAllowedOrigins ?: '*');
 define('CORS_ALLOWED_METHODS', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
-define('CORS_ALLOWED_HEADERS', 'Content-Type, Authorization, X-Requested-With');
+define('CORS_ALLOWED_HEADERS', 'Content-Type, Authorization, X-Requested-With, X-CSRF-Token');
 
 // Pagination
 define('DEFAULT_PAGE_SIZE', 20);

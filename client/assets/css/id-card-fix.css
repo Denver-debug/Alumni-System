@@ -1,0 +1,471 @@
+/* ID Card Page Specific Fixes */
+
+/* Ensure sidebar is always visible on ID card page */
+body[data-app-section="alumni"] .id-card-page .sidebar,
+body[data-app-section="alumni"] .dashboard-layout .sidebar {
+  display: flex !important;
+  flex-direction: column !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Fix ID card page layout */
+body[data-app-section="alumni"] .id-card-page .dashboard-layout,
+body[data-app-section="alumni"] .dashboard-layout {
+  display: flex !important;
+}
+
+body[data-app-section="alumni"] .id-card-page .main-content,
+body[data-app-section="alumni"] .dashboard-layout .main-content {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Ensure proper spacing */
+.id-card-page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Icon circle styling */
+.icon-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.bg-primary-light {
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.text-primary {
+  color: rgb(16, 185, 129);
+}
+
+/* ID Card Container */
+.id-card-container {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-radius: 1rem;
+  min-height: 400px;
+}
+
+.id-card-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  perspective: 1000px;
+}
+
+.id-card {
+  width: 100%;
+  aspect-ratio: 1.586 / 1;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.id-card-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: rotateY(180deg);
+  backface-visibility: hidden;
+  display: none;
+}
+
+.id-card-wrapper.flipped .id-card-front {
+  display: none;
+}
+
+.id-card-wrapper.flipped .id-card-back {
+  display: flex;
+}
+
+.id-card-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid rgb(16, 185, 129);
+  margin-bottom: 1rem;
+}
+
+.id-card-logo img {
+  height: 50px;
+  width: auto;
+}
+
+.id-card-institution h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: rgb(15, 23, 42);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.id-card-institution p {
+  font-size: 0.75rem;
+  color: rgb(100, 116, 139);
+  margin: 0;
+}
+
+.id-card-body {
+  flex: 1;
+  display: flex;
+  gap: 1.5rem;
+}
+
+.id-card-photo-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.id-card-photo {
+  width: 120px;
+  height: 140px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 3px solid rgb(167, 243, 208);
+  background: rgb(243, 244, 246);
+  position: relative;
+}
+
+.id-card-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.id-card-photo-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgb(16, 185, 129), rgb(5, 150, 105));
+  color: white;
+  font-size: 3rem;
+  font-weight: 700;
+}
+
+.id-card-qr {
+  text-align: center;
+}
+
+.id-card-qr canvas {
+  width: 100px;
+  height: 100px;
+  border: 2px solid rgb(229, 231, 235);
+  border-radius: 8px;
+  background: white;
+}
+
+.id-card-qr-label {
+  font-size: 0.65rem;
+  color: rgb(100, 116, 139);
+  margin-top: 0.25rem;
+}
+
+.id-card-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.id-card-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.id-card-field label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: rgb(100, 116, 139);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.id-card-value {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgb(15, 23, 42);
+  line-height: 1.2;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+.id-card-value.id-number {
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+  color: rgb(16, 185, 129);
+  letter-spacing: 0.05em;
+}
+
+.id-card-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.id-card-footer {
+  padding-top: 1rem;
+  border-top: 1px solid rgb(229, 231, 235);
+  margin-top: auto;
+}
+
+.id-card-footer-text {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.7rem;
+  color: rgb(100, 116, 139);
+}
+
+.id-card-status {
+  background: rgb(220, 252, 231);
+  color: rgb(22, 101, 52);
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.65rem;
+}
+
+/* Back of card */
+.id-card-back-header {
+  padding-bottom: 1rem;
+  border-bottom: 2px solid rgb(16, 185, 129);
+  margin-bottom: 1rem;
+}
+
+.id-card-back-header h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: rgb(15, 23, 42);
+  margin: 0;
+}
+
+.id-card-back-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.id-card-back-notice {
+  background: rgb(249, 250, 251);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: auto;
+}
+
+.id-card-back-notice h4 {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: rgb(15, 23, 42);
+  margin: 0 0 0.5rem 0;
+}
+
+.id-card-back-notice p {
+  font-size: 0.7rem;
+  color: rgb(100, 116, 139);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.id-card-back-signature {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.signature-line {
+  width: 200px;
+  height: 1px;
+  background: rgb(156, 163, 175);
+  margin: 0 auto 0.5rem;
+}
+
+.id-card-back-signature p {
+  font-size: 0.7rem;
+  color: rgb(100, 116, 139);
+  margin: 0;
+}
+
+.qr-share-container {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+  background: rgb(249, 250, 251);
+  border-radius: 0.75rem;
+}
+
+.qr-share-container canvas {
+  width: 250px;
+  height: 250px;
+  border: 4px solid white;
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+}
+
+@media print {
+  /* Force all colors and backgrounds to print */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  /* Reset page margins for maximum space */
+  @page {
+    size: A4 landscape;
+    margin: 0.5cm;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Hide everything except the ID card */
+  body * {
+    visibility: hidden !important;
+  }
+
+  .id-card-wrapper,
+  .id-card-wrapper * {
+    visibility: visible !important;
+  }
+
+  /* Position and size the card - LARGER SIZE */
+  .id-card-wrapper {
+    position: fixed !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) scale(1.3) !important;
+    width: 600px !important;
+    max-width: 600px !important;
+    perspective: none !important;
+  }
+
+  /* CRITICAL: Remove flip transforms for print */
+  .id-card-wrapper.flipped .id-card-front {
+    transform: rotateY(0deg) !important;
+  }
+
+  .id-card-wrapper.flipped .id-card-back {
+    transform: rotateY(0deg) !important;
+  }
+
+  /* Ensure card maintains proper size - LARGER */
+  .id-card,
+  .id-card-front,
+  .id-card-back {
+    width: 600px !important;
+    height: 378px !important; /* 600 / 1.586 */
+    max-width: 600px !important;
+    aspect-ratio: 1.586 / 1 !important;
+    box-shadow: none !important;
+    border: 1px solid #e5e7eb !important;
+    transform: rotateY(0deg) !important;
+    backface-visibility: visible !important;
+  }
+
+  /* Print front card on first page */
+  .id-card-front {
+    display: flex !important;
+    page-break-after: always !important;
+    position: relative !important;
+  }
+
+  /* Print back card on second page */
+  .id-card-back {
+    display: flex !important;
+    page-break-before: always !important;
+    position: relative !important;
+  }
+
+  /* Ensure photos display correctly */
+  .id-card-photo img,
+  .front-photo img,
+  #cardPhoto {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  /* Force background colors and images to print */
+  .id-card-front::before,
+  .front-green-bg,
+  .id-card-photo,
+  .front-photo,
+  .id-card-photo-placeholder,
+  .photo-placeholder {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide UI elements */
+  .topbar,
+  .sidebar,
+  .topbar-actions,
+  .card:not(.id-card-wrapper),
+  button,
+  .btn {
+    display: none !important;
+    visibility: hidden !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .id-card-container {
+    padding: 1rem;
+  }
+
+  .id-card {
+    padding: 1rem;
+  }
+
+  .id-card-body {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .id-card-photo-section {
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+  }
+
+  .topbar-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .topbar-actions .btn {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  .topbar-actions .btn svg {
+    width: 16px;
+    height: 16px;
+  }
+}

@@ -7,6 +7,7 @@
 require_once __DIR__ . '/../../../config/database.php';
 require_once __DIR__ . '/../../../middleware/auth.php';
 require_once __DIR__ . '/../../../config/auth.php';
+require_once __DIR__ . '/../../../utils/helpers.php';
 
 header('Content-Type: application/json');
 
@@ -29,7 +30,7 @@ if (!$eventId) {
 try {
     $db = Database::getInstance()->getConnection();
     
-    $stmt = $db->prepare("SELECT id, title FROM events WHERE id = ?");
+    $stmt = $db->prepare("SELECT id, title, cover_image FROM events WHERE id = ?");
     $stmt->execute([$eventId]);
     $event = $stmt->fetch();
     
@@ -42,7 +43,7 @@ try {
     $db->beginTransaction();
     
     // Delete related records
-    $stmt = $db->prepare("DELETE FROM event_attendance_codes WHERE event_id = ?");
+    $stmt = $db->prepare("DELETE FROM event_rsvps WHERE event_id = ?");
     $stmt->execute([$eventId]);
     
     $stmt = $db->prepare("DELETE FROM event_attendances WHERE event_id = ?");
@@ -52,10 +53,13 @@ try {
     $stmt->execute([$eventId]);
     
     $db->commit();
+
+    if (isLocalUploadPath($event['cover_image'] ?? null)) {
+        deleteLocalImage($event['cover_image']);
+    }
     
     $admin = getCurrentUser();
-    $stmt = $db->prepare("INSERT INTO admin_activities (admin_id, action, target_type, target_id, details, ip_address, created_at) VALUES (?, 'delete', 'event', ?, ?, ?, NOW())");
-    $stmt->execute([$admin['id'], $eventId, json_encode(['title' => $event['title']]), $_SERVER['REMOTE_ADDR'] ?? null]);
+    logAdminActivity((int)$admin['id'], 'delete', 'Deleted event: ' . $event['title'], 'event', (int)$eventId);
     
     echo json_encode(['success' => true, 'message' => 'Event deleted']);
     

@@ -10,74 +10,121 @@ require_once __DIR__ . '/../../../middleware/auth.php';
 
 header('Content-Type: application/json');
 
-requireAdmin();
+$admin = requireAdmin();
+
+$allowedSettings = [
+    'primary_color' => ['default' => '#10b981', 'type' => 'color', 'description' => 'Primary brand color'],
+    'secondary_color' => ['default' => '#6b7280', 'type' => 'color', 'description' => 'Secondary color'],
+    'accent_color' => ['default' => '#f59e0b', 'type' => 'color', 'description' => 'Accent color'],
+    'background_color' => ['default' => '#f8fafc', 'type' => 'color', 'description' => 'Background color'],
+    'text_color' => ['default' => '#1f2937', 'type' => 'color', 'description' => 'Primary text color'],
+    'heading_font' => ['default' => 'Inter', 'type' => 'font', 'description' => 'Heading font family'],
+    'body_font' => ['default' => 'Inter', 'type' => 'font', 'description' => 'Body font family'],
+    'font_family' => ['default' => 'Inter', 'type' => 'font', 'description' => 'Legacy font family alias'],
+    'logo_url' => ['default' => '', 'type' => 'image', 'description' => 'Logo URL'],
+    'auth_background_image_url' => ['default' => '', 'type' => 'image', 'description' => 'Authentication page background image URL'],
+    'favicon_url' => ['default' => '', 'type' => 'image', 'description' => 'Favicon URL'],
+    'sidebar_style' => ['default' => 'dark', 'type' => 'text', 'description' => 'Sidebar visual style'],
+    'border_radius' => ['default' => 'md', 'type' => 'size', 'description' => 'Global border radius'],
+    'custom_css' => ['default' => '', 'type' => 'text', 'description' => 'Custom CSS overrides'],
+];
 
 try {
     $db = Database::getInstance()->getConnection();
     
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-        $stmt = $db->query("SELECT * FROM theme_settings ORDER BY id DESC LIMIT 1");
-        $settings = $stmt->fetch();
-        
-        if (!$settings) {
-            $settings = [
-                'primary_color' => '#4f46e5',
-                'secondary_color' => '#06b6d4',
-                'accent_color' => '#f59e0b',
-                'background_color' => '#f8fafc',
-                'text_color' => '#1e293b',
-                'font_family' => 'Inter',
-                'logo_url' => null,
-                'favicon_url' => null
-            ];
+        $settings = [];
+        foreach ($allowedSettings as $key => $meta) {
+            $settings[$key] = $meta['default'];
+        }
+
+        $keys = array_keys($allowedSettings);
+        $placeholders = implode(', ', array_fill(0, count($keys), '?'));
+        $stmt = $db->prepare("SELECT setting_key, setting_value FROM theme_settings WHERE setting_key IN ($placeholders)");
+        $stmt->execute($keys);
+        $rows = $stmt->fetchAll();
+
+        foreach ($rows as $row) {
+            $settings[$row['setting_key']] = (string)($row['setting_value'] ?? '');
+        }
+
+        if ($settings['body_font'] === '' && $settings['font_family'] !== '') {
+            $settings['body_font'] = $settings['font_family'];
+        }
+        if ($settings['heading_font'] === '' && $settings['font_family'] !== '') {
+            $settings['heading_font'] = $settings['font_family'];
+        }
+        if ($settings['font_family'] === '' && $settings['body_font'] !== '') {
+            $settings['font_family'] = $settings['body_font'];
         }
         
         echo json_encode(['success' => true, 'data' => $settings]);
         
     } elseif ($_SERVER['REQUEST_METHOD'] === 'PUT') {
-        $data = json_decode(file_get_contents('php://input'), true);
-        
-        $fields = ['primary_color', 'secondary_color', 'accent_color', 'background_color', 
-                   'text_color', 'font_family', 'logo_url', 'favicon_url', 'custom_css'];
-        
-        // Check if exists
-        $stmt = $db->query("SELECT id FROM theme_settings LIMIT 1");
-        $existing = $stmt->fetch();
-        
-        if ($existing) {
-            $updates = [];
-            $params = [];
-            foreach ($fields as $field) {
-                if (isset($data[$field])) {
-                    $updates[] = "$field = ?";
-                    $params[] = $data[$field];
-                }
+        $data = json_decode(file_get_contents('php://input'), true) ?? [];
+
+        if (!is_array($data)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Invalid payload']);
+            exit;
+        }
+
+        $updates = [];
+        foreach ($allowedSettings as $key => $meta) {
+            if (!array_key_exists($key, $data)) {
+                continue;
             }
-            if (!empty($updates)) {
-                $updates[] = "updated_at = NOW()";
-                $params[] = $existing['id'];
-                $stmt = $db->prepare("UPDATE theme_settings SET " . implode(', ', $updates) . " WHERE id = ?");
-                $stmt->execute($params);
+
+            $value = $data[$key];
+            if (is_bool($value)) {
+                $value = $value ? '1' : '0';
+            } elseif (is_array($value)) {
+                $value = json_encode($value);
+            } elseif ($value === null) {
+                $value = '';
+            } else {
+                $value = (string)$value;
             }
-        } else {
-            $stmt = $db->prepare("
-                INSERT INTO theme_settings (primary_color, secondary_color, accent_color, background_color, text_color, font_family, logo_url, favicon_url, custom_css, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
-            ");
+
+            $updates[$key] = $value;
+        }
+
+        // Keep backward compatibility with older clients that only send one of these keys.
+        if (array_key_exists('font_family', $data) && !array_key_exists('body_font', $updates)) {
+            $updates['body_font'] = (string)$data['font_family'];
+        }
+        if (array_key_exists('body_font', $data) && !array_key_exists('font_family', $updates)) {
+            $updates['font_family'] = (string)$data['body_font'];
+        }
+
+        if (empty($updates)) {
+            echo json_encode(['success' => true, 'message' => 'No changes']);
+            exit;
+        }
+
+        $stmt = $db->prepare(
+            "INSERT INTO theme_settings (setting_key, setting_value, setting_type, description, updated_by, created_at, updated_at)
+             VALUES (?, ?, ?, ?, ?, NOW(), NOW())
+             ON DUPLICATE KEY UPDATE
+                setting_value = VALUES(setting_value),
+                setting_type = VALUES(setting_type),
+                description = VALUES(description),
+                updated_by = VALUES(updated_by),
+                updated_at = NOW()"
+        );
+
+        foreach ($updates as $key => $value) {
+            $meta = $allowedSettings[$key] ?? ['type' => 'text', 'description' => ucwords(str_replace('_', ' ', $key))];
             $stmt->execute([
-                $data['primary_color'] ?? '#4f46e5',
-                $data['secondary_color'] ?? '#06b6d4',
-                $data['accent_color'] ?? '#f59e0b',
-                $data['background_color'] ?? '#f8fafc',
-                $data['text_color'] ?? '#1e293b',
-                $data['font_family'] ?? 'Inter',
-                $data['logo_url'] ?? null,
-                $data['favicon_url'] ?? null,
-                $data['custom_css'] ?? null
+                $key,
+                $value,
+                $meta['type'],
+                $meta['description'],
+                (int)$admin['id'],
             ]);
         }
         
-        echo json_encode(['success' => true, 'message' => 'Theme settings updated']);
+        echo json_encode(['success' => true, 'message' => 'Theme settings updated', 'data' => ['updated_keys' => array_keys($updates)]]);
         
     } else {
         http_response_code(405);
