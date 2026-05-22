@@ -141,6 +141,9 @@
 
       const code = Utils.$("#code").value.trim();
 
+      console.log("Verifying email:", email);
+      console.log("Verification code:", code, "Length:", code.length);
+
       if (code.length !== 6) {
         Utils.error("Please enter a valid 6-digit code");
         return;
@@ -150,6 +153,8 @@
 
       try {
         const response = await Auth.verifyEmail(email, code);
+
+        console.log("Verification response:", response);
 
         const requiresProfileCompletion = !!response?.data?.requiresProfileCompletion;
         const requiresApproval = !!response?.data?.requiresApproval;
@@ -180,7 +185,16 @@
         Utils.success("Email verified successfully. You can now log in.");
         Router.navigate("/login");
       } catch (error) {
-        Utils.error(error.message || "Invalid verification code");
+        console.error("Verification error:", error);
+        console.error("Error details:", JSON.stringify(error, null, 2));
+        
+        // Show specific validation errors if available
+        if (error.errors) {
+          const errorMessages = Object.values(error.errors).flat().join(", ");
+          Utils.error(errorMessages || error.message || "Invalid verification code");
+        } else {
+          Utils.error(error.message || "Invalid verification code");
+        }
       } finally {
         Utils.setButtonLoading("#verifyBtn", false);
       }

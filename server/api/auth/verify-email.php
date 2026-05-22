@@ -18,7 +18,7 @@ $data = getRequestBody();
 // Validate input
 $errors = validate($data, [
     'email' => 'required|email',
-    'code' => 'required|min:6|max:6'
+    'code' => 'required|min:6|max:6|regex:/^[0-9]{6}$/'
 ]);
 
 if (!empty($errors)) {

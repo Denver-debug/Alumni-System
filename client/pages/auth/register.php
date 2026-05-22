@@ -458,6 +458,7 @@
 </style>
 
 <script>
+  // Registration Form Handler v2.0 - Updated for dev mode support
   (function () {
     const registerForm = Utils.$("#registerForm");
     const googleBtn = Utils.$("#googleRegisterBtn");
@@ -474,11 +475,8 @@
         const response = await API.organization.getColleges();
         if (response.success && response.data) {
           const select = Utils.$("#college_id");
-          select.innerHTML =
-            '<option value="">Select College</option>' +
-            response.data
-              .map((c) => `<option value="${c.id}">${c.name}</option>`)
-              .join("");
+          const options = response.data.map((c) => "<option value='" + c.id + "'>" + c.name + "</option>").join("");
+          select.innerHTML = "<option value=''>Select College</option>" + options;
         }
       } catch (e) {
         console.error("Error loading colleges:", e);
@@ -491,8 +489,8 @@
       const programSelect = Utils.$("#program_id");
       const sectionSelect = Utils.$("#section_id");
 
-      programSelect.innerHTML = '<option value="">Select Program</option>';
-      sectionSelect.innerHTML = '<option value="">Select Section</option>';
+      programSelect.innerHTML = "<option value=''>Select Program</option>";
+      sectionSelect.innerHTML = "<option value=''>Select Section</option>";
       programSelect.disabled = !collegeId;
       sectionSelect.disabled = true;
 
@@ -500,11 +498,8 @@
         try {
           const response = await API.organization.getPrograms(collegeId);
           if (response.success && response.data) {
-            programSelect.innerHTML =
-              '<option value="">Select Program</option>' +
-              response.data
-                .map((p) => `<option value="${p.id}">${p.name}</option>`)
-                .join("");
+            const options = response.data.map((p) => "<option value='" + p.id + "'>" + p.name + "</option>").join("");
+            programSelect.innerHTML = "<option value=''>Select Program</option>" + options;
             programSelect.disabled = false;
           }
         } catch (e) {
@@ -518,22 +513,15 @@
       const programId = this.value;
       const sectionSelect = Utils.$("#section_id");
 
-      sectionSelect.innerHTML =
-        '<option value="">Select Section (Optional)</option>';
+      sectionSelect.innerHTML = "<option value=''>Select Section (Optional)</option>";
       sectionSelect.disabled = !programId;
 
       if (programId) {
         try {
           const response = await API.organization.getSections(programId);
           if (response.success && response.data) {
-            sectionSelect.innerHTML =
-              '<option value="">Select Section (Optional)</option>' +
-              response.data
-                .map(
-                  (s) =>
-                    `<option value="${s.id}">${s.name} (${s.batch_year})</option>`,
-                )
-                .join("");
+            const options = response.data.map((s) => "<option value='" + s.id + "'>" + s.name + " (" + s.batch_year + ")</option>").join("");
+            sectionSelect.innerHTML = "<option value=''>Select Section (Optional)</option>" + options;
             sectionSelect.disabled = false;
           }
         } catch (e) {
@@ -548,52 +536,43 @@
         const response = await API.formFields.getAll();
         if (response.success && response.data && response.data.length) {
           const container = Utils.$("#dynamicFields");
-          container.innerHTML =
-            '<h3 class="mb-md mt-lg">Additional Information</h3>' +
-            response.data
-              .map((field) => {
-                let input = "";
-                const required = field.is_required ? "required" : "";
-                const requiredLabel = field.is_required ? "required" : "";
+          const fieldsHTML = response.data.map((field) => {
+            let input = "";
+            const required = field.is_required ? "required" : "";
+            const requiredLabel = field.is_required ? "required" : "";
+            const fieldId = "custom_" + field.id;
+            const fieldName = "custom_fields[" + field.field_key + "]";
 
-                switch (field.field_type) {
-                  case "text":
-                    input = `<input type="text" id="custom_${field.id}" name="custom_fields[${field.field_key}]" class="form-input" ${required} />`;
-                    break;
-                  case "email":
-                    input = `<input type="email" id="custom_${field.id}" name="custom_fields[${field.field_key}]" class="form-input" ${required} />`;
-                    break;
-                  case "number":
-                    input = `<input type="number" id="custom_${field.id}" name="custom_fields[${field.field_key}]" class="form-input" ${required} />`;
-                    break;
-                  case "textarea":
-                    input = `<textarea id="custom_${field.id}" name="custom_fields[${field.field_key}]" class="form-input" rows="3" ${required}></textarea>`;
-                    break;
-                  case "select":
-                    const options = field.options
-                      ? JSON.parse(field.options)
-                      : [];
-                    input = `<select id="custom_${field.id}" name="custom_fields[${field.field_key}]" class="form-input" ${required}>
-                    <option value="">Select...</option>
-                    ${options.map((o) => `<option value="${o}">${o}</option>`).join("")}
-                  </select>`;
-                    break;
-                  case "date":
-                    input = `<input type="date" id="custom_${field.id}" name="custom_fields[${field.field_key}]" class="form-input" ${required} />`;
-                    break;
-                  default:
-                    input = `<input type="text" id="custom_${field.id}" name="custom_fields[${field.field_key}]" class="form-input" ${required} />`;
-                }
+            switch (field.field_type) {
+              case "text":
+                input = "<input type='text' id='" + fieldId + "' name='" + fieldName + "' class='form-input' " + required + " />";
+                break;
+              case "email":
+                input = "<input type='email' id='" + fieldId + "' name='" + fieldName + "' class='form-input' " + required + " />";
+                break;
+              case "number":
+                input = "<input type='number' id='" + fieldId + "' name='" + fieldName + "' class='form-input' " + required + " />";
+                break;
+              case "textarea":
+                input = "<textarea id='" + fieldId + "' name='" + fieldName + "' class='form-input' rows='3' " + required + "></textarea>";
+                break;
+              case "select":
+                const options = field.options ? JSON.parse(field.options) : [];
+                const optionsHTML = options.map((o) => "<option value='" + o + "'>" + o + "</option>").join("");
+                input = "<select id='" + fieldId + "' name='" + fieldName + "' class='form-input' " + required + "><option value=''>Select...</option>" + optionsHTML + "</select>";
+                break;
+              case "date":
+                input = "<input type='date' id='" + fieldId + "' name='" + fieldName + "' class='form-input' " + required + " />";
+                break;
+              default:
+                input = "<input type='text' id='" + fieldId + "' name='" + fieldName + "' class='form-input' " + required + " />";
+            }
 
-                return `
-                <div class="form-group">
-                  <label class="form-label ${requiredLabel}" for="custom_${field.id}">${field.label}</label>
-                  ${input}
-                  ${field.placeholder ? `<div class="form-hint">${field.placeholder}</div>` : ""}
-                </div>
-              `;
-              })
-              .join("");
+            const hintHTML = field.placeholder ? "<div class='form-hint'>" + field.placeholder + "</div>" : "";
+            return "<div class='form-group'><label class='form-label " + requiredLabel + "' for='" + fieldId + "'>" + field.label + "</label>" + input + hintHTML + "</div>";
+          }).join("");
+          
+          container.innerHTML = "<h3 class='mb-md mt-lg'>Additional Information</h3>" + fieldsHTML;
         }
       } catch (e) {
         console.log("No dynamic fields or error:", e);
@@ -624,7 +603,7 @@
     }
 
     function validateStep(step) {
-      const stepContent = document.querySelector(`#step${step}`);
+      const stepContent = document.querySelector("#step" + step);
       const inputs = stepContent.querySelectorAll(
         "input[required], select[required]",
       );
@@ -683,20 +662,33 @@
       try {
         const response = await Auth.register(formData);
 
-        Utils.success(
-          "Registration successful! Please check your email for verification code.",
-        );
+        // Check if email verification is required
+        if (response && response.data && response.data.requiresVerification) {
+          Utils.success(
+            "Registration successful! Please check your email for verification code.",
+          );
 
-        // Store email for verification page
-        sessionStorage.setItem("verify_email", formData.email);
+          // Store email for verification page
+          sessionStorage.setItem("verify_email", formData.email);
 
-        // Redirect to verification
-        Router.navigate("/verify-email");
+          // Redirect to verification
+          Router.navigate("/verify-email");
+        } else if (response && response.data && response.data.requiresProfileCompletion) {
+          // Registration completed without email verification (dev mode)
+          Utils.success("Registration successful! Please complete your profile.");
+          
+          // Redirect to complete profile or dashboard
+          Router.navigate("/complete-profile");
+        } else {
+          // Registration completed
+          Utils.success("Registration successful!");
+          Router.navigate("/dashboard");
+        }
       } catch (error) {
-        if (error.errors) {
+        if (error && error.errors) {
           Utils.showFormErrors(registerForm, error.errors);
         }
-        Utils.error(error.message || "Registration failed");
+        Utils.error((error && error.message) || "Registration failed");
       } finally {
         Utils.setButtonLoading("#submitBtn", false);
       }

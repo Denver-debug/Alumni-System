@@ -93,20 +93,22 @@ class Validator {
                 
             case 'min':
                 $min = $params[0] ?? 0;
-                if (is_string($value) && strlen($value) < $min) {
-                    return "$label must be at least $min characters";
-                }
-                if (is_numeric($value) && $value < $min) {
+                if (is_string($value)) {
+                    if (strlen($value) < $min) {
+                        return "$label must be at least $min characters";
+                    }
+                } elseif (is_numeric($value) && $value < $min) {
                     return "$label must be at least $min";
                 }
                 break;
                 
             case 'max':
                 $max = $params[0] ?? 255;
-                if (is_string($value) && strlen($value) > $max) {
-                    return "$label must not exceed $max characters";
-                }
-                if (is_numeric($value) && $value > $max) {
+                if (is_string($value)) {
+                    if (strlen($value) > $max) {
+                        return "$label must not exceed $max characters";
+                    }
+                } elseif (is_numeric($value) && $value > $max) {
                     return "$label must not exceed $max";
                 }
                 break;

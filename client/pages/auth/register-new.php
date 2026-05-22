@@ -162,7 +162,10 @@
 </div>
 
 <script>
+  // Registration Form Handler - Simplified version
   (function () {
+    console.log("Register page script loaded");
+    
     const form = Utils.$("#registerForm");
     const errorDiv = Utils.$("#registerError");
     const errorText = Utils.$("#registerErrorText");
@@ -170,8 +173,7 @@
     const successText = Utils.$("#registerSuccessText");
     const googleBtn = Utils.$("#googleRegisterBtn");
 
-    // Setup real-time validation
-    Validation.setupRealtimeValidation(form, Validation.schemas.register);
+    console.log("Form element:", form);
 
     // Password toggles
     const togglePassword = Utils.$("#togglePassword");
@@ -241,48 +243,92 @@
         .slice(0, 255);
     }
 
-    // Form submission with validation
+    // Form submission
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
+      console.log("Form submitted!");
       hideAlerts();
 
       const registerBtn = Utils.$("#registerBtn");
+      const email = Utils.$("#email").value.trim();
+      const password = Utils.$("#password").value;
+      const passwordConfirmation = Utils.$("#password_confirmation").value;
 
-      const success = await Validation.validateAndSubmit(
-        form,
-        Validation.schemas.register,
-        async (formData) => {
-          const name = deriveNameFromEmail(formData.email);
+      console.log("Form data:", { email, passwordLength: password.length });
+
+      // Basic validation
+      if (!email || !password || !passwordConfirmation) {
+        showError("Please fill in all fields");
+        return;
+      }
+
+      if (password !== passwordConfirmation) {
+        showError("Passwords do not match");
+        return;
+      }
+
+      if (password.length < 8) {
+        showError("Password must be at least 8 characters");
+        return;
+      }
+
+      const name = deriveNameFromEmail(email);
+      
+      console.log("Starting registration for:", email);
+      Utils.setButtonLoading(registerBtn, true);
+
+      try {
+        const response = await Auth.register({
+          name: name,
+          email: email,
+          password: password,
+          password_confirmation: passwordConfirmation,
+        });
+
+        console.log("Registration response:", response);
+
+        // Check if email verification is required
+        if (response && response.data && response.data.requiresVerification) {
+          showSuccess(
+            "Registration successful! Please check your email for verification code.",
+          );
+
+          // Store email for verification page
+          sessionStorage.setItem("verify_email", email);
+
+          // Redirect to verification after delay
+          setTimeout(() => {
+            Router.navigate("/verify-email");
+          }, 2000);
+        } else if (response && response.data && response.data.requiresProfileCompletion) {
+          // Registration completed without email verification (dev mode)
+          showSuccess("Registration successful! Redirecting to complete your profile...");
           
-          Utils.setButtonLoading(registerBtn, true);
-
-          try {
-            const response = await Auth.register({
-              name,
-              email: formData.email,
-              password: formData.password,
-              password_confirmation: formData.password_confirmation,
-            });
-
-            showSuccess(
-              "Registration successful! Please check your email for verification code.",
-            );
-
-            // Store email for verification page
-            sessionStorage.setItem("verify_email", formData.email);
-
-            // Redirect to verification after delay
-            setTimeout(() => {
-              Router.navigate("/verify-email");
-            }, 2000);
-          } catch (error) {
-            showError(error.message || "Registration failed. Please try again.");
-            throw error;
-          } finally {
-            Utils.setButtonLoading(registerBtn, false);
-          }
+          // Redirect to complete profile
+          setTimeout(() => {
+            Router.navigate("/complete-profile");
+          }, 1500);
+        } else {
+          // Registration completed
+          showSuccess("Registration successful! Redirecting...");
+          setTimeout(() => {
+            Router.navigate("/dashboard");
+          }, 1500);
         }
-      );
+      } catch (error) {
+        console.error("Registration error:", error);
+        console.error("Error details:", JSON.stringify(error, null, 2));
+        
+        // Show specific validation errors if available
+        if (error.errors) {
+          const errorMessages = Object.values(error.errors).flat().join(", ");
+          showError(errorMessages || error.message || "Registration failed. Please try again.");
+        } else {
+          showError(error.message || "Registration failed. Please try again.");
+        }
+      } finally {
+        Utils.setButtonLoading(registerBtn, false);
+      }
     });
 
     // Google Sign Up
@@ -311,16 +357,14 @@
 
         const user = response.data.user;
 
-        // Check if profile is complete
-        if (user.role === "alumni" && !response.data.profileComplete) {
-          // Check if profile needs to be completed
-          if (!user.profile_completed) {
-            Router.navigate("/complete-profile");
-          } else if (["admin", "system_admin", "campus_admin", "staff"].includes(user.role)) {
-            Router.navigate("/admin/dashboard");
-          } else {
-            Router.navigate("/dashboard");
-          }
+        // Check if profile needs to be completed
+        if (!user.profile_completed) {
+          Router.navigate("/complete-profile");
+        } else if (["admin", "system_admin", "campus_admin", "staff"].includes(user.role)) {
+          Router.navigate("/admin/dashboard");
+        } else {
+          Router.navigate("/dashboard");
+        }
       } catch (error) {
         console.error("Google signup error:", error);
         showError(error.message || "Google sign-up failed");
